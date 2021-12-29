@@ -14,6 +14,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.compose.components.TopAppBarLayout
 import com.mutualmobile.mmleave.ui.theme.MMLeaveTheme
 import com.mutualmobile.mmleave.ui.theme.button_unselected
+import com.mutualmobile.mmleave.ui.theme.white_background
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,8 +69,7 @@ fun ApplyPtoScreen() {
       Text(
           text = "Select Dates",
           modifier = Modifier.constrainAs(selectDatesText) {
-            top.linkTo(parent.top)
-            bottom.linkTo(dateFromTf.top)
+            linkTo(top = parent.top, bottom = parent.bottom, bias = 0.05F)
             absoluteLeft.linkTo(parent.absoluteLeft)
           }
       )
@@ -85,10 +86,9 @@ fun ApplyPtoScreen() {
           modifier = Modifier
               .fillMaxWidth(0.45F)
               .constrainAs(dateFromTf) {
-                top.linkTo(selectDatesText.bottom)
+                linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.05F)
                 absoluteRight.linkTo(dash.absoluteLeft)
                 absoluteLeft.linkTo(parent.absoluteLeft)
-                bottom.linkTo(noOfLeavesLeft.top)
               }
       )
       Text(
@@ -96,10 +96,9 @@ fun ApplyPtoScreen() {
           modifier = Modifier
               .fillMaxWidth(0.1F)
               .constrainAs(dash) {
-                top.linkTo(selectDatesText.bottom)
+                linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.05F)
                 absoluteLeft.linkTo(dateFromTf.absoluteRight)
                 absoluteRight.linkTo(dateToTf.absoluteLeft)
-                bottom.linkTo(noOfLeavesLeft.top)
               },
           textAlign = TextAlign.Center
       )
@@ -117,25 +116,25 @@ fun ApplyPtoScreen() {
           modifier = Modifier
               .fillMaxWidth(0.45F)
               .constrainAs(dateToTf) {
-                top.linkTo(selectDatesText.bottom)
+                linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.05F)
                 absoluteLeft.linkTo(dash.absoluteRight)
                 absoluteRight.linkTo(parent.absoluteRight)
-                bottom.linkTo(noOfLeavesLeft.top)
-              }
+              },
+          colors = TextFieldDefaults.outlinedTextFieldColors(
+              backgroundColor = white_background
+          ),
       )
       Text(text = "Leaves Left: $leavesLeft",
           modifier = Modifier.constrainAs(noOfLeavesLeft) {
-            top.linkTo(dateToTf.bottom)
+            linkTo(top = dateToTf.bottom, bottom = parent.bottom, bias = 0.05F)
             absoluteRight.linkTo(parent.absoluteRight)
-            bottom.linkTo(reasonForLeave.top)
           })
 
       Text(text = "Add Reason Of Leave (Optional)",
           modifier = Modifier.constrainAs(reasonForLeave) {
             top.linkTo(noOfLeavesLeft.bottom)
-            linkTo(top = noOfLeavesLeft.bottom, bottom = parent.bottom, bias = 0.1F)
+            linkTo(top = noOfLeavesLeft.bottom, bottom = parent.bottom, bias = 0.05F)
             absoluteLeft.linkTo(parent.absoluteLeft)
-            bottom.linkTo(leaveDescription.top)
           })
       OutlinedTextField(
           value = leaveDescriptionText,
@@ -145,10 +144,12 @@ fun ApplyPtoScreen() {
           modifier = Modifier
               .fillMaxWidth()
               .constrainAs(leaveDescription) {
-                top.linkTo(reasonForLeave.bottom)
+                linkTo(top = reasonForLeave.bottom, bottom = parent.bottom, bias = 0.05F)
                 absoluteLeft.linkTo(parent.absoluteLeft)
-                bottom.linkTo(applyPtoButton.top, margin = 32.dp)
               },
+          colors = TextFieldDefaults.outlinedTextFieldColors(
+              backgroundColor = white_background
+          ),
           maxLines = 5,
       )
       Button(
@@ -158,21 +159,19 @@ fun ApplyPtoScreen() {
                 Color.Blue else button_unselected
           ),
           modifier = Modifier.constrainAs(applyPtoButton) {
-            top.linkTo(leaveDescription.bottom)
+            linkTo(top = leaveDescription.bottom, bottom = parent.bottom, bias = 0.8F)
             absoluteLeft.linkTo(parent.absoluteLeft)
-            bottom.linkTo(parent.bottom)
             absoluteRight.linkTo(parent.absoluteRight)
-          }
+          },
 
-      ) {
+          ) {
         Text(text = "APPLY PTO")
       }
     }
 
   }
 }
-
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun DefaultPreview() {
   MMLeaveTheme {

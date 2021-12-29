@@ -36,53 +36,6 @@ fun TopAppBarLayout() {
 }
 
 @Composable
-fun DateTextField(
-  dateTypeHead: String,
-  description: String
-) {
-  var text by remember { mutableStateOf("") }
-
-  OutlinedTextField(
-      value = text,
-      onValueChange = { text = it },
-      label = { Text(dateTypeHead) },
-      trailingIcon = {
-        Icon(
-            painter = painterResource(id = R.drawable.calendar),
-            contentDescription = description
-        )
-      }
-  )
-}
-
-@Composable
-fun ExplainBriefTextField() {
-  var leaveDescriptionText by remember { mutableStateOf("") }
-  OutlinedTextField(
-      value = leaveDescriptionText, onValueChange = {
-    leaveDescriptionText = it
-  },
-      modifier = Modifier.fillMaxWidth(),
-      maxLines = 5
-  )
-}
-
-@Composable
-fun ApplyPtoButton() {
-  val selected = remember { mutableStateOf(false) }
-  Button(
-      onClick = { /*TODO*/ },
-      colors = ButtonDefaults.buttonColors(
-          backgroundColor = if (selected.value)
-            Color.Blue else button_unselected
-      )
-
-  ) {
-    Text(text = "APPLY PTO")
-  }
-}
-
-@Composable
 @Preview
 fun PreviewTopAppBar() {
   TopAppBarLayout()
