@@ -20,10 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
 import kotlinx.coroutines.delay
 
@@ -37,13 +39,13 @@ fun AnimatedSplashScreen(navController: NavHostController) {
     val alphaAnim = animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
         animationSpec = tween(
-            durationMillis = 1000
+            durationMillis = 2000
         )
     )
 
     LaunchedEffect(key1 = true) {
-        startAnimation = false
-        delay(2000)
+        startAnimation = true
+        delay(3000)
         // Clear the back Stack as well
         navController.popBackStack()
         // After the delay navigate back to the sign up screen
@@ -58,16 +60,15 @@ fun Splash(alpha: Float) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background),
+            .background(MaterialTheme.colors.surface),
         contentAlignment = Alignment.Center
     ) {
         Icon(
+            painterResource(id = R.drawable.mm_splash_logo),
+            contentDescription = "splash_logo",
             modifier = Modifier
                 .size(120.dp)
-                .alpha(alpha),
-            imageVector = Icons.Default.MailOutline,
-            contentDescription = "splash_logo",
-            tint = Color.Black
+                .alpha(alpha)
         )
     }
 }
