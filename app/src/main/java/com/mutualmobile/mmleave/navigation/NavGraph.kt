@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mutualmobile.mmleave.screens.AnimatedSplashScreen
+import com.mutualmobile.mmleave.screens.LandingPageScreen
 
 @Composable
 fun SetUpNavGraph(
@@ -27,8 +28,12 @@ fun SetUpNavGraph(
 
         composable(
             route = Screen.SignUp.route
-        ){
-            Text(text = "Google Sign In", fontSize = 40.sp, style = MaterialTheme.typography.h1, modifier = Modifier.fillMaxSize())
+        ) {
+            LandingPageScreen(
+                text = "Continue with Google",
+                loadingText = "Signing up...",
+                onClicked = {}
+            )
         }
     }
 }
