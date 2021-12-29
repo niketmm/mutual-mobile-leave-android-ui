@@ -26,9 +26,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,20 +42,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.navigation.Screen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun LandingPageScreen(
+    navController : NavHostController,
     modifier: Modifier = Modifier,
     text: String = "Continue with Google",
     loadingText: String = "Signing up...",
     shape: Shape = MaterialTheme.shapes.large,
     borderColor: Color = Color.LightGray,
-    backgroundColor: Color = MaterialTheme.colors.surface,
-    progressIndicatorColor: Color = MaterialTheme.colors.primary,
+    backgroundColor: Color = MaterialTheme.colors.primary,
+    progressIndicatorColor: Color = Color.White,
     onClicked: () -> Unit
 ) {
     var clicked by remember { mutableStateOf(false) }
+    val scope =  rememberCoroutineScope()
 
     val constraint = ConstraintSet {
         val topLayout = createRefFor("top_layout")
@@ -156,11 +165,17 @@ fun LandingPageScreen(
                         )
                         onClicked()
                     }
+                    scope.launch {
+                        if (clicked) {
+                            delay(4000)
+                            navController.navigate(Screen.Home.route)
+                        }
+                    }
                 }
             }
 
-            // Todo Why this Spacer is not working??
-            Spacer(modifier = Modifier.width(8.dp))
+            // Todo Why this Spacer is not working with Width??
+            Spacer(modifier = Modifier.padding(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -181,6 +196,7 @@ fun LandingPageScreen(
 @Preview(showBackground = true)
 fun LandingPagePreview() {
     LandingPageScreen(
+        navController = rememberNavController(),
         text = "Sign Up with Google",
         loadingText = "Creating Account...",
         onClicked = {}

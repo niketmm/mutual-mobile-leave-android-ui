@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mutualmobile.mmleave.screens.AnimatedSplashScreen
 import com.mutualmobile.mmleave.screens.LandingPageScreen
+import kotlinx.coroutines.delay
 
 @Composable
 fun SetUpNavGraph(
@@ -30,10 +31,17 @@ fun SetUpNavGraph(
             route = Screen.SignUp.route
         ) {
             LandingPageScreen(
+                navController = navController,
                 text = "Continue with Google",
                 loadingText = "Signing up...",
                 onClicked = {}
             )
+        }
+
+        composable(
+            route = Screen.Home.route
+        ){
+            Text(text = "Home Screen will be designed here", style = MaterialTheme.typography.h3)
         }
     }
 }
