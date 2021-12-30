@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.compose.screens.ptorequest
+package com.mutualmobile.mmleave.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -34,13 +34,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.R
-import com.mutualmobile.mmleave.compose.screens.ptoavailed.ExpandingText
 import com.mutualmobile.mmleave.model.PtoRequest
 import com.mutualmobile.mmleave.ui.theme.alert
 import com.mutualmobile.mmleave.ui.theme.name_pto_request
 import com.mutualmobile.mmleave.ui.theme.primary_1
 import com.mutualmobile.mmleave.ui.theme.primary_3
-import com.mutualmobile.mmleave.ui.theme.primary_3_dark
 import com.mutualmobile.mmleave.ui.theme.secondary_accent_1
 import com.mutualmobile.mmleave.ui.theme.white_two
 

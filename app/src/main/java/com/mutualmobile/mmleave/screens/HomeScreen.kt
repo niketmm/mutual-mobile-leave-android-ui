@@ -130,7 +130,7 @@ fun HomeScreen(
                 Text(text = "Laksh", fontSize = 24.sp)
             }
 
-            OutlineCalendarButton()
+            OutlineCalendarButton(navController)
             ProfileImageHolder()
         }
 
@@ -193,7 +193,7 @@ fun HomeScreen(
             Text(text = "Applied PTOs", modifier = Modifier.padding(bottom = 16.dp))
             Surface(
                 modifier = Modifier
-                    .clickable { navController.navigate(Screen.Splash.route) }
+                    .clickable { navController.navigate(Screen.PtoRequests.route) }
                     .fillMaxWidth()
                     .height(120.dp),
                 shape = MaterialTheme.shapes.large,
@@ -232,7 +232,7 @@ fun HomeScreen(
 
         Box(modifier = Modifier.layoutId("lowerFooterButton")
             .padding(bottom = 32.dp)) {
-            Button(onClick = { navController.navigate(Screen.Splash.route) }) {
+            Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
                 Text(text = "APPLY PTO")
                 Icon(
                     imageVector = Icons.Default.ArrowForward,

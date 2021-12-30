@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.compose.screens.ptoavailed
+package com.mutualmobile.mmleave.screens
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
