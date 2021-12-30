@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.compose.screens.ptoavailed.ExpandingText
 import com.mutualmobile.mmleave.model.PtoRequest
 import com.mutualmobile.mmleave.ui.theme.alert
 import com.mutualmobile.mmleave.ui.theme.name_pto_request
@@ -45,24 +47,26 @@ import com.mutualmobile.mmleave.ui.theme.white_two
 @Preview
 @Composable
 fun PtoRequestScreen() {
+  val text =
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   PtosRequestList(
       ptosList = listOf(
           PtoRequest(
               "Rebecca Knight", 22,
               "Feb 20, 2021 - Feb 25, 2021", "" +
-              "Far far behind the word mountains Vokalia and... Read more", "Debbie Reynolds",
+             text, "Debbie Reynolds",
               "approved"
           ),
           PtoRequest(
               "Rebecca Knight", 22,
               "Feb 20, 2021 - Feb 25, 2021", "" +
-              "Far far behind the word mountains Vokalia and... Read more", "Debbie Reynolds",
+             text, "Debbie Reynolds",
               "approved"
           ),
           PtoRequest(
               "Rebecca Knight", 22,
               "Feb 20, 2021 - Feb 25, 2021", "" +
-              "Far far behind the word mountains Vokalia and... Read more", "Debbie Reynolds",
+             text, "Debbie Reynolds",
               "approved"
           ),
       )
@@ -170,12 +174,10 @@ fun PtoRequestElement(request: PtoRequest) {
         style = TextStyle(color = primary_1)
 
     )
-    Text(
-        text = request.description,
+    ExpandingText(text = AnnotatedString(text = request.description),
         modifier = Modifier.padding(
             bottom = 16.dp, start = 4.dp, end = 4.dp
-        ),
-        style = TextStyle(color = primary_3_dark)
+        )
     )
     Row(
         modifier = Modifier
