@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.compose.screens
+package com.mutualmobile.mmleave.screens
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
