@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
@@ -56,7 +58,11 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.composable_elements.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
+import com.mutualmobile.mmleave.ui.theme.cyan
+import com.mutualmobile.mmleave.ui.theme.darBlue
+import com.mutualmobile.mmleave.ui.theme.textSecondary
 
 @ExperimentalCoilApi
 @Composable
@@ -67,10 +73,14 @@ fun HomeScreen(
     val constraints = ConstraintSet {
         val topProfileAndGreetingLayout = createRefFor("topProfileAndGreetingLayout")
         val upperMidTotalLeaveLayout = createRefFor("upperMidTotalLeaveLayout")
+        val middleLine = createRefFor("middleLine")
         val lowerMidAppliedLeaveLayout = createRefFor("lowerMidAppliedLeaveLayout")
         val lowerFooterLayout = createRefFor("lowerFooterLayout")
+        val lowerFooterButton = createRefFor("lowerFooterButton")
 
-        val midGuideline = createGuidelineFromTop(0.3f)
+        // Todo : Cross Check those guidelines using the Constraint ToolKit.
+        val midGuideline = createGuidelineFromTop(0.35f)
+        val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
 
         constrain(topProfileAndGreetingLayout) {
             top.linkTo(parent.top)
@@ -84,14 +94,25 @@ fun HomeScreen(
             bottom.linkTo(midGuideline)
         }
 
-        constrain(lowerMidAppliedLeaveLayout) {
+        constrain(middleLine){
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(midGuideline)
         }
 
+        constrain(lowerMidAppliedLeaveLayout) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(middleLine.bottom)
+        }
+
         constrain(lowerFooterLayout) {
             start.linkTo(parent.start)
+            bottom.linkTo(parent.bottom)
+        }
+
+        constrain(lowerFooterButton){
+            start.linkTo(verticalMidGuideline)
             bottom.linkTo(parent.bottom)
         }
 
@@ -102,41 +123,46 @@ fun HomeScreen(
         Row(
             modifier = Modifier
                 .layoutId("topProfileAndGreetingLayout")
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(24.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Column {
-                Text(text = "Good Morning", fontSize = 16.sp)
+                Text(text = "Good Morning", fontSize = 16.sp, color = textSecondary)
                 Text(text = "Laksh", fontSize = 24.sp)
             }
 
-            Icon(imageVector = Icons.Default.Notifications, contentDescription = "calendar icon")
+            OutlineCalendarButton()
             ProfileImageHolder()
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         Surface(
             modifier = Modifier
                 .layoutId("upperMidTotalLeaveLayout")
+                .padding(24.dp)
+                .height(158.dp)
                 .clickable { navController.navigate(Screen.Splash.route) },
             shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colors.surface
+            color = darBlue,
+
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
+                    .fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.Start
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier
+                        .padding(start = 24.dp)
                 ) {
-                    Text(text = "18 of 24", fontSize = 32.sp)
-                    Text(text = "PTOs availed")
-                    Text(text = "SEE DETAILS -->")
+                    Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
+                    Text(text = "PTOs availed",fontSize = 20.sp, color = cyan)
+                    Text(text = "SEE DETAILS -->",fontSize = 16.sp, color = Color.White)
                 }
 
                 Box(
@@ -144,31 +170,51 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     LeaveAnimatedCircularProgressBar(
-                        percentage = 1f,
+                        percentage = 0.77f,
                         totalValue = 100
                     )
                 }
             }
         }
 
+        // Showing a line
+        Box(modifier = Modifier
+            .layoutId("middleLine")
+            .fillMaxWidth()
+            .padding(24.dp)
+            .height(1.dp)
+            .background(color = cyan)
+        ) {
+            // This is just a view (Line)
+        }
+
         Column(
             modifier = Modifier
                 .layoutId("lowerMidAppliedLeaveLayout")
+                .padding(start = 24.dp, end = 24.dp)
+                .fillMaxWidth()
         ) {
-            Text(text = "Applied PTOs")
+            Text(text = "Applied PTOs", modifier = Modifier.padding(bottom = 16.dp))
             Surface(
-                modifier = Modifier.clickable { navController.navigate(Screen.Splash.route) },
+                modifier = Modifier
+                    .clickable { navController.navigate(Screen.Splash.route) }
+                    .fillMaxWidth()
+                    .height(120.dp),
                 shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colors.secondary
+                color = Color.White
             ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    // Date and Approved Btn will be at same row 
-                    Row {
-                        Text(text = "Feb 20,2021 - Feb 25,2021 ", fontSize = 18.sp)
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 4.dp, end = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = "Feb 20, 2021 - Feb 25, 2021 ", fontSize = 14.sp)
                         Text(text = "Approved", fontSize = 18.sp)
                     }
-
-                    // Todo Change it to a Composable method
+                    Spacer(modifier = Modifier.height(16.dp))
                     ExpandableTextLayoutWithReadMoreFeature(text = stringResource(id = R.string.long_text))
                 }
             }
@@ -176,24 +222,26 @@ fun HomeScreen(
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
                 .layoutId("lowerFooterLayout")
+                .fillMaxWidth()
         ) {
-            Row {
-                Image(
-                    painterResource(id = R.drawable.home_page_illus_mm_leave),
-                    contentDescription = "two_people_illustration",
-                    modifier = Modifier
-                        .height(156.dp)
-                        .width(256.dp),
+            Image(
+                painterResource(id = R.drawable.home_page_illus_mm_leave),
+                contentDescription = "two_people_illustration",
+                modifier = Modifier
+                    .height(200.dp)
+                    .width(270.dp),
+            )
+        }
+
+        Box(modifier = Modifier.layoutId("lowerFooterButton")
+            .padding(bottom = 32.dp)) {
+            Button(onClick = { navController.navigate(Screen.Splash.route) }) {
+                Text(text = "APPLY PTO")
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "forward arrow for the button"
                 )
-                Button(onClick = { navController.navigate(Screen.Splash.route) }) {
-                    Text(text = "APPLY PTO")
-                    Icon(
-                        imageVector = Icons.Default.ArrowForward,
-                        contentDescription = "forward arrow for the button"
-                    )
-                }
             }
         }
     }
@@ -212,7 +260,7 @@ fun LeaveAnimatedCircularProgressBar(
     animationDelay: Int = 0,
     animationDuration: Int = 1500,
     stokeWidth: Dp = 8.dp,
-    color: Color = Color.Blue,
+    color: Color = cyan,
     percentage: Float,
     totalValue: Int
 ) {
@@ -256,7 +304,7 @@ fun LeaveAnimatedCircularProgressBar(
 
 @Composable
 fun ExpandableTextLayoutWithReadMoreFeature(
-    text: String
+    text : String
 ) {
     val MINIMUM_LINE_SIZE = 2
     // [TextLayoutResult] provides every details we need for the Expandable feature
@@ -264,16 +312,16 @@ fun ExpandableTextLayoutWithReadMoreFeature(
     var finalText by remember { mutableStateOf(text) }
 
     // Click Events
-    var isClickable by remember { mutableStateOf(false) }
-    var isExpandable by remember { mutableStateOf(false) }
+    var isClickable by remember{ mutableStateOf(false) }
+    var isExpandable by remember{ mutableStateOf(false) }
 
     // Whenever the Value of the state will be changed the Compose will be recomposed
-    LaunchedEffect(textLayoutResultState) {
-        if (textLayoutResultState == null) {
+    LaunchedEffect(textLayoutResultState){
+        if (textLayoutResultState == null){
             return@LaunchedEffect
         }
 
-        when {
+        when{
             isExpandable -> {
                 finalText = "$text Show Less"
             }
@@ -307,7 +355,7 @@ fun ExpandableTextLayoutWithReadMoreFeature(
             }
             .animateContentSize()
 
-        // Todo add a animation here to make it look smooth
+            // Todo add a animation here to make it look smooth
     )
 }
 
