@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -92,101 +94,107 @@ fun LandingPageScreen(
 
     }
 
-    ConstraintLayout(constraintSet = constraint, modifier = Modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier
-                .layoutId("top_layout")
-                .fillMaxWidth()
-                .padding(36.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(painterResource(id = R.drawable.mm_logo_white_small), contentDescription = "top_layout_mm_logo_left", modifier = Modifier.size(28.dp))
-            Text(text = "MM PTOs", color = Color.Black)
-        }
-
-        Column(
-            modifier = Modifier
-                .layoutId("mid_layout")
-                .fillMaxWidth()
-                .padding(start = 36.dp)
-        ) {
-            Text(text = "Hello!", style = MaterialTheme.typography.h2, color = Color.Black)
-            Spacer(modifier = Modifier.padding(8.dp))
-            Text(text = "To get started,please login", style = MaterialTheme.typography.subtitle1, color = Color.Black)
-            Text(text = "with your MM Gmail ID.", style = MaterialTheme.typography.subtitle1, color = Color.Black)
-        }
-
-        Column(
-            modifier = Modifier
-                .layoutId("end_layout")
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Surface(
-                modifier = modifier.clickable { clicked = !clicked },
-                shape = shape,
-                border = BorderStroke(width = 1.dp, color = borderColor),
-                color = backgroundColor
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(painterResource(id = R.drawable.rectangle_gradient_png_large), contentDescription = "rectangle_gradient_image" )
+        ConstraintLayout(constraintSet = constraint, modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .layoutId("top_layout")
+                    .fillMaxWidth()
+                    .padding(36.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(
-                            start = 12.dp,
-                            end = 16.dp,
-                            top = 12.dp,
-                            bottom = 12.dp
-                        )
-                        .animateContentSize(
-                            animationSpec = tween(
-                                durationMillis = 300,
-                                easing = LinearOutSlowInEasing
-                            )
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Icon(painterResource(id = R.drawable.mm_logo_white_small), contentDescription = "top_layout_mm_logo_left", modifier = Modifier.size(28.dp), tint = Color.Unspecified)
+                Text(text = "MM PTOs", color = Color.White)
+            }
+
+            Column(
+                modifier = Modifier
+                    .layoutId("mid_layout")
+                    .fillMaxWidth()
+                    .padding(start = 36.dp)
+            ) {
+                Text(text = "Hello!", style = MaterialTheme.typography.h2, color = Color.White)
+                Spacer(modifier = Modifier.padding(8.dp))
+                Text(text = "To get started,please login", style = MaterialTheme.typography.subtitle1, color = Color.White)
+                Text(text = "with your MM Gmail ID.", style = MaterialTheme.typography.subtitle1, color = Color.White)
+            }
+
+            Column(
+                modifier = Modifier
+                    .layoutId("end_layout")
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Surface(
+                    modifier = modifier.clickable { clicked = !clicked }.height(48.dp),
+                    shape = shape,
+                    border = BorderStroke(width = 1.dp, color = borderColor),
+                    color = backgroundColor
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.MailOutline,
-                        contentDescription = "Google Button",
-                        tint = Color.Unspecified
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = if (clicked) loadingText else text)
-                    if (clicked) {
-                        Spacer(modifier = Modifier.width(16.dp))
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .height(16.dp)
-                                .width(16.dp),
-                            strokeWidth = 2.dp,
-                            color = progressIndicatorColor
+                    Row(
+                        modifier = Modifier
+                            .padding(
+                                start = 12.dp,
+                                end = 16.dp,
+                                top = 12.dp,
+                                bottom = 12.dp
+                            )
+                            .animateContentSize(
+                                animationSpec = tween(
+                                    durationMillis = 300,
+                                    easing = LinearOutSlowInEasing
+                                )
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.google_icon_color),
+                            contentDescription = "Google Button",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.width(16.dp).height(16.dp)
                         )
-                        onClicked()
-                    }
-                    scope.launch {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = if (clicked) loadingText else text)
                         if (clicked) {
-                            delay(4000)
-                            navController.navigate(Screen.Home.route)
+                            Spacer(modifier = Modifier.width(16.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .height(16.dp)
+                                    .width(16.dp),
+                                strokeWidth = 2.dp,
+                                color = progressIndicatorColor
+                            )
+                            onClicked()
+                        }
+                        scope.launch {
+                            if (clicked) {
+                                delay(4000)
+                                navController.navigate(Screen.Home.route)
+                            }
                         }
                     }
                 }
-            }
 
-            // Todo Why this Spacer is not working with Width??
-            Spacer(modifier = Modifier.padding(8.dp))
+                // Todo Why this Spacer is not working with Width??
+                Spacer(modifier = Modifier.padding(8.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Need Help")
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "Contact Support", Modifier.clickable {
-                    // Todo Add a Web Link here
-                })
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "NEED HELP? ")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "CONTACT SUPPORT", Modifier.clickable {
+                        // Todo Add a Web Link here
+                    },
+                    textDecoration = TextDecoration.Underline
+                    )
+                }
             }
         }
     }
