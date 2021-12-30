@@ -6,8 +6,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.screens.AnimatedSplashScreen
+import com.mutualmobile.mmleave.screens.ApplyPtoScreen
 import com.mutualmobile.mmleave.screens.HomeScreen
 import com.mutualmobile.mmleave.screens.LandingPageScreen
+import com.mutualmobile.mmleave.screens.PtoAvailedScreen
+import com.mutualmobile.mmleave.screens.PtoRequestScreen
+import com.mutualmobile.mmleave.screens.PtoScreen
 
 @ExperimentalCoilApi
 @Composable
@@ -37,8 +41,26 @@ fun SetUpNavGraph(
 
         composable(
             route = Screen.Home.route
-        ){
-           HomeScreen(navController)
+        ) {
+            HomeScreen(navController)
+        }
+
+        composable(
+            route = Screen.ApplyPto.route
+        ) {
+            ApplyPtoScreen()
+        }
+
+        composable(
+            route = Screen.PtoRequests.route
+        ) {
+            PtoRequestScreen()
+        }
+
+        composable(
+            route = Screen.PtoAvailed.route
+        ) {
+            PtoAvailedScreen()
         }
     }
 }

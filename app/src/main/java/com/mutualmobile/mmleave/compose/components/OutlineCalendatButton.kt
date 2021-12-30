@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.composable_elements
+package com.mutualmobile.mmleave.compose.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,14 +13,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.mmleave.R
-import com.mutualmobile.mmleave.ui.theme.PitchLight
+import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.ui.theme.cyan
 
 @Composable
-fun OutlineCalendarButton() {
+fun OutlineCalendarButton(
+    navController : NavHostController
+) {
     OutlinedButton(
-        onClick = { /*TODO*/ },
+        onClick = { navController.navigate(Screen.PtoAvailed.route) },
         modifier = Modifier.size(30.dp),
         shape = CircleShape,
         border = BorderStroke(1.dp, color = cyan),
@@ -37,5 +41,5 @@ fun OutlineCalendarButton() {
 @Preview(showBackground = true)
 @Composable
 fun OutlineCalendarPreview() {
-    OutlineCalendarButton()
+    OutlineCalendarButton(navController = rememberNavController())
 }
