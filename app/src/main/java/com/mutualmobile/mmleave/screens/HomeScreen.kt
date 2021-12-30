@@ -50,9 +50,15 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.ImagePainter
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
 
+@ExperimentalCoilApi
 @Composable
 fun HomeScreen(
     navController: NavHostController
@@ -107,9 +113,7 @@ fun HomeScreen(
             }
 
             Icon(imageVector = Icons.Default.Notifications, contentDescription = "calendar icon")
-
-            // Todo Change it with the Coil implementation
-            Icon(imageVector = Icons.Default.Person, contentDescription = "person_icon")
+            ProfileImageHolder()
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -252,7 +256,7 @@ fun LeaveAnimatedCircularProgressBar(
 
 @Composable
 fun ExpandableTextLayoutWithReadMoreFeature(
-    text : String
+    text: String
 ) {
     val MINIMUM_LINE_SIZE = 2
     // [TextLayoutResult] provides every details we need for the Expandable feature
@@ -260,16 +264,16 @@ fun ExpandableTextLayoutWithReadMoreFeature(
     var finalText by remember { mutableStateOf(text) }
 
     // Click Events
-    var isClickable by remember{ mutableStateOf(false) }
-    var isExpandable by remember{ mutableStateOf(false) }
+    var isClickable by remember { mutableStateOf(false) }
+    var isExpandable by remember { mutableStateOf(false) }
 
     // Whenever the Value of the state will be changed the Compose will be recomposed
-    LaunchedEffect(textLayoutResultState){
-        if (textLayoutResultState == null){
+    LaunchedEffect(textLayoutResultState) {
+        if (textLayoutResultState == null) {
             return@LaunchedEffect
         }
 
-        when{
+        when {
             isExpandable -> {
                 finalText = "$text Show Less"
             }
@@ -300,8 +304,50 @@ fun ExpandableTextLayoutWithReadMoreFeature(
         modifier = Modifier
             .clickable(enabled = isClickable) {
                 isExpandable = !isExpandable
-            }.animateContentSize()
+            }
+            .animateContentSize()
 
-            // Todo add a animation here to make it look smooth
+        // Todo add a animation here to make it look smooth
     )
+}
+
+@ExperimentalCoilApi
+@Composable
+fun ProfileImageHolder(
+    imageUrl: String = "https://avatars.githubusercontent.com/u/66577?v=4"
+) {
+    Box(
+        modifier = Modifier
+            .width(40.dp)
+            .height(40.dp),
+        contentAlignment = Alignment.Center
+    ) {
+
+        val imagePainter = rememberImagePainter(
+            data = imageUrl,
+            builder = {
+                placeholder(R.drawable.mm_splash_logo)
+                crossfade(1000)
+                transformations(
+                    CircleCropTransformation()
+                )
+            }
+        )
+        // This is to control the State of the Async call of the Coil Image request
+        val imagePainterState = imagePainter.state
+
+        // Calling the sealed class from the Coil Lib
+        // This is Crashing the app for some reason
+//        when(imagePainterState){
+//            is ImagePainter.State.Loading -> {
+//
+//            }
+//            is ImagePainter.State.Success -> TODO()
+//            is ImagePainter.State.Error -> TODO()
+//            ImagePainter.State.Empty -> TODO()
+//        }
+
+        // Fetching the Image and populating Image
+        Image(painter = imagePainter, contentDescription = "profile image")
+    }
 }
