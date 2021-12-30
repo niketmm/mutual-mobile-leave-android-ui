@@ -67,7 +67,7 @@ fun Splash(alpha: Float) {
             painterResource(id = R.drawable.mm_splash_logo),
             contentDescription = "splash_logo",
             modifier = Modifier
-                .size(120.dp)
+                .size(52.dp)
                 .alpha(alpha)
         )
     }
