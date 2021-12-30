@@ -52,6 +52,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.ImagePainter
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.composable_elements.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
@@ -59,6 +64,7 @@ import com.mutualmobile.mmleave.ui.theme.cyan
 import com.mutualmobile.mmleave.ui.theme.darBlue
 import com.mutualmobile.mmleave.ui.theme.textSecondary
 
+@ExperimentalCoilApi
 @Composable
 fun HomeScreen(
     navController: NavHostController
@@ -129,7 +135,7 @@ fun HomeScreen(
             }
 
             OutlineCalendarButton()
-            Icon(imageVector = Icons.Default.Person, contentDescription = "person_icon")
+            ProfileImageHolder()
         }
 
         Surface(
@@ -351,4 +357,45 @@ fun ExpandableTextLayoutWithReadMoreFeature(
 
             // Todo add a animation here to make it look smooth
     )
+}
+
+@ExperimentalCoilApi
+@Composable
+fun ProfileImageHolder(
+    imageUrl: String = "https://avatars.githubusercontent.com/u/66577?v=4"
+) {
+    Box(
+        modifier = Modifier
+            .width(40.dp)
+            .height(40.dp),
+        contentAlignment = Alignment.Center
+    ) {
+
+        val imagePainter = rememberImagePainter(
+            data = imageUrl,
+            builder = {
+                placeholder(R.drawable.mm_splash_logo)
+                crossfade(1000)
+                transformations(
+                    CircleCropTransformation()
+                )
+            }
+        )
+        // This is to control the State of the Async call of the Coil Image request
+        val imagePainterState = imagePainter.state
+
+        // Calling the sealed class from the Coil Lib
+        // This is Crashing the app for some reason
+//        when(imagePainterState){
+//            is ImagePainter.State.Loading -> {
+//
+//            }
+//            is ImagePainter.State.Success -> TODO()
+//            is ImagePainter.State.Error -> TODO()
+//            ImagePainter.State.Empty -> TODO()
+//        }
+
+        // Fetching the Image and populating Image
+        Image(painter = imagePainter, contentDescription = "profile image")
+    }
 }
