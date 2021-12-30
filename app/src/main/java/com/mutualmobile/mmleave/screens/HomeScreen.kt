@@ -1,5 +1,6 @@
 package com.mutualmobile.mmleave.screens
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -117,7 +119,7 @@ fun HomeScreen(
                 .layoutId("upperMidTotalLeaveLayout")
                 .clickable { navController.navigate(Screen.Splash.route) },
             shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colors.primary
+            color = MaterialTheme.colors.surface
         ) {
             Row(
                 modifier = Modifier
@@ -161,7 +163,9 @@ fun HomeScreen(
                         Text(text = "Feb 20,2021 - Feb 25,2021 ", fontSize = 18.sp)
                         Text(text = "Approved", fontSize = 18.sp)
                     }
-                    Text(text = stringResource(id = R.string.long_text), maxLines = 2)
+
+                    // Todo Change it to a Composable method
+                    ExpandableTextLayoutWithReadMoreFeature(text = stringResource(id = R.string.long_text))
                 }
             }
         }
@@ -175,7 +179,8 @@ fun HomeScreen(
                 Image(
                     painterResource(id = R.drawable.home_page_illus_mm_leave),
                     contentDescription = "two_people_illustration",
-                    modifier = Modifier.height(156.dp)
+                    modifier = Modifier
+                        .height(156.dp)
                         .width(256.dp),
                 )
                 Button(onClick = { navController.navigate(Screen.Splash.route) }) {
@@ -243,4 +248,60 @@ fun LeaveAnimatedCircularProgressBar(
             fontWeight = FontWeight.Bold
         )
     }
+}
+
+@Composable
+fun ExpandableTextLayoutWithReadMoreFeature(
+    text : String
+) {
+    val MINIMUM_LINE_SIZE = 2
+    // [TextLayoutResult] provides every details we need for the Expandable feature
+    var textLayoutResultState by remember { mutableStateOf<TextLayoutResult?>(null) }
+    var finalText by remember { mutableStateOf(text) }
+
+    // Click Events
+    var isClickable by remember{ mutableStateOf(false) }
+    var isExpandable by remember{ mutableStateOf(false) }
+
+    // Whenever the Value of the state will be changed the Compose will be recomposed
+    LaunchedEffect(textLayoutResultState){
+        if (textLayoutResultState == null){
+            return@LaunchedEffect
+        }
+
+        when{
+            isExpandable -> {
+                finalText = "$text Show Less"
+            }
+
+            !isExpandable && textLayoutResultState!!.hasVisualOverflow -> {
+                val lastCharIndex = textLayoutResultState!!.getLineEnd(MINIMUM_LINE_SIZE - 1)
+                val showMoreString = "... Read More"
+                val adjustmentText = text
+                    .substring(startIndex = 0, endIndex = lastCharIndex)
+                    .dropLast(showMoreString.length)
+                    .dropLastWhile {
+                        it.equals(" ") || it.equals(".")
+                    }
+
+                finalText = "$adjustmentText $showMoreString"
+
+                isClickable = true
+            }
+        }
+    }
+
+    Text(
+        text = finalText,
+        maxLines = if (isExpandable) Int.MAX_VALUE else MINIMUM_LINE_SIZE,
+        onTextLayout = {
+            textLayoutResultState = it
+        },
+        modifier = Modifier
+            .clickable(enabled = isClickable) {
+                isExpandable = !isExpandable
+            }.animateContentSize()
+
+            // Todo add a animation here to make it look smooth
+    )
 }
