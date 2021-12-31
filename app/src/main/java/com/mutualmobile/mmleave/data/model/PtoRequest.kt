@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.model
+package com.mutualmobile.mmleave.data.model
 
 data class PtoRequest(
   val name: String,

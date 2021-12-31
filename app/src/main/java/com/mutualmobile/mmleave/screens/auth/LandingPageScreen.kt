@@ -1,11 +1,10 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.screens.auth
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,14 +19,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
-import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.mmleave.R
@@ -61,7 +57,8 @@ fun LandingPageScreen(
     borderColor: Color = Color.LightGray,
     backgroundColor: Color = MaterialTheme.colors.primary,
     progressIndicatorColor: Color = Color.White,
-    onClicked: () -> Unit
+    onClicked: () -> Unit,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     var clicked by remember { mutableStateOf(false) }
     val scope =  rememberCoroutineScope()
@@ -129,7 +126,9 @@ fun LandingPageScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Surface(
-                    modifier = modifier.clickable { clicked = !clicked }.height(48.dp),
+                    modifier = modifier
+                        .clickable { clicked = !clicked }
+                        .height(48.dp),
                     shape = shape,
                     border = BorderStroke(width = 1.dp, color = borderColor),
                     color = backgroundColor
@@ -155,7 +154,9 @@ fun LandingPageScreen(
                             painterResource(id = R.drawable.google_icon_color),
                             contentDescription = "Google Button",
                             tint = Color.Unspecified,
-                            modifier = Modifier.width(16.dp).height(16.dp)
+                            modifier = Modifier
+                                .width(16.dp)
+                                .height(16.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = if (clicked) loadingText else text)
@@ -174,6 +175,7 @@ fun LandingPageScreen(
                             if (clicked) {
                                 delay(4000)
                                 navController.navigate(Screen.Home.route)
+                                viewModel.authUser()
                             }
                         }
                     }

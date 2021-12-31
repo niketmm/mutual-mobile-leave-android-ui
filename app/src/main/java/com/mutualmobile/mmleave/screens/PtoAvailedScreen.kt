@@ -39,8 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.R.drawable
-import com.mutualmobile.mmleave.model.PtoData
-import com.mutualmobile.mmleave.ui.theme.backgroundLight
+import com.mutualmobile.mmleave.data.model.PtoData
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 
