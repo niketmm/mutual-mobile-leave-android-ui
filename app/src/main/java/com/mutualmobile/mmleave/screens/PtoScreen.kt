@@ -1,9 +1,14 @@
 package com.mutualmobile.mmleave.screens
 
+import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.widget.DatePicker
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +42,8 @@ import com.mutualmobile.mmleave.ui.theme.primary_1
 import com.mutualmobile.mmleave.ui.theme.secondary_accent_1
 import com.mutualmobile.mmleave.ui.theme.white_background
 import com.mutualmobile.mmleave.ui.theme.white_two
+import java.util.Calendar
+import java.util.Date
 
 class PtoScreen : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,12 +65,17 @@ fun ApplyPtoScreen() {
   Scaffold(
       topBar = { TopAppBarLayout() }
   ) {
+    val context = LocalContext.current
     val leavesLeft = 18
     var dateFrom by remember { mutableStateOf("") }
     var dateTo by remember { mutableStateOf("") }
     var leaveDescriptionText by remember { mutableStateOf("") }
     val selected = remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
 
+    if (showDatePicker) {
+      ShowDatePicker(context = context)
+    }
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -86,17 +99,23 @@ fun ApplyPtoScreen() {
           trailingIcon = {
             Icon(
                 painter = painterResource(id = drawable.calendar_3x),
-                contentDescription = "date from text field"
+                contentDescription = "date from text field",
+                modifier = Modifier.clickable(enabled = true, onClick = {
+                  showDatePicker = !showDatePicker
+                })
             )
           },
           modifier = Modifier
               .fillMaxWidth(0.45F)
               .background(color = white_background)
+              .clickable {
+                showDatePicker = !showDatePicker
+              }
               .constrainAs(dateFromTf) {
                 linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.02F)
                 absoluteRight.linkTo(dash.absoluteLeft)
                 absoluteLeft.linkTo(parent.absoluteLeft)
-              }
+              },
       )
       Text(
           "-",
@@ -117,7 +136,10 @@ fun ApplyPtoScreen() {
           trailingIcon = {
             Icon(
                 painter = painterResource(id = drawable.calendar_3x),
-                contentDescription = "date to text field"
+                contentDescription = "date to text field",
+                modifier = Modifier.clickable(enabled = true, onClick = {
+                  showDatePicker = !showDatePicker
+                })
             )
           },
           modifier = Modifier
@@ -127,9 +149,8 @@ fun ApplyPtoScreen() {
                 linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.02F)
                 absoluteLeft.linkTo(dash.absoluteRight)
                 absoluteRight.linkTo(parent.absoluteRight)
-              },
-
-          )
+              }
+      )
       Text(
           text = "Leaves Left: $leavesLeft",
           modifier = Modifier.constrainAs(noOfLeavesLeft) {
@@ -164,7 +185,9 @@ fun ApplyPtoScreen() {
           maxLines = 5,
       )
       Button(
-          onClick = { selected.value = !selected.value },
+          onClick = {
+            selected.value = !selected.value
+          },
           colors = ButtonDefaults.buttonColors(
               backgroundColor = if (selected.value)
                 primary_1 else button_unselected,
@@ -187,6 +210,35 @@ fun ApplyPtoScreen() {
     }
 
   }
+}
+
+@Composable
+fun ShowDatePicker(context: Context) {
+  val mYear: Int
+  val mMonth: Int
+  val mDay: Int
+  val now = Calendar.getInstance()
+  mYear = now.get(Calendar.YEAR)
+  mMonth = now.get(Calendar.MONTH)
+  mDay = now.get(Calendar.DAY_OF_MONTH)
+  now.time = Date()
+  val dateSelected = remember { mutableStateOf("") }
+  val datePickerDialog = DatePickerDialog(
+      context,
+      { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+        val cal = Calendar.getInstance()
+        cal.set(year, month, dayOfMonth)
+      }, mYear, mMonth, mDay
+  )
+
+  datePickerDialog.setOnDateSetListener { datePicker, date, month, year ->
+    val selectedDate = "${datePicker.dayOfMonth}/${datePicker.month}/${datePicker.year}"
+    Log.d(
+        "ApplyPtoScreen", "onDateSet: " + selectedDate
+    )
+    dateSelected.value = selectedDate
+  }
+  datePickerDialog.show()
 }
 
 @Preview
