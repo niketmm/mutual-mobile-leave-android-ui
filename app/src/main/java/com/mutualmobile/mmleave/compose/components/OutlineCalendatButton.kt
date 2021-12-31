@@ -17,7 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.ui.theme.cyan
+import com.mutualmobile.mmleave.ui.theme.secondaryColorLight
 
 @Composable
 fun OutlineCalendarButton(
@@ -27,7 +27,7 @@ fun OutlineCalendarButton(
         onClick = { navController.navigate(Screen.PtoAvailed.route) },
         modifier = Modifier.size(30.dp),
         shape = CircleShape,
-        border = BorderStroke(1.dp, color = cyan),
+        border = BorderStroke(1.dp, color = secondaryColorLight),
         contentPadding = PaddingValues(0.dp),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
     ) {

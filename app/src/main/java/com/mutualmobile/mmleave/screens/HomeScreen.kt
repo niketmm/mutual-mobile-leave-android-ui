@@ -56,9 +56,8 @@ import coil.transform.CircleCropTransformation
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.ui.theme.cyan
-import com.mutualmobile.mmleave.ui.theme.darBlue
-import com.mutualmobile.mmleave.ui.theme.textSecondary
+import com.mutualmobile.mmleave.ui.theme.primaryColorLight
+import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 
 @ExperimentalCoilApi
 @Composable
@@ -126,7 +125,7 @@ fun HomeScreen(
         ) {
 
             Column {
-                Text(text = "Good Morning", fontSize = 16.sp, color = textSecondary)
+                Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
                 Text(text = "Laksh", fontSize = 24.sp)
             }
 
@@ -141,7 +140,7 @@ fun HomeScreen(
                 .height(158.dp)
                 .clickable { navController.navigate(Screen.Splash.route) },
             shape = MaterialTheme.shapes.large,
-            color = darBlue,
+            color = primaryColorLight,
 
         ) {
             Row(
@@ -157,7 +156,7 @@ fun HomeScreen(
                         .padding(start = 24.dp)
                 ) {
                     Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
-                    Text(text = "PTOs availed",fontSize = 20.sp, color = cyan)
+                    Text(text = "PTOs availed",fontSize = 20.sp, color = secondaryTextColorDark)
                     Text(text = "SEE DETAILS -->",fontSize = 16.sp, color = Color.White)
                 }
 
@@ -179,7 +178,7 @@ fun HomeScreen(
             .fillMaxWidth()
             .padding(24.dp)
             .height(1.dp)
-            .background(color = cyan)
+            .background(color = secondaryTextColorDark)
         ) {
             // This is just a view (Line)
         }
@@ -256,7 +255,7 @@ fun LeaveAnimatedCircularProgressBar(
     animationDelay: Int = 0,
     animationDuration: Int = 1500,
     stokeWidth: Dp = 8.dp,
-    color: Color = cyan,
+    color: Color = secondaryTextColorDark,
     percentage: Float,
     totalValue: Int
 ) {

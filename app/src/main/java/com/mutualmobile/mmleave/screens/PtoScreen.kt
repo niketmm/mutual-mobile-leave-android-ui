@@ -31,11 +31,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.compose.components.TopAppBarLayout
 import com.mutualmobile.mmleave.ui.theme.MMLeaveTheme
-import com.mutualmobile.mmleave.ui.theme.button_unselected
-import com.mutualmobile.mmleave.ui.theme.primary_1
-import com.mutualmobile.mmleave.ui.theme.secondary_accent_1
-import com.mutualmobile.mmleave.ui.theme.white_background
-import com.mutualmobile.mmleave.ui.theme.white_two
+import com.mutualmobile.mmleave.ui.theme.backgroundLight
+import com.mutualmobile.mmleave.ui.theme.buttonUnselected
+import com.mutualmobile.mmleave.ui.theme.primaryColorLight
+import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
 
 class PtoScreen : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,7 +90,7 @@ fun ApplyPtoScreen() {
           },
           modifier = Modifier
               .fillMaxWidth(0.45F)
-              .background(color = white_background)
+              .background(color = backgroundLight)
               .constrainAs(dateFromTf) {
                 linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.02F)
                 absoluteRight.linkTo(dash.absoluteLeft)
@@ -122,7 +121,7 @@ fun ApplyPtoScreen() {
           },
           modifier = Modifier
               .fillMaxWidth(0.45F)
-              .background(color = white_background)
+              .background(color = backgroundLight)
               .constrainAs(dateToTf) {
                 linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.02F)
                 absoluteLeft.linkTo(dash.absoluteRight)
@@ -136,7 +135,7 @@ fun ApplyPtoScreen() {
             linkTo(top = dateToTf.bottom, bottom = parent.bottom, bias = 0.03F)
             absoluteRight.linkTo(parent.absoluteRight)
           },
-          color = secondary_accent_1,
+          color = purpleTextColorLight,
           fontSize = 16.sp
       )
 
@@ -156,7 +155,7 @@ fun ApplyPtoScreen() {
           },
           modifier = Modifier
               .fillMaxWidth()
-              .background(color = white_background)
+              .background(color = backgroundLight)
               .constrainAs(leaveDescription) {
                 linkTo(top = reasonForLeave.bottom, bottom = parent.bottom, bias = 0.03F)
                 absoluteLeft.linkTo(parent.absoluteLeft)
@@ -167,7 +166,7 @@ fun ApplyPtoScreen() {
           onClick = { selected.value = !selected.value },
           colors = ButtonDefaults.buttonColors(
               backgroundColor = if (selected.value)
-                primary_1 else button_unselected,
+                primaryColorLight else buttonUnselected,
           ),
           modifier = Modifier.constrainAs(applyPtoButton) {
             linkTo(top = leaveDescription.bottom, bottom = parent.bottom, bias = 0.8F)
@@ -181,7 +180,7 @@ fun ApplyPtoScreen() {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
-            color = if (selected.value) white_two else Color.Black
+            color = if (selected.value) Color.White else Color.Black
         )
       }
     }
