@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,7 +75,7 @@ fun HomeScreen(
         val lowerFooterButton = createRefFor("lowerFooterButton")
 
         // Todo : Cross Check those guidelines using the Constraint ToolKit.
-        val midGuideline = createGuidelineFromTop(0.35f)
+        val midGuideline = createGuidelineFromTop(0.4f)
         val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
 
         constrain(topProfileAndGreetingLayout) {
@@ -210,7 +211,7 @@ fun HomeScreen(
                         Text(text = "Approved", fontSize = 18.sp)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    ExpandableTextLayoutWithReadMoreFeature(text = stringResource(id = R.string.long_text))
+                    ExpandingText(text = AnnotatedString(text =  stringResource(id = R.string.long_text)))
                 }
             }
         }
@@ -229,7 +230,8 @@ fun HomeScreen(
             )
         }
 
-        Box(modifier = Modifier.layoutId("lowerFooterButton")
+        Box(modifier = Modifier
+            .layoutId("lowerFooterButton")
             .padding(bottom = 32.dp)) {
             Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
                 Text(text = "APPLY PTO")
