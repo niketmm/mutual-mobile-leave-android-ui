@@ -41,8 +41,16 @@ class AuthViewModel @Inject constructor(
 
   fun handleGoogleSignInResult(data: Intent) {
     viewModelScope.launch {
-      val authCredential = socialService.signIn(data)
-      authenticationService.authenticateUser(authCredential = authCredential)
+
+      try {
+        loadingState.emit(LoadingState.LOADING)
+        val authCredential = socialService.signIn(data)
+        authenticationService.authenticateUser(authCredential = authCredential)
+        loadingState.emit(LoadingState.LOADED)
+      } catch (e: Exception) {
+        loadingState.emit(LoadingState.error(e.localizedMessage))
+      }
+
     }
   }
 }

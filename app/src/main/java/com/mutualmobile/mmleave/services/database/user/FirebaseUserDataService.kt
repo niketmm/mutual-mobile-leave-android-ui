@@ -15,7 +15,7 @@ class FirebaseUserDataService : UserDataService<FirebaseUser> {
     val user = HashMap<String, Any?>()
     user["email"] = currentUser.email
     user["displayName"] = currentUser.displayName
-    user["photoUrl"] = currentUser.photoUrl
+    user["photoUrl"] = currentUser.photoUrl.toString()
     user["userType"] = 1
     FirebaseFirestore.getInstance()
       .collection("users_list")
@@ -26,7 +26,7 @@ class FirebaseUserDataService : UserDataService<FirebaseUser> {
   override suspend fun updateUser(currentUser: FirebaseUser) {
     val user = HashMap<String, Any?>()
     user["displayName"] = currentUser.displayName
-    user["photoUrl"] = currentUser.photoUrl
+    user["photoUrl"] = currentUser.photoUrl.toString()
     FirebaseFirestore.getInstance()
       .collection("users_list")
       .document(currentUser.email!!)

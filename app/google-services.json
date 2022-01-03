@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "964855784492-uoi8ut375tv9mil766vd72vt9ai0spg1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mutualmobile.mmleave",
+            "certificate_hash": "02c6c56c6495677897bcab5b1a1716ec4f8ff60f"
+          }
+        },
+        {
           "client_id": "964855784492-emvhjgl3m4ma5oq4uloqsr91u6but84q.apps.googleusercontent.com",
           "client_type": 3
         }

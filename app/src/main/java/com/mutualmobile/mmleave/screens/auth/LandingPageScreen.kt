@@ -66,7 +66,7 @@ fun LandingPageScreen (
 ) {
     var clicked by remember { mutableStateOf(false) }
     val scope =  rememberCoroutineScope()
-    
+
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
         it.data?.let { it1 -> viewModel.handleGoogleSignInResult(it1) }
     }
@@ -179,11 +179,11 @@ fun LandingPageScreen (
                             )
                             onClicked()
                         }
-                        val webClient = stringResource(id = R.string.web_client_id)
+                        val webClient = stringResource(id = R.string.default_web_client_id)
                         val context = LocalContext.current
                         scope.launch {
                             if (clicked) {
-                                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                                     .requestIdToken(webClient)
                                     .requestEmail()
                                     .build()
@@ -227,12 +227,3 @@ fun LandingPagePreview() {
     )
 }
 
-@Composable
-private fun SetUpGoogleSignInOptions(){
-    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken(stringResource(id = R.string.web_client_id))
-        .requestEmail()
-        .build()
-
-    val googleSignInClient = GoogleSignIn.getClient(LocalContext.current, gso)
-}
