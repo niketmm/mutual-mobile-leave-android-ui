@@ -1,6 +1,5 @@
 package com.mutualmobile.mmleave.screens.auth
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -47,13 +46,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.GoogleAuthProvider
 import com.mutualmobile.mmleave.R
-import com.mutualmobile.mmleave.navigation.Screen
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -73,14 +66,7 @@ fun LandingPageScreen (
     val scope =  rememberCoroutineScope()
     
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-        try {
-            val account = task.getResult(ApiException::class.java)!!
-            val credentials = GoogleAuthProvider.getCredential(account.idToken!!,null)
-            viewModel.authUser(credential = credentials)
-        }catch (e : ApiException){
-            Log.d("GoogleAuth: ", "LandingPageScreen: Google Signed Failed")
-        }
+        it.data?.let { it1 -> viewModel.handleGoogleSignInResult(it1) }
     }
 
     val constraint = ConstraintSet {

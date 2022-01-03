@@ -1,9 +1,15 @@
 package com.mutualmobile.mmleave.screens.auth
 
+import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.mutualmobile.mmleave.services.auth.SocialService
 import com.mutualmobile.mmleave.util.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,22 +18,28 @@ import javax.inject.Inject
 import java.lang.Exception
 
 @HiltViewModel
-class AuthViewModel @Inject constructor() : ViewModel() {
+class AuthViewModel @Inject constructor(private val socialService: SocialService<Intent, AuthCredential>) :
+  ViewModel() {
 
-    private var _loadingState = MutableStateFlow(LoadingState.IDLE)
-    val loadingState = _loadingState
+  private var _loadingState = MutableStateFlow(LoadingState.IDLE)
+  val loadingState = _loadingState
 
 
-    fun authUser(credential: AuthCredential) {
-        viewModelScope.launch {
-            try {
-                loadingState.emit(LoadingState.LOADING)
-                FirebaseAuth.getInstance().signInWithCredential(credential)
-                loadingState.emit(LoadingState.LOADED)
-            }catch (e: Exception){
-                loadingState.emit(LoadingState.error(e.localizedMessage))
-            }
+  fun authUser(credential: AuthCredential) {
+    viewModelScope.launch {
+      try {
+        loadingState.emit(LoadingState.LOADING)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+        loadingState.emit(LoadingState.LOADED)
+      } catch (e: Exception) {
+        loadingState.emit(LoadingState.error(e.localizedMessage))
+      }
 
-        }
     }
+  }
+
+  fun handleGoogleSignInResult(data: Intent) {
+    val authCredential = socialService.signIn(data)
+
+  }
 }

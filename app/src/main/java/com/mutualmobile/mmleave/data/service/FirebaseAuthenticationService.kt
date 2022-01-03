@@ -1,25 +1,49 @@
 package com.mutualmobile.mmleave.data.service
 
-import com.google.firebase.auth.FirebaseAuth
-import com.mutualmobile.mmleave.data.model.MMUser
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.*
+import com.mutualmobile.mmleave.exceptions.UnauthorizedException
+import kotlinx.coroutines.suspendCancellableCoroutine
 
-class FirebaseAuthenticationService : AuthenticationService {
+class FirebaseAuthenticationService(private val authCollectionService: UserAuthService<FirebaseUser>) :
+  AuthenticationService {
 
-    /**
-     * Take the data and post it to the firebase
-     */
-    override fun registerUser() {
-       FirebaseAuth.getInstance().signInWithCredential()
+  override suspend fun authenticateUser(authCredential: AuthCredential): AuthResult {
+    if (authCredential is GoogleAuthCredential) {
+      val authResult = FirebaseAuth.getInstance().signInWithCredential(authCredential).await()
+      FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
+        // user email
+        if (isUserExistsInDatabase(safeEmail)) {
+          authCollectionService.updateUser(FirebaseAuth.getInstance().currentUser!!)
+        } else {
+          authCollectionService.saveUser(FirebaseAuth.getInstance().currentUser!!)
+        }
+        return authResult
+      } ?: run {
+        throw UnauthorizedException()
+      }
+    } else {
+      throw RuntimeException("We don't support anything apart of Google!")
     }
+  }
 
-    /**
-     * This will return a Boolean value
-     * We will check the Email exists in the DB or not
-     * If yes then we will return true
-     * Else we will return false and call the RegisterUser method
-     */
-    override fun isUserExists(email: String) : Boolean{
-       return false
+  override suspend fun isUserExistsInDatabase(email: String): Boolean {
+    // fetch user details from user collections.
+    return true
+  }
+}
+
+
+suspend fun Task<AuthResult>.await(): AuthResult {
+  return suspendCancellableCoroutine { continuation ->
+    this.addOnFailureListener { authException ->
+      continuation.resumeWith(Result.failure(authException))
     }
-
+    this.addOnSuccessListener { authResult ->
+      continuation.resumeWith(Result.success(authResult))
+    }
+    this.addOnCanceledListener {
+      continuation.cancel()
+    }
+  }
 }

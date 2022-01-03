@@ -1,9 +1,9 @@
 package com.mutualmobile.mmleave.data.service
 
 import com.google.firebase.auth.AuthCredential
-import com.mutualmobile.mmleave.data.model.MMUser
+import com.google.firebase.auth.AuthResult
 
 interface AuthenticationService {
-    fun registerUser()
-    fun isUserExists(email : String) : Boolean
+  suspend fun authenticateUser(authCredential: AuthCredential): AuthResult
+  suspend fun isUserExistsInDatabase(email: String): Boolean
 }
