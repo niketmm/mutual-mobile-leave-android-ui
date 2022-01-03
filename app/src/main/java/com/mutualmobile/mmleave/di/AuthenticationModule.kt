@@ -17,12 +17,12 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 @Module
 object AuthenticationModule {
 
   @Provides
-  @Singleton
+  @ViewModelScoped
   fun provideAuthenticationService(userDataService: UserDataService<FirebaseUser>): AuthenticationService {
     return FirebaseAuthenticationService(userDataService)
   }
@@ -34,16 +34,16 @@ object GoogleAuthModule {
 
   @Provides
   @ViewModelScoped
-  fun provideGoogleAuthService(): SocialService<Intent, AuthCredential> {
+  fun provideGoogleAuthService(): GoogleSocialService {
     return GoogleSocialService()
   }
 }
 
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 @Module
 object UserDataModule {
   @Provides
-  @Singleton
+  @ViewModelScoped
   fun provideUserDataService(): UserDataService<FirebaseUser> {
     return FirebaseUserDataService()
   }

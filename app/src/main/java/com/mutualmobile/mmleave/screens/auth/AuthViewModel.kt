@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.mutualmobile.mmleave.services.auth.firebase.AuthenticationService
+import com.mutualmobile.mmleave.services.auth.social.GoogleSocialService
 import com.mutualmobile.mmleave.services.auth.social.SocialService
 import com.mutualmobile.mmleave.util.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +16,10 @@ import javax.inject.Inject
 import java.lang.Exception
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val socialService: SocialService<Intent, AuthCredential>) :
+class AuthViewModel @Inject constructor(
+  private val socialService: GoogleSocialService,
+  private val authenticationService: AuthenticationService
+) :
   ViewModel() {
 
   private var _loadingState = MutableStateFlow(LoadingState.IDLE)
@@ -35,7 +40,9 @@ class AuthViewModel @Inject constructor(private val socialService: SocialService
   }
 
   fun handleGoogleSignInResult(data: Intent) {
-    val authCredential = socialService.signIn(data)
-
+    viewModelScope.launch {
+      val authCredential = socialService.signIn(data)
+      authenticationService.authenticateUser(authCredential = authCredential)
+    }
   }
 }
