@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.services.auth
+package com.mutualmobile.mmleave.services.auth.firebase
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*

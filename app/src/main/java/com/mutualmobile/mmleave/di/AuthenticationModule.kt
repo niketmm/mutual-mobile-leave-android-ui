@@ -1,7 +1,7 @@
 package com.mutualmobile.mmleave.di
 
-import com.mutualmobile.mmleave.services.auth.AuthenticationService
-import com.mutualmobile.mmleave.services.auth.FirebaseAuthenticationService
+import com.mutualmobile.mmleave.services.auth.firebase.AuthenticationService
+import com.mutualmobile.mmleave.services.auth.firebase.FirebaseAuthenticationService
 import com.mutualmobile.mmleave.services.auth.social.GoogleSocialService
 import com.mutualmobile.mmleave.services.auth.social.SocialService
 import dagger.Module

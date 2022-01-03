@@ -1,9 +1,8 @@
 package com.mutualmobile.mmleave.services.database.user
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mutualmobile.mmleave.services.auth.await
+import com.mutualmobile.mmleave.services.auth.firebase.await
 
 class FirebaseUserDataService : UserDataService<FirebaseUser> {
   override suspend fun isUserExistInDB(email: String): Boolean {
