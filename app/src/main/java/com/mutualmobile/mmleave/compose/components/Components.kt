@@ -8,12 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.mutualmobile.mmleave.ui.theme.backgroundLight
+import com.mutualmobile.mmleave.ui.theme.white_background
 
 @Composable
 fun TopAppBarLayout() {
   TopAppBar(
-      backgroundColor = backgroundLight,
+    backgroundColor = white_background,
       modifier = Modifier.fillMaxWidth(),
       title = {
         Box(modifier = Modifier.fillMaxWidth()) {
