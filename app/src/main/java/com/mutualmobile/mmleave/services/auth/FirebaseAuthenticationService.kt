@@ -29,8 +29,7 @@ class FirebaseAuthenticationService(private val dataCollectionService: UserDataS
   }
 
   override suspend fun isUserExistsInDatabase(email: String): Boolean {
-    // fetch user details from user collections.
-    return true
+    return dataCollectionService.isUserExistInDB(email = email)
   }
 }
 
