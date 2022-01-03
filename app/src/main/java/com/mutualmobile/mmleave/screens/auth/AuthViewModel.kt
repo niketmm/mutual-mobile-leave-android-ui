@@ -4,32 +4,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 import com.mutualmobile.mmleave.data.repo.AuthRepo
 import com.mutualmobile.mmleave.util.LoadingState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import java.io.IOException
+import java.lang.Exception
 
-class AuthViewModel @Inject constructor(
-    private val authRepo: AuthRepo
-) : ViewModel() {
+@HiltViewModel
+class AuthViewModel @Inject constructor() : ViewModel() {
 
     private var _loadingState = MutableStateFlow(LoadingState.IDLE)
     val loadingState = _loadingState
 
 
-    fun authUser(credential: AuthCredential) : Boolean {
+    fun authUser(credential: AuthCredential) {
         viewModelScope.launch {
             try {
                 loadingState.emit(LoadingState.LOADING)
-                FirebaseAuth.getInstance().signInWithCredential()
-            }catch (e: IOException){
-
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                loadingState.emit(LoadingState.LOADED)
+            }catch (e: Exception){
+                loadingState.emit(LoadingState.error(e.localizedMessage))
             }
 
         }
-        return false;
     }
 }
