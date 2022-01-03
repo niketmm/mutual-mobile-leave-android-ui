@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "964855784492",
+    "project_id": "mm-leave",
+    "storage_bucket": "mm-leave.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964855784492:android:847a84e3cca05ac1ba1d89",
+        "android_client_info": {
+          "package_name": "com.mutualmobile.mmleave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "964855784492-emvhjgl3m4ma5oq4uloqsr91u6but84q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUtbyGYk17pZ2ugVjBKRzjJRFtWQ-I6Ns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "964855784492-emvhjgl3m4ma5oq4uloqsr91u6but84q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
