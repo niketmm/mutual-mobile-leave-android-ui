@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.services.auth
+package com.mutualmobile.mmleave.services.auth.social
 
 import android.content.Intent
 import com.google.android.gms.auth.api.signin.GoogleSignIn

@@ -1,11 +1,11 @@
-package com.mutualmobile.mmleave.firestore.service
+package com.mutualmobile.mmleave.services.database.ptorequest
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mutualmobile.mmleave.firestore.PtoProperties
 import com.mutualmobile.mmleave.model.User
 
-class PtoRequestServiceImpl(private val fireStore: FirebaseFirestore) : PtoRequestService {
+class PtoRequestServiceImpl() : PtoRequestService {
   val TAG = PtoRequestServiceImpl::class.simpleName
   override fun makePtoRequest(
     user: User,
@@ -19,7 +19,7 @@ class PtoRequestServiceImpl(private val fireStore: FirebaseFirestore) : PtoReque
     pto["designation"] = ptoProperties.designation
     pto["status"] = ptoProperties.status
     pto["approver"] = ptoProperties.approver
-    fireStore.collection("PTOs_list").document(user.email)
+    FirebaseFirestore.getInstance().collection("PTOs_list").document(user.email)
         .set(pto)
         .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
         .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
@@ -29,7 +29,7 @@ class PtoRequestServiceImpl(private val fireStore: FirebaseFirestore) : PtoReque
     ptoProperties: PtoProperties,
     user: User
   ) {
-    val userListCollectionRef = fireStore.collection("PTOs_list")
+    val userListCollectionRef =  FirebaseFirestore.getInstance().collection("PTOs_list")
 
     userListCollectionRef.whereArrayContains("approver", user.email).get()
         .addOnSuccessListener { documents ->

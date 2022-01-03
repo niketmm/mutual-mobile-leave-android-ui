@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.data.service
+package com.mutualmobile.mmleave.services.auth
 
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
