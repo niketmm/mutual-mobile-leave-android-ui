@@ -5,6 +5,7 @@ import com.google.firebase.auth.*
 import com.mutualmobile.mmleave.exceptions.UnauthorizedException
 import com.mutualmobile.mmleave.services.database.user.UserDataService
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.suspendCoroutine
 
 class FirebaseAuthenticationService(private val dataCollectionService: UserDataService<FirebaseUser>) :
   AuthenticationService {
@@ -35,15 +36,12 @@ class FirebaseAuthenticationService(private val dataCollectionService: UserDataS
 
 
 suspend fun <T> Task<T>.await(): T {
-  return suspendCancellableCoroutine { continuation ->
+  return suspendCoroutine { continuation ->
     this.addOnFailureListener { authException ->
       continuation.resumeWith(Result.failure(authException))
     }
     this.addOnSuccessListener { authResult ->
       continuation.resumeWith(Result.success(authResult))
-    }
-    this.addOnCanceledListener {
-      continuation.cancel()
     }
   }
 }
