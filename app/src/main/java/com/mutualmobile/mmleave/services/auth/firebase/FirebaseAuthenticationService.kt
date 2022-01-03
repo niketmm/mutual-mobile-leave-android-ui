@@ -5,9 +5,10 @@ import com.google.firebase.auth.*
 import com.mutualmobile.mmleave.exceptions.UnauthorizedException
 import com.mutualmobile.mmleave.services.database.user.UserDataService
 import kotlinx.coroutines.suspendCancellableCoroutine
+import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 
-class FirebaseAuthenticationService(private val dataCollectionService: UserDataService<FirebaseUser>) :
+class FirebaseAuthenticationService @Inject constructor(private val dataCollectionService: UserDataService<FirebaseUser>) :
   AuthenticationService {
 
   override suspend fun authenticateUser(authCredential: AuthCredential): AuthResult {
