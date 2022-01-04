@@ -135,9 +135,7 @@ fun ApplyPtoScreen(
     if (selected.value) {
       val formatter = SimpleDateFormat(DEFAULT_PATTERN)
       Log.d("PtoScreen", "ApplyPtoScreen: " + timeFrom)
-      val selectedDateFrom = formatter.parse(
-          "${dateFrom.date}/${dateFrom.month + 1}/${dateFrom.year} $timeFrom"
-      )!!
+      val selectedDateFrom = formatter.format(dateFrom)
       Log.d("PtoScreen", "ShowDatePicker: $selectedDateFrom")
 
       val selectedDateTo = formatter.parse(
