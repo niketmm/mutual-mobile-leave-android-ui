@@ -1,17 +1,12 @@
 package com.mutualmobile.mmleave.firestore
 
-import com.mutualmobile.mmleave.model.User
 import java.util.Date
 
 data class PtoProperties(
-  var email: String,
-  var userId: String,
   var dateFrom: Date,
   var dateTo: Date,
-  var description: String="",
-  var designation: Designation,
-  var status: Status,
-  var approver: List<User>
+  var email: String,
+  var description: String = "",
 )
 
 sealed class Designation {
@@ -21,6 +16,7 @@ sealed class Designation {
 }
 
 sealed class Status {
-  data class Approved(val message: String): Status()
+  data class Approved(val message: String) : Status()
+  data class NotDefined(val message: String) : Status()
   data class Rejected(val reason: String) : Status()
 }

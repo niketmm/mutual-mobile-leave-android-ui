@@ -1,13 +1,13 @@
 package com.mutualmobile.mmleave.services.database.ptorequest
 
+import android.provider.ContactsContract.CommonDataKinds.Email
 import com.mutualmobile.mmleave.firestore.PtoProperties
 import com.mutualmobile.mmleave.model.User
 
 interface PtoRequestService {
-  fun makePtoRequest(
-    user: User,
+  suspend fun makePtoRequest(
     ptoProperties: PtoProperties
   )
 
-  fun approvePtoRequest(ptoProperties: PtoProperties,user: User)
+  suspend fun approvePtoRequest(ptoProperties: PtoProperties)
 }
