@@ -112,7 +112,8 @@ fun ApplyPtoScreen(ptoViewModel: PtoRequestViewModel = hiltViewModel()) {
           leaveDescriptionText = it
         },
         modifier = Modifier
-          .fillMaxWidth().padding(vertical = 8.dp)
+          .fillMaxWidth()
+          .padding(vertical = 8.dp)
           .background(color = backgroundLight),
         maxLines = 5,
       )
@@ -167,12 +168,11 @@ private fun DateTo(
         modifier = Modifier.clickable(enabled = true, onClick = {
           ShowDatePicker(context = context,
             selectDate = { date: Date ->
-              ptoProp.dateTo = date
+              ptoViewModel.updateDateTo(date)
               ShowTimePicker(
                 context = context,
                 selectTime = { time: Date ->
-                  ptoProp.dateTo = time
-                  ptoViewModel.ptoRequestState.value.dateTo = time
+                  ptoViewModel.updateDateTo(time)
                 }, ptoProp.dateTo
               )
             })
@@ -204,12 +204,12 @@ private fun DateFrom(
         modifier = Modifier.clickable(enabled = true, onClick = {
           ShowDatePicker(context = context,
             selectDate = { date: Date ->
-              ptoProp.dateFrom = date
+              ptoViewModel.updateDateFrom(date)
+
               ShowTimePicker(
                 context = context,
                 selectTime = { time: Date ->
-                  ptoProp.dateFrom = time
-                  ptoViewModel.ptoRequestState.value.dateFrom = time
+                  ptoViewModel.updateDateFrom(time)
                 }, ptoProp.dateFrom
               )
             })
@@ -250,8 +250,8 @@ fun ShowTimePicker(
   val timePickerDialog = TimePickerDialog(
     context,
     { view, hourOfDay, minute ->
-      now.set(Calendar.HOUR_OF_DAY,hourOfDay)
-      now.set(Calendar.MINUTE,minute)
+      now.set(Calendar.HOUR_OF_DAY, hourOfDay)
+      now.set(Calendar.MINUTE, minute)
       selectTime(now.time)
     }, mHour, mMinute, true
   )
