@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.compose.components.TopAppBarLayout
+import com.mutualmobile.mmleave.firestore.PtoProperties
 import com.mutualmobile.mmleave.services.database.ptorequest.viewmodel.PtoRequestViewModel
 import com.mutualmobile.mmleave.ui.theme.MMLeaveTheme
 import com.mutualmobile.mmleave.ui.theme.backgroundLight
@@ -90,82 +91,20 @@ fun ApplyPtoScreen(ptoViewModel: PtoRequestViewModel = hiltViewModel()) {
         fontSize = 16.sp
       )
       Column {
-        OutlinedTextField(
-          value = ptoProp.dateFrom.asFormattedString(),
-          onValueChange = { },
-          label = { Text("DateTime From") },
-          readOnly = true,
-          trailingIcon = {
-            Icon(
-              painter = painterResource(id = drawable.calendar_3x),
-              contentDescription = "date from text field",
-              modifier = Modifier.clickable(enabled = true, onClick = {
-                ShowDatePicker(context = context,
-                  selectDate = { date: Date ->
-                    ptoProp.dateFrom = date
-                    ShowTimePicker(
-                      context = context,
-                      selectTime = { time: Date ->
-                        ptoProp.dateFrom = time
-                        ptoViewModel.ptoRequestState.value.dateFrom = time
-                      }, ptoProp.dateFrom
-                    )
-                  })
-              }
-              ))
-          },
-          modifier = Modifier
-            .fillMaxWidth()
-            .background(color = backgroundLight)
-        )
+        DateFrom(ptoProp, context, ptoViewModel)
 
-        OutlinedTextField(
-          value = ptoProp.dateTo.asFormattedString(),
-          onValueChange = { },
-          label = { Text("DateTime To") },
-          readOnly = true,
-          trailingIcon = {
-            Icon(
-              painter = painterResource(id = drawable.ic_baseline_access_time_24),
-              contentDescription = "time from text field",
-              modifier = Modifier.clickable(enabled = true, onClick = {
-                ShowDatePicker(context = context,
-                  selectDate = { date: Date ->
-                    ptoProp.dateTo = date
-                    ShowTimePicker(
-                      context = context,
-                      selectTime = { time: Date ->
-                        ptoProp.dateTo = time
-                        ptoViewModel.ptoRequestState.value.dateTo = time
-                      }, ptoProp.dateTo
-                    )
-                  })
-              }
-              ))
-          },
-          modifier = Modifier
-            .fillMaxWidth()
-            .background(color = backgroundLight)
-
-        )
+        DateTo(ptoProp, context, ptoViewModel)
       }
-
-      Text(
-        "-",
-        modifier = Modifier
-          .fillMaxWidth(0.05F),
-        textAlign = TextAlign.Center
-      )
 
       Text(
         text = "Leaves Left: $leavesLeft",
         color = purpleTextColorLight,
-        fontSize = 16.sp
+        fontSize = 16.sp, modifier = Modifier.fillMaxWidth()
       )
 
       Text(
         text = "Add Reason Of Leave (Optional)",
-        fontSize = 16.sp
+        fontSize = 16.sp, modifier = Modifier.fillMaxWidth()
       )
       OutlinedTextField(
         value = leaveDescriptionText,
@@ -173,33 +112,114 @@ fun ApplyPtoScreen(ptoViewModel: PtoRequestViewModel = hiltViewModel()) {
           leaveDescriptionText = it
         },
         modifier = Modifier
-          .fillMaxWidth()
+          .fillMaxWidth().padding(vertical = 8.dp)
           .background(color = backgroundLight),
         maxLines = 5,
       )
-      Button(
-        onClick = {
-          requestPtoNow(
-            ptoViewModel,
-            FirebaseAuth.getInstance().currentUser?.email!!,
-            leaveDescriptionText
-          )
-        },
-        colors = ButtonDefaults.buttonColors(
-          backgroundColor = primaryColorLight,
-        ),
-      ) {
-        Text(
-          text = "APPLY PTO",
-          modifier = Modifier.fillMaxWidth(),
-          textAlign = TextAlign.Center,
-          fontSize = 20.sp,
-          color = Color.White
-        )
-      }
+      ApplyPtoButton(ptoViewModel, leaveDescriptionText)
     }
 
   }
+}
+
+@Composable
+private fun ApplyPtoButton(
+  ptoViewModel: PtoRequestViewModel,
+  leaveDescriptionText: String
+) {
+  Button(
+    onClick = {
+      requestPtoNow(
+        ptoViewModel,
+        FirebaseAuth.getInstance().currentUser?.email!!,
+        leaveDescriptionText
+      )
+    },
+    colors = ButtonDefaults.buttonColors(
+      backgroundColor = primaryColorLight,
+    ),
+  ) {
+    Text(
+      text = "APPLY PTO",
+      modifier = Modifier.fillMaxWidth(),
+      textAlign = TextAlign.Center,
+      fontSize = 20.sp,
+      color = Color.White
+    )
+  }
+}
+
+@Composable
+private fun DateTo(
+  ptoProp: PtoProperties,
+  context: Context,
+  ptoViewModel: PtoRequestViewModel
+) {
+  OutlinedTextField(
+    value = ptoProp.dateTo.asFormattedString(),
+    onValueChange = { },
+    label = { Text("DateTime To") },
+    readOnly = true,
+    trailingIcon = {
+      Icon(
+        painter = painterResource(id = drawable.ic_baseline_access_time_24),
+        contentDescription = "time from text field",
+        modifier = Modifier.clickable(enabled = true, onClick = {
+          ShowDatePicker(context = context,
+            selectDate = { date: Date ->
+              ptoProp.dateTo = date
+              ShowTimePicker(
+                context = context,
+                selectTime = { time: Date ->
+                  ptoProp.dateTo = time
+                  ptoViewModel.ptoRequestState.value.dateTo = time
+                }, ptoProp.dateTo
+              )
+            })
+        }
+        ))
+    },
+    modifier = Modifier
+      .fillMaxWidth()
+      .background(color = backgroundLight)
+
+  )
+}
+
+@Composable
+private fun DateFrom(
+  ptoProp: PtoProperties,
+  context: Context,
+  ptoViewModel: PtoRequestViewModel
+) {
+  OutlinedTextField(
+    value = ptoProp.dateFrom.asFormattedString(),
+    onValueChange = { },
+    label = { Text("DateTime From") },
+    readOnly = true,
+    trailingIcon = {
+      Icon(
+        painter = painterResource(id = drawable.calendar_3x),
+        contentDescription = "date from text field",
+        modifier = Modifier.clickable(enabled = true, onClick = {
+          ShowDatePicker(context = context,
+            selectDate = { date: Date ->
+              ptoProp.dateFrom = date
+              ShowTimePicker(
+                context = context,
+                selectTime = { time: Date ->
+                  ptoProp.dateFrom = time
+                  ptoViewModel.ptoRequestState.value.dateFrom = time
+                }, ptoProp.dateFrom
+              )
+            })
+        }
+        ))
+    },
+    modifier = Modifier
+      .fillMaxWidth()
+      .background(color = backgroundLight)
+  )
 }
 
 private fun Date?.asFormattedString(): String {
