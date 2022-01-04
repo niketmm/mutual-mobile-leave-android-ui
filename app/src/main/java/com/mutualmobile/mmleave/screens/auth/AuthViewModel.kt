@@ -23,16 +23,20 @@ class AuthViewModel @Inject constructor(
 
   fun handleGoogleSignInResult(data: Intent) {
     viewModelScope.launch {
-
       try {
+        // Loading here
         loadingState.emit(LoadingState.LOADING)
+
         val authCredential = socialService.signIn(data)
-        authenticationService.authenticateUser(authCredential = authCredential)
-        loadingState.emit(LoadingState.LOADED)
+        authCredential?.let {
+          authenticationService.authenticateUser(authCredential = it)
+        } ?: loadingState.emit(LoadingState.error("This domain is not allowed"))
+
+        // Completed Process
+        loadingState.emit(LoadingState.LOGGED_IN)
       } catch (e: Exception) {
         loadingState.emit(LoadingState.error(e.localizedMessage))
       }
-
     }
   }
 }
