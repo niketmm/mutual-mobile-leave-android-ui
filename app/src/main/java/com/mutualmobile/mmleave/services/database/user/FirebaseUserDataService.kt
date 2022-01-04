@@ -17,10 +17,21 @@ class FirebaseUserDataService : UserDataService<FirebaseUser> {
     user["displayName"] = currentUser.displayName
     user["photoUrl"] = currentUser.photoUrl.toString()
     user["userType"] = 1
+    user["nameAsArray"] = generateNameAsArray(currentUser.displayName!!)
     FirebaseFirestore.getInstance()
       .collection("users_list")
       .document(currentUser.email!!)
       .set(user).await()
+  }
+
+  private fun generateNameAsArray(displayName: String) : List<String> {
+    val keywords = mutableListOf<String>()
+    for (i in displayName.indices) {
+      for (j in (i+1)..displayName.length) {
+        keywords.add(displayName.slice(i until j))
+      }
+    }
+    return keywords
   }
 
   override suspend fun updateUser(currentUser: FirebaseUser) {

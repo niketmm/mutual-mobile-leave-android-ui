@@ -8,9 +8,9 @@
         android:name=".MMInternalApplication"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/mm_splash_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/mm_splash_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.MMLeave">
         <activity
