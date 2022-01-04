@@ -50,11 +50,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 
-var dateFrom: Date? = null
-var dateTo: Date? = null
-
-var timeFrom: String? = "12:00:00"
-var timeTo: String? = "12:00:00"
 const val DEFAULT_PATTERN = "dd/M/yyyy HH:mm:ss"
 
 @AndroidEntryPoint
@@ -63,6 +58,7 @@ class PtoScreen : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       MMLeaveTheme {
+        val context = LocalContext.current
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
           ApplyPtoScreen()
@@ -72,7 +68,6 @@ class PtoScreen : ComponentActivity() {
   }
 }
 
-@Preview
 @Composable
 fun ApplyPtoScreen(
 ) {
@@ -83,7 +78,18 @@ fun ApplyPtoScreen(
     // val email = FirebaseAuth.getInstance().currentUser?.email
     val email = ""
     val leavesLeft = 18
-
+    var dateFrom: Date by remember {
+      mutableStateOf(Date())
+    }
+    var dateTo: Date by remember {
+      mutableStateOf(Date())
+    }
+    var timeFrom: String by remember {
+      mutableStateOf("")
+    }
+    var timeTo: String by remember {
+      mutableStateOf("")
+    }
     var dateFromText by remember { mutableStateOf("") }
     var timeFromText by remember { mutableStateOf("") }
     var dateToText by remember { mutableStateOf("") }
@@ -96,31 +102,53 @@ fun ApplyPtoScreen(
     var showTimePickerTo by remember { mutableStateOf(false) }
 
     if (showDatePickerFrom) {
-      ShowDatePicker(context = context, 0)
+      ShowDatePicker(context = context, 0, selectDate = { date: Date, dateType: Int ->
+        dateFrom = date
+      })
       showDatePickerFrom = false
     }
 
     if (showDatePickerTo) {
-      ShowDatePicker(context = context, 1)
+      ShowDatePicker(context = context, 1,
+          selectDate = { date: Date, dateType: Int ->
+            dateTo = date
+            Log.d("PtoScreen", "ApplyPtoScreen: " + dateTo)
+          })
       showDatePickerTo = false
     }
     if (showTimePickerFrom) {
-      ShowTimePicker(context = context, timeType = 0)
+      ShowTimePicker(context = context, timeType = 0,
+          selectTime = { time: String, timeType: Int ->
+            timeFrom = time
+            Log.d("PtoScreen", "ApplyPtoScreen: " + timeFrom)
+          })
       showTimePickerFrom = false
     }
 
     if (showTimePickerTo) {
-      ShowTimePicker(context = context, timeType = 1)
+      ShowTimePicker(context = context, timeType = 1,
+          selectTime = { time: String, timeType: Int ->
+            timeTo = time
+          })
       showTimePickerTo = false
     }
     if (selected.value) {
-      dateFrom?.let { from ->
-        dateTo?.let { to ->
-          email?.let {
-            ApplyPto(ptoProperties = PtoProperties(from, to, email, leaveDescriptionText))
-          }
-        }
-      }
+      val formatter = SimpleDateFormat(DEFAULT_PATTERN)
+      Log.d("PtoScreen", "ApplyPtoScreen: " + timeFrom)
+      val selectedDateFrom = formatter.parse(
+          "${dateFrom.date}/${dateFrom.month + 1}/${dateFrom.year} $timeFrom"
+      )!!
+      Log.d("PtoScreen", "ShowDatePicker: $selectedDateFrom")
+
+      val selectedDateTo = formatter.parse(
+          "${dateTo.date}/${dateTo.month + 1}/${dateTo.year} $timeTo"
+      )!!
+      Log.d("PtoScreen", "ShowDatePicker: $selectedDateTo")
+      ApplyPto(
+          ptoProperties = PtoProperties(
+              selectedDateFrom, selectedDateTo, email, leaveDescriptionText
+          )
+      )
     }
     ConstraintLayout(
         modifier = Modifier
@@ -306,7 +334,6 @@ fun ApplyPtoScreen(
 fun ApplyPto(
   ptoProperties: PtoProperties,
 ) {
-  Log.d("PtoScreen", "ApplyPto: " + dateFrom + dateTo)
   val ptoViewModel: PtoRequestViewModel = hiltViewModel()
   ptoViewModel.applyPtoRequest(ptoProperties)
 }
@@ -315,6 +342,7 @@ fun ApplyPto(
 fun ShowTimePicker(
   context: Context,
   timeType: Int,
+  selectTime: (String, timeType: Int) -> Unit
 ) {
   val mMinute: Int
   val mHour: Int
@@ -322,19 +350,12 @@ fun ShowTimePicker(
   val now = Calendar.getInstance()
   mMinute = now.get(Calendar.MINUTE)
   mHour = now.get(Calendar.HOUR)
-  mSecond = now.get(Calendar.SECOND)
   now.time = Date()
 
   val timePickerDialog = TimePickerDialog(
       context,
       { view, hourOfDay, minute ->
-        if (timeType == 0) {
-          timeFrom = "$hourOfDay:$minute:00"
-          Log.d("PtoScreen", "ShowTimePicker: " + timeFrom)
-        } else {
-          timeTo = "$hourOfDay:$minute:00"
-          Log.d("PtoScreen", "ShowTimePicker: " + timeTo)
-        }
+        selectTime("$hourOfDay:$minute:00", timeType)
       }, mHour, mMinute, true
   )
   timePickerDialog.show()
@@ -343,7 +364,8 @@ fun ShowTimePicker(
 @Composable
 fun ShowDatePicker(
   context: Context,
-  dateType: Int
+  dateType: Int,
+  selectDate: (Date, dateType: Int) -> Unit,
 ) {
   val mYear: Int
   val mMonth: Int
@@ -363,21 +385,9 @@ fun ShowDatePicker(
   )
 
   datePickerDialog.setOnDateSetListener { datePicker, date, month, year ->
-    val formatter = SimpleDateFormat(DEFAULT_PATTERN)
-
-    if (dateType == 0) {
-      dateSelected.value = formatter.parse(
-          "${date}/${month + 1}/$year $timeFrom"
-      )!!
-      dateFrom = dateSelected.value
-      Log.d("PtoScreen", "ShowDatePicker: " + dateSelected.value)
-    } else {
-      dateSelected.value = formatter.parse(
-          "${date}/${month + 1}/$year $timeTo"
-      )!!
-      dateTo = dateSelected.value
-      Log.d("PtoScreen", "ShowDatePicker: " + dateSelected.value)
-    }
+    dateSelected.value = Date(date, month, year)
+    selectDate(dateSelected.value, dateType)
+    Log.d("PtoScreen", "ShowDatePicker: " + dateSelected.value)
   }
   datePickerDialog.show()
 }
