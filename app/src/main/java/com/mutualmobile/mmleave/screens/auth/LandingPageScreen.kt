@@ -50,6 +50,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.screens.PtoScreen
 import kotlinx.coroutines.launch
 
@@ -79,7 +80,9 @@ fun LandingPageScreen(
   if (navigateToPtoScreen) {
     val intent = Intent(context, PtoScreen::class.java)
     context.startActivity(intent)
+//      navController.navigate(Screen.ApplyPto.route)
   }
+
   val constraint = ConstraintSet {
     val topLayout = createRefFor("top_layout")
     val midLayout = createRefFor("mid_layout")
