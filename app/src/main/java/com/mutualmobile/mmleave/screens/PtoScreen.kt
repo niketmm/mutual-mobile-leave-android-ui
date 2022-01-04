@@ -1,6 +1,7 @@
 package com.mutualmobile.mmleave.screens
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -35,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.compose.components.TopAppBarLayout
 import com.mutualmobile.mmleave.firestore.PtoProperties
@@ -52,7 +52,10 @@ import java.util.Date
 
 var dateFrom: Date? = null
 var dateTo: Date? = null
-val DEFAULT_PATTERN = "dd/M/yyyy HH:mm:ss"
+
+var timeFrom: String? = "12:00:00"
+var timeTo: String? = "12:00:00"
+const val DEFAULT_PATTERN = "dd/M/yyyy HH:mm:ss"
 
 @AndroidEntryPoint
 class PtoScreen : ComponentActivity() {
@@ -77,15 +80,20 @@ fun ApplyPtoScreen(
       topBar = { TopAppBarLayout() }
   ) {
     val context = LocalContext.current
-    val email = FirebaseAuth.getInstance().currentUser?.email
+    // val email = FirebaseAuth.getInstance().currentUser?.email
+    val email = ""
     val leavesLeft = 18
 
     var dateFromText by remember { mutableStateOf("") }
+    var timeFromText by remember { mutableStateOf("") }
     var dateToText by remember { mutableStateOf("") }
+    var timeToText by remember { mutableStateOf("") }
     var leaveDescriptionText by remember { mutableStateOf("") }
     val selected = remember { mutableStateOf(false) }
     var showDatePickerFrom by remember { mutableStateOf(false) }
+    var showTimePickerFrom by remember { mutableStateOf(false) }
     var showDatePickerTo by remember { mutableStateOf(false) }
+    var showTimePickerTo by remember { mutableStateOf(false) }
 
     if (showDatePickerFrom) {
       ShowDatePicker(context = context, 0)
@@ -95,6 +103,15 @@ fun ApplyPtoScreen(
     if (showDatePickerTo) {
       ShowDatePicker(context = context, 1)
       showDatePickerTo = false
+    }
+    if (showTimePickerFrom) {
+      ShowTimePicker(context = context, timeType = 0)
+      showTimePickerFrom = false
+    }
+
+    if (showTimePickerTo) {
+      ShowTimePicker(context = context, timeType = 1)
+      showTimePickerTo = false
     }
     if (selected.value) {
       dateFrom?.let { from ->
@@ -111,7 +128,7 @@ fun ApplyPtoScreen(
             .fillMaxHeight()
             .padding(start = 16.dp, end = 16.dp)
     ) {
-      val (selectDatesText, dateFromTf, dateToTf, noOfLeavesLeft,
+      val (selectDatesText, dateFromTf, timeFromTf, dateToTf, timeToTf, noOfLeavesLeft,
         reasonForLeave, leaveDescription, applyPtoButton, dash) = createRefs()
       Text(
           text = "Select Dates",
@@ -135,21 +152,45 @@ fun ApplyPtoScreen(
                 ))
           },
           modifier = Modifier
-              .fillMaxWidth(0.45F)
+              .fillMaxWidth(0.25F)
               .background(color = backgroundLight)
               .constrainAs(dateFromTf) {
                 linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.02F)
-                absoluteRight.linkTo(dash.absoluteLeft)
+                absoluteRight.linkTo(timeFromTf.absoluteLeft)
                 absoluteLeft.linkTo(parent.absoluteLeft)
               }
       )
+
+      OutlinedTextField(
+          value = timeFromText,
+          onValueChange = { timeFromText = it },
+          label = { Text("Time From") },
+          trailingIcon = {
+            Icon(
+                painter = painterResource(id = drawable.ic_baseline_access_time_24),
+                contentDescription = "time from text field",
+                modifier = Modifier.clickable(enabled = true, onClick = {
+                  showTimePickerFrom = true
+                }
+                ))
+          },
+          modifier = Modifier
+              .fillMaxWidth(0.25F)
+              .background(color = backgroundLight)
+              .constrainAs(timeFromTf) {
+                linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.02F)
+                absoluteRight.linkTo(dash.absoluteLeft)
+                absoluteLeft.linkTo(dateFromTf.absoluteRight, 5.dp)
+              }
+      )
+
       Text(
           "-",
           modifier = Modifier
-              .fillMaxWidth(0.1F)
+              .fillMaxWidth(0.05F)
               .constrainAs(dash) {
                 linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.05F)
-                absoluteLeft.linkTo(dateFromTf.absoluteRight)
+                absoluteLeft.linkTo(timeFromTf.absoluteRight)
                 absoluteRight.linkTo(dateToTf.absoluteLeft)
               },
           textAlign = TextAlign.Center
@@ -169,11 +210,35 @@ fun ApplyPtoScreen(
                 ))
           },
           modifier = Modifier
-              .fillMaxWidth(0.45F)
+              .fillMaxWidth(0.25F)
               .background(color = backgroundLight)
               .constrainAs(dateToTf) {
                 linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.02F)
                 absoluteLeft.linkTo(dash.absoluteRight)
+                absoluteRight.linkTo(timeToTf.absoluteLeft, 5.dp)
+              },
+
+          )
+
+      OutlinedTextField(
+          value = timeToText,
+          onValueChange = { timeToText = it },
+          label = { Text("Time To") },
+          trailingIcon = {
+            Icon(
+                painter = painterResource(id = drawable.ic_baseline_access_time_24),
+                contentDescription = "time to text field",
+                modifier = Modifier.clickable(enabled = true, onClick = {
+                  showTimePickerTo = true
+                }
+                ))
+          },
+          modifier = Modifier
+              .fillMaxWidth(0.25F)
+              .background(color = backgroundLight)
+              .constrainAs(timeToTf) {
+                linkTo(top = selectDatesText.bottom, bottom = parent.bottom, bias = 0.02F)
+                absoluteLeft.linkTo(dateToTf.absoluteRight)
                 absoluteRight.linkTo(parent.absoluteRight)
               },
 
@@ -247,6 +312,35 @@ fun ApplyPto(
 }
 
 @Composable
+fun ShowTimePicker(
+  context: Context,
+  timeType: Int,
+) {
+  val mMinute: Int
+  val mHour: Int
+  val mSecond: Int
+  val now = Calendar.getInstance()
+  mMinute = now.get(Calendar.MINUTE)
+  mHour = now.get(Calendar.HOUR)
+  mSecond = now.get(Calendar.SECOND)
+  now.time = Date()
+
+  val timePickerDialog = TimePickerDialog(
+      context,
+      { view, hourOfDay, minute ->
+        if (timeType == 0) {
+          timeFrom = "$hourOfDay:$minute:00"
+          Log.d("PtoScreen", "ShowTimePicker: " + timeFrom)
+        } else {
+          timeTo = "$hourOfDay:$minute:00"
+          Log.d("PtoScreen", "ShowTimePicker: " + timeTo)
+        }
+      }, mHour, mMinute, true
+  )
+  timePickerDialog.show()
+}
+
+@Composable
 fun ShowDatePicker(
   context: Context,
   dateType: Int
@@ -269,21 +363,20 @@ fun ShowDatePicker(
   )
 
   datePickerDialog.setOnDateSetListener { datePicker, date, month, year ->
-    val selectedDate = "${datePicker.dayOfMonth}/${datePicker.month + 1}/${datePicker.year}"
-    Log.d(
-        "ApplyPtoScreen", "onDateSet: " + selectedDate
-    )
     val formatter = SimpleDateFormat(DEFAULT_PATTERN)
-    dateSelected.value = formatter.parse(
-        "${datePicker.dayOfMonth}/${datePicker.month + 1}/${datePicker.year} 12:00:00"
-    )
 
     if (dateType == 0) {
+      dateSelected.value = formatter.parse(
+          "${date}/${month + 1}/$year $timeFrom"
+      )!!
       dateFrom = dateSelected.value
-      Log.d("PtoScreen", "ShowDatePicker: " + dateFrom)
+      Log.d("PtoScreen", "ShowDatePicker: " + dateSelected.value)
     } else {
+      dateSelected.value = formatter.parse(
+          "${date}/${month + 1}/$year $timeTo"
+      )!!
       dateTo = dateSelected.value
-      Log.d("PtoScreen", "ShowDatePicker: " + dateTo)
+      Log.d("PtoScreen", "ShowDatePicker: " + dateSelected.value)
     }
   }
   datePickerDialog.show()
