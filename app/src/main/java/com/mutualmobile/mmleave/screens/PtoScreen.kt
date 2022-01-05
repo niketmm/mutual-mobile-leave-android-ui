@@ -1,9 +1,14 @@
 package com.mutualmobile.mmleave.screens
 
+import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.widget.DatePicker
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,20 +27,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.compose.components.TopAppBarLayout
+import com.mutualmobile.mmleave.firestore.PtoProperties
+import com.mutualmobile.mmleave.services.database.ptorequest.viewmodel.PtoRequestViewModel
 import com.mutualmobile.mmleave.ui.theme.MMLeaveTheme
 import com.mutualmobile.mmleave.ui.theme.backgroundLight
 import com.mutualmobile.mmleave.ui.theme.buttonUnselected
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
+import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 
+var dateFrom: Date? = null
+var dateTo: Date? = null
+val DEFAULT_PATTERN = "dd/M/yyyy HH:mm:ss"
+
+@AndroidEntryPoint
 class PtoScreen : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -43,7 +62,7 @@ class PtoScreen : ComponentActivity() {
       MMLeaveTheme {
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
-          PtoRequestScreen()
+          ApplyPtoScreen()
         }
       }
     }
@@ -52,16 +71,40 @@ class PtoScreen : ComponentActivity() {
 
 @Preview
 @Composable
-fun ApplyPtoScreen() {
+fun ApplyPtoScreen(
+) {
   Scaffold(
       topBar = { TopAppBarLayout() }
   ) {
+    val context = LocalContext.current
+    val email = FirebaseAuth.getInstance().currentUser?.email
     val leavesLeft = 18
-    var dateFrom by remember { mutableStateOf("") }
-    var dateTo by remember { mutableStateOf("") }
+
+    var dateFromText by remember { mutableStateOf("") }
+    var dateToText by remember { mutableStateOf("") }
     var leaveDescriptionText by remember { mutableStateOf("") }
     val selected = remember { mutableStateOf(false) }
+    var showDatePickerFrom by remember { mutableStateOf(false) }
+    var showDatePickerTo by remember { mutableStateOf(false) }
 
+    if (showDatePickerFrom) {
+      ShowDatePicker(context = context, 0)
+      showDatePickerFrom = false
+    }
+
+    if (showDatePickerTo) {
+      ShowDatePicker(context = context, 1)
+      showDatePickerTo = false
+    }
+    if (selected.value) {
+      dateFrom?.let { from ->
+        dateTo?.let { to ->
+          email?.let {
+            ApplyPto(ptoProperties = PtoProperties(from, to, email, leaveDescriptionText))
+          }
+        }
+      }
+    }
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -79,14 +122,17 @@ fun ApplyPtoScreen() {
           fontSize = 16.sp
       )
       OutlinedTextField(
-          value = dateFrom,
-          onValueChange = { dateFrom = it },
+          value = dateFromText,
+          onValueChange = { dateFromText = it },
           label = { Text("From") },
           trailingIcon = {
             Icon(
                 painter = painterResource(id = drawable.calendar_3x),
-                contentDescription = "date from text field"
-            )
+                contentDescription = "date from text field",
+                modifier = Modifier.clickable(enabled = true, onClick = {
+                  showDatePickerFrom = true
+                }
+                ))
           },
           modifier = Modifier
               .fillMaxWidth(0.45F)
@@ -110,14 +156,17 @@ fun ApplyPtoScreen() {
       )
 
       OutlinedTextField(
-          value = dateTo,
-          onValueChange = { dateTo = it },
+          value = dateToText,
+          onValueChange = { dateToText = it },
           label = { Text("To") },
           trailingIcon = {
             Icon(
                 painter = painterResource(id = drawable.calendar_3x),
-                contentDescription = "date to text field"
-            )
+                contentDescription = "date to text field",
+                modifier = Modifier.clickable(enabled = true, onClick = {
+                  showDatePickerTo = true
+                }
+                ))
           },
           modifier = Modifier
               .fillMaxWidth(0.45F)
@@ -186,6 +235,58 @@ fun ApplyPtoScreen() {
     }
 
   }
+}
+
+@Composable
+fun ApplyPto(
+  ptoProperties: PtoProperties,
+) {
+  Log.d("PtoScreen", "ApplyPto: " + dateFrom + dateTo)
+  val ptoViewModel: PtoRequestViewModel = hiltViewModel()
+  ptoViewModel.applyPtoRequest(ptoProperties)
+}
+
+@Composable
+fun ShowDatePicker(
+  context: Context,
+  dateType: Int
+) {
+  val mYear: Int
+  val mMonth: Int
+  val mDay: Int
+  val now = Calendar.getInstance()
+  mYear = now.get(Calendar.YEAR)
+  mMonth = now.get(Calendar.MONTH)
+  mDay = now.get(Calendar.DAY_OF_MONTH)
+  now.time = Date()
+  val dateSelected = remember { mutableStateOf(Date()) }
+  val datePickerDialog = DatePickerDialog(
+      context,
+      { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+        val cal = Calendar.getInstance()
+        cal.set(year, month, dayOfMonth)
+      }, mYear, mMonth, mDay
+  )
+
+  datePickerDialog.setOnDateSetListener { datePicker, date, month, year ->
+    val selectedDate = "${datePicker.dayOfMonth}/${datePicker.month + 1}/${datePicker.year}"
+    Log.d(
+        "ApplyPtoScreen", "onDateSet: " + selectedDate
+    )
+    val formatter = SimpleDateFormat(DEFAULT_PATTERN)
+    dateSelected.value = formatter.parse(
+        "${datePicker.dayOfMonth}/${datePicker.month + 1}/${datePicker.year} 12:00:00"
+    )
+
+    if (dateType == 0) {
+      dateFrom = dateSelected.value
+      Log.d("PtoScreen", "ShowDatePicker: " + dateFrom)
+    } else {
+      dateTo = dateSelected.value
+      Log.d("PtoScreen", "ShowDatePicker: " + dateTo)
+    }
+  }
+  datePickerDialog.show()
 }
 
 @Preview
