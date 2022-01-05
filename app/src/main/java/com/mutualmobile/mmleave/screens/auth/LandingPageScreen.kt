@@ -199,15 +199,17 @@ fun LandingPageScreen(
                     modifier = modifier
                         .clickable {
                             clicked = !clicked
-                            scope.launch {
-                                val gso =
-                                    GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                        .requestIdToken(webClient)
-                                        .requestEmail()
-                                        .build()
+                            if (clicked){
+                                scope.launch {
+                                    val gso =
+                                        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                            .requestIdToken(webClient)
+                                            .requestEmail()
+                                            .build()
 
-                                val googleSignInClient = GoogleSignIn.getClient(context, gso)
-                                launcher.launch(googleSignInClient.signInIntent)
+                                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                                    launcher.launch(googleSignInClient.signInIntent)
+                                }
                             }
                         }
                         .height(48.dp),
