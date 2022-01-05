@@ -11,6 +11,7 @@ import com.mutualmobile.mmleave.screens.HomeScreen
 import com.mutualmobile.mmleave.screens.auth.LandingPageScreen
 import com.mutualmobile.mmleave.screens.PtoAvailedScreen
 import com.mutualmobile.mmleave.screens.PtoRequestScreen
+import com.mutualmobile.mmleave.screens.SearchScreen
 
 @ExperimentalCoilApi
 @Composable
@@ -47,7 +48,7 @@ fun SetUpNavGraph(
         composable(
             route = Screen.ApplyPto.route
         ) {
-            ApplyPtoScreen()
+            ApplyPtoScreen(navController = navController)
         }
 
         composable(
@@ -60,6 +61,12 @@ fun SetUpNavGraph(
             route = Screen.PtoAvailed.route
         ) {
             PtoAvailedScreen()
+        }
+
+        composable(
+            Screen.SearchScreen.route
+        ){
+            SearchScreen()
         }
     }
 }
