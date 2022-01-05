@@ -51,5 +51,5 @@ object UserDataModule {
 object PtoModule {
   @Provides
   @ViewModelScoped
-  fun providePtoRequestService(): PtoRequestService = PtoRequestServiceImpl()
+  fun providePtoRequestService(): PtoRequestServiceImpl = PtoRequestServiceImpl()
 }
