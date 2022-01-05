@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.screens.splash
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,7 +26,9 @@ import com.mutualmobile.mmleave.navigation.Screen
 import kotlinx.coroutines.delay
 
 @Composable
-fun AnimatedSplashScreen(navController: NavHostController) {
+fun AnimatedSplashScreen(
+    navController: NavHostController,
+) {
 
     var startAnimation by remember {
         mutableStateOf(false)

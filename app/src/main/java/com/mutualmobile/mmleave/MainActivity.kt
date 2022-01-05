@@ -12,8 +12,10 @@ import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.navigation.SetUpNavGraph
 import com.mutualmobile.mmleave.ui.theme.MMLeaveTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalCoilApi
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,9 +57,8 @@ import coil.transform.CircleCropTransformation
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.ui.theme.cyan
-import com.mutualmobile.mmleave.ui.theme.darBlue
-import com.mutualmobile.mmleave.ui.theme.textSecondary
+import com.mutualmobile.mmleave.ui.theme.primaryColorLight
+import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 
 @ExperimentalCoilApi
 @Composable
@@ -75,7 +75,7 @@ fun HomeScreen(
         val lowerFooterButton = createRefFor("lowerFooterButton")
 
         // Todo : Cross Check those guidelines using the Constraint ToolKit.
-        val midGuideline = createGuidelineFromTop(0.35f)
+        val midGuideline = createGuidelineFromTop(0.4f)
         val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
 
         constrain(topProfileAndGreetingLayout) {
@@ -126,7 +126,7 @@ fun HomeScreen(
         ) {
 
             Column {
-                Text(text = "Good Morning", fontSize = 16.sp, color = textSecondary)
+                Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
                 Text(text = "Laksh", fontSize = 24.sp)
             }
 
@@ -141,7 +141,7 @@ fun HomeScreen(
                 .height(158.dp)
                 .clickable { navController.navigate(Screen.Splash.route) },
             shape = MaterialTheme.shapes.large,
-            color = darBlue,
+            color = primaryColorLight,
 
         ) {
             Row(
@@ -157,7 +157,7 @@ fun HomeScreen(
                         .padding(start = 24.dp)
                 ) {
                     Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
-                    Text(text = "PTOs availed",fontSize = 20.sp, color = cyan)
+                    Text(text = "PTOs availed",fontSize = 20.sp, color = secondaryTextColorDark)
                     Text(text = "SEE DETAILS -->",fontSize = 16.sp, color = Color.White)
                 }
 
@@ -179,7 +179,7 @@ fun HomeScreen(
             .fillMaxWidth()
             .padding(24.dp)
             .height(1.dp)
-            .background(color = cyan)
+            .background(color = secondaryTextColorDark)
         ) {
             // This is just a view (Line)
         }
@@ -211,7 +211,7 @@ fun HomeScreen(
                         Text(text = "Approved", fontSize = 18.sp)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    ExpandableTextLayoutWithReadMoreFeature(text = stringResource(id = R.string.long_text))
+                    ExpandingText(text = AnnotatedString(text =  stringResource(id = R.string.long_text)))
                 }
             }
         }
@@ -230,7 +230,8 @@ fun HomeScreen(
             )
         }
 
-        Box(modifier = Modifier.layoutId("lowerFooterButton")
+        Box(modifier = Modifier
+            .layoutId("lowerFooterButton")
             .padding(bottom = 32.dp)) {
             Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
                 Text(text = "APPLY PTO")
@@ -256,7 +257,7 @@ fun LeaveAnimatedCircularProgressBar(
     animationDelay: Int = 0,
     animationDuration: Int = 1500,
     stokeWidth: Dp = 8.dp,
-    color: Color = cyan,
+    color: Color = secondaryTextColorDark,
     percentage: Float,
     totalValue: Int
 ) {

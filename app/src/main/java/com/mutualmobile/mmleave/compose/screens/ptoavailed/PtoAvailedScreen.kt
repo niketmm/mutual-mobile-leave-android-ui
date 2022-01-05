@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.compose.screens.ptoavailed
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
@@ -39,9 +39,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.R.drawable
-import com.mutualmobile.mmleave.data.model.PtoData
-import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
-import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
+import com.mutualmobile.mmleave.model.PtoData
+import com.mutualmobile.mmleave.ui.theme.name_pto_request
+import com.mutualmobile.mmleave.ui.theme.primary_3_dark
+import com.mutualmobile.mmleave.ui.theme.white_two
 
 const val MINIMIZED_MAX_LINES = 2
 
@@ -115,7 +116,7 @@ fun PtoElement(data: PtoData) {
           onClick = { /*TODO*/ },
           modifier = Modifier.size(30.dp),  //avoid the oval shape
           shape = CircleShape,
-          border = BorderStroke(1.dp, Color.White),
+          border = BorderStroke(1.dp, white_two),
           contentPadding = PaddingValues(0.dp),  //avoid the little icon
           colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
       ) {
@@ -142,7 +143,7 @@ fun PtoElement(data: PtoData) {
         modifier = Modifier
             .align(Alignment.End)
             .padding(bottom = 4.dp),
-        style = TextStyle(color = blueTextColorLight)
+        style = TextStyle(color = name_pto_request)
     )
   }
 }
@@ -175,7 +176,7 @@ fun ExpandingText(
         val showLessString = "Show Less"
         finalText = AnnotatedString(
             text = text.toString(),
-            spanStyle = SpanStyle(color = secondaryTextColorDark)
+            spanStyle = SpanStyle(color = primary_3_dark)
         ).plus(
             AnnotatedString(
                 text = showLessString,
@@ -193,7 +194,7 @@ fun ExpandingText(
 
         finalText = AnnotatedString(
             text = adjustedText,
-            spanStyle = SpanStyle(color = secondaryTextColorDark)
+            spanStyle = SpanStyle(color = primary_3_dark)
         ).plus(
             AnnotatedString(
                 text = showMoreString,

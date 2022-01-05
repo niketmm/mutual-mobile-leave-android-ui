@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.compose.screens.ptorequest
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -34,12 +34,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.R
-import com.mutualmobile.mmleave.data.model.PtoRequest
-import com.mutualmobile.mmleave.ui.theme.alertRed
-import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
-import com.mutualmobile.mmleave.ui.theme.primaryColorLight
-import com.mutualmobile.mmleave.ui.theme.secondaryColorLight
-import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
+import com.mutualmobile.mmleave.compose.screens.ptoavailed.ExpandingText
+import com.mutualmobile.mmleave.model.PtoRequest
+import com.mutualmobile.mmleave.ui.theme.alert
+import com.mutualmobile.mmleave.ui.theme.name_pto_request
+import com.mutualmobile.mmleave.ui.theme.primary_1
+import com.mutualmobile.mmleave.ui.theme.primary_3
+import com.mutualmobile.mmleave.ui.theme.primary_3_dark
+import com.mutualmobile.mmleave.ui.theme.secondary_accent_1
+import com.mutualmobile.mmleave.ui.theme.white_two
 
 @Preview
 @Composable
@@ -97,7 +100,7 @@ fun PtosRequestList(ptosList: List<PtoRequest>) {
             onClick = { /*TODO*/ },
             modifier = Modifier.size(50.dp),  //avoid the oval shape
             shape = CircleShape,
-            border = BorderStroke(1.dp, secondaryColorLight),
+            border = BorderStroke(1.dp, primary_3),
             contentPadding = PaddingValues(0.dp),  //avoid the little icon
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Blue)
         ) {
@@ -154,11 +157,11 @@ fun PtoRequestElement(request: PtoRequest) {
       ) {
         Text(
             text = request.name,
-            style = TextStyle(color = blueTextColorLight)
+            style = TextStyle(color = name_pto_request)
         )
         Text(
             text = "Leaves Left: ${request.leavesLeft}",
-            style = TextStyle(color = purpleTextColorLight)
+            style = TextStyle(color = secondary_accent_1)
         )
       }
 
@@ -168,7 +171,7 @@ fun PtoRequestElement(request: PtoRequest) {
         modifier = Modifier.padding(
             bottom = 4.dp, start = 4.dp, end = 4.dp
         ),
-        style = TextStyle(color = primaryColorLight)
+        style = TextStyle(color = primary_1)
 
     )
     ExpandingText(text = AnnotatedString(text = request.description),
@@ -185,8 +188,8 @@ fun PtoRequestElement(request: PtoRequest) {
       Button(
           onClick = { /*TODO*/ },
           colors = ButtonDefaults.buttonColors(
-              backgroundColor = primaryColorLight,
-              contentColor = Color.White
+              backgroundColor = primary_1,
+              contentColor = white_two
           ),
           modifier = Modifier.padding(end = 16.dp)
       ) {
@@ -202,8 +205,8 @@ fun PtoRequestElement(request: PtoRequest) {
       Button(
           onClick = { /*TODO*/ },
           colors = ButtonDefaults.buttonColors(
-              backgroundColor = Color.White,
-              contentColor = alertRed
+              backgroundColor = white_two,
+              contentColor = alert
           )
       ) {
         Text(
