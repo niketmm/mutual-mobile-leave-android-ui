@@ -8,6 +8,5 @@ interface PtoRequestService {
   suspend fun makePtoRequest(
     ptoProperties: PtoProperties
   )
-
   suspend fun approvePtoRequest(ptoProperties: PtoProperties)
 }
