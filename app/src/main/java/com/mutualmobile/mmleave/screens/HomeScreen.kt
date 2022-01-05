@@ -54,6 +54,8 @@ import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
@@ -124,10 +126,10 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
+            val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
             Column {
                 Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
-                Text(text = "Laksh", fontSize = 24.sp)
+                Text(text = name, fontSize = 24.sp)
             }
 
             OutlineCalendarButton(navController)
