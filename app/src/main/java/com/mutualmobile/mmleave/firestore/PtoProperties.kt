@@ -3,9 +3,9 @@ package com.mutualmobile.mmleave.firestore
 import java.util.Date
 
 data class PtoProperties(
-  var dateFrom: Date,
-  var dateTo: Date,
-  var email: String,
+  var dateFrom: Date? = Date(),
+  var dateTo: Date? = Date(),
+  var email: String? = null,
   var description: String = "",
 )
 

@@ -6,13 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.mutualmobile.mmleave.services.auth.firebase.AuthenticationService
 import com.mutualmobile.mmleave.services.auth.social.GoogleSocialService
 import com.mutualmobile.mmleave.util.LandingPageState
-import com.mutualmobile.mmleave.util.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,9 +18,6 @@ class AuthViewModel @Inject constructor(
   private val authenticationService: AuthenticationService
 ) :
     ViewModel() {
-
-//  private var _loadingState = MutableStateFlow(LoadingState.IDLE)
-//  val loadingState = _loadingState
 
   private val _authFlow = MutableSharedFlow<LandingPageState<String>>()
   val authFlow: SharedFlow<LandingPageState<String>> = _authFlow
@@ -50,4 +43,5 @@ class AuthViewModel @Inject constructor(
       }
     }
   }
+
 }
