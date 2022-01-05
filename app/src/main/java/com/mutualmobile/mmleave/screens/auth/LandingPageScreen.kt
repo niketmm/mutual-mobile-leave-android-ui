@@ -1,6 +1,8 @@
 package com.mutualmobile.mmleave.screens.auth
 
 import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -26,6 +28,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,205 +54,238 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.screens.PtoScreen
+import com.mutualmobile.mmleave.util.LandingPageState
 import kotlinx.coroutines.launch
 
 @Composable
 fun LandingPageScreen(
-  navController: NavHostController,
-  modifier: Modifier = Modifier,
-  text: String = "Continue with Google",
-  loadingText: String = "Signing up...",
-  shape: Shape = MaterialTheme.shapes.large,
-  borderColor: Color = Color.LightGray,
-  backgroundColor: Color = MaterialTheme.colors.primary,
-  progressIndicatorColor: Color = Color.White,
-  onClicked: () -> Unit,
-  viewModel: AuthViewModel = hiltViewModel()
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    text: String = "Continue with Google",
+    loadingText: String = "Signing up...",
+    shape: Shape = MaterialTheme.shapes.large,
+    borderColor: Color = Color.LightGray,
+    backgroundColor: Color = MaterialTheme.colors.primary,
+    progressIndicatorColor: Color = Color.White,
+    onClicked: () -> Unit,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
-  val context = LocalContext.current
-  var clicked by remember { mutableStateOf(false) }
-  var navigateToPtoScreen by remember { mutableStateOf(false) }
-  val scope = rememberCoroutineScope()
+    val TAG = "LandingPage"
 
-  val launcher =
-    rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-      it.data?.let { it1 -> viewModel.handleGoogleSignInResult(it1) }
+    val context = LocalContext.current
+
+    var clicked by remember { mutableStateOf(false) }
+
+    var navigateToPtoScreen by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
+
+    val viewState = viewModel.authFlow.collectAsState(initial = null).value
+
+    when (viewState) {
+        is LandingPageState.Loading -> {
+            Log.d(TAG, "LandingPageScreen: Loading Branch called")
+        }
+        is LandingPageState.Failed -> {
+            Log.d(TAG, "LandingPageScreen: Failed called")
+        }
+        else -> {
+            Log.d(TAG, "LandingPageScreen: Else Branch called")
+        }
     }
 
-  if (navigateToPtoScreen) {
-    val intent = Intent(context, PtoScreen::class.java)
-    context.startActivity(intent)
-  }
-  val constraint = ConstraintSet {
-    val topLayout = createRefFor("top_layout")
-    val midLayout = createRefFor("mid_layout")
-    val endLayout = createRefFor("end_layout")
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+            it.data?.let { it1 -> viewModel.handleGoogleSignInResult(it1) }
+        }
 
-    // Creating a Guideline here for the MidLayout
-    val guidelineFromTopToMid = createGuidelineFromTop(0.4f)
-    val guideLineFromBottomToMid = createGuidelineFromBottom(0.05f)
-
-    constrain(topLayout) {
-      top.linkTo(parent.top)
-      start.linkTo(parent.start)
-      end.linkTo(parent.end)
+    LaunchedEffect(viewState?.isSuccess) {
+        if (viewState?.isSuccess == true) {
+            navController.navigate(Screen.Home.route) {
+                launchSingleTop = true
+                Log.d(TAG, "LandingPageScreen: Success Callback")
+            }
+        }
     }
 
-    constrain(midLayout) {
-      start.linkTo(parent.start)
-      bottom.linkTo(guidelineFromTopToMid)
+    if (navigateToPtoScreen) {
+        val intent = Intent(context, PtoScreen::class.java)
+        context.startActivity(intent)
+    }
+    val constraint = ConstraintSet {
+        val topLayout = createRefFor("top_layout")
+        val midLayout = createRefFor("mid_layout")
+        val endLayout = createRefFor("end_layout")
+
+        // Creating a Guideline here for the MidLayout
+        val guidelineFromTopToMid = createGuidelineFromTop(0.4f)
+        val guideLineFromBottomToMid = createGuidelineFromBottom(0.05f)
+
+        constrain(topLayout) {
+            top.linkTo(parent.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
+
+        constrain(midLayout) {
+            start.linkTo(parent.start)
+            bottom.linkTo(guidelineFromTopToMid)
+        }
+
+        constrain(endLayout) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            bottom.linkTo(guideLineFromBottomToMid)
+        }
+
     }
 
-    constrain(endLayout) {
-      start.linkTo(parent.start)
-      end.linkTo(parent.end)
-      bottom.linkTo(guideLineFromBottomToMid)
-    }
-
-  }
-
-  Box(modifier = Modifier.fillMaxSize()) {
-    Image(
-        painterResource(id = R.drawable.rectangle_gradient_png_large),
-        contentDescription = "rectangle_gradient_image"
-    )
-    ConstraintLayout(constraintSet = constraint, modifier = Modifier.fillMaxSize()) {
-      Row(
-          modifier = Modifier
-              .layoutId("top_layout")
-              .fillMaxWidth()
-              .padding(36.dp),
-          horizontalArrangement = Arrangement.SpaceBetween,
-          verticalAlignment = Alignment.CenterVertically
-      ) {
-        Icon(
-            painterResource(id = R.drawable.mm_logo_white_small),
-            contentDescription = "top_layout_mm_logo_left", modifier = Modifier.size(28.dp),
-            tint = Color.Unspecified
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painterResource(id = R.drawable.rectangle_gradient_png_large),
+            contentDescription = "rectangle_gradient_image"
         )
-        Text(text = "MM PTOs", color = Color.White,
-            modifier = Modifier.clickable {
-              navigateToPtoScreen = true
-            })
-      }
-
-      Column(
-          modifier = Modifier
-              .layoutId("mid_layout")
-              .fillMaxWidth()
-              .padding(start = 36.dp)
-      ) {
-        Text(text = "Hello!", style = MaterialTheme.typography.h2, color = Color.White)
-        Spacer(modifier = Modifier.padding(8.dp))
-        Text(
-            text = "To get started,please login", style = MaterialTheme.typography.subtitle1,
-            color = Color.White
-        )
-        Text(
-            text = "with your MM Gmail ID.", style = MaterialTheme.typography.subtitle1,
-            color = Color.White
-        )
-      }
-
-      Column(
-          modifier = Modifier
-              .layoutId("end_layout")
-              .fillMaxWidth(),
-          verticalArrangement = Arrangement.Center,
-          horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        Surface(
-            modifier = modifier
-                .clickable { clicked = !clicked }
-                .height(48.dp),
-            shape = shape,
-            border = BorderStroke(width = 1.dp, color = borderColor),
-            color = backgroundColor
-        ) {
-          Row(
-              modifier = Modifier
-                  .padding(
-                      start = 12.dp,
-                      end = 16.dp,
-                      top = 12.dp,
-                      bottom = 12.dp
-                  )
-                  .animateContentSize(
-                      animationSpec = tween(
-                          durationMillis = 300,
-                          easing = LinearOutSlowInEasing
-                      )
-                  ),
-              verticalAlignment = Alignment.CenterVertically,
-              horizontalArrangement = Arrangement.Center
-          ) {
-            Icon(
-                painterResource(id = R.drawable.google_icon_color),
-                contentDescription = "Google Button",
-                tint = Color.Unspecified,
+        ConstraintLayout(constraintSet = constraint, modifier = Modifier.fillMaxSize()) {
+            Row(
                 modifier = Modifier
-                    .width(16.dp)
-                    .height(16.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = if (clicked) loadingText else text)
-            if (clicked) {
-              Spacer(modifier = Modifier.width(16.dp))
-              CircularProgressIndicator(
-                  modifier = Modifier
-                      .height(16.dp)
-                      .width(16.dp),
-                  strokeWidth = 2.dp,
-                  color = progressIndicatorColor
-              )
-              onClicked()
+                    .layoutId("top_layout")
+                    .fillMaxWidth()
+                    .padding(36.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.mm_logo_white_small),
+                    contentDescription = "top_layout_mm_logo_left", modifier = Modifier.size(28.dp),
+                    tint = Color.Unspecified
+                )
+                Text(text = "MM PTOs", color = Color.White,
+                    modifier = Modifier.clickable {
+                        navigateToPtoScreen = true
+                    })
             }
+
+            Column(
+                modifier = Modifier
+                    .layoutId("mid_layout")
+                    .fillMaxWidth()
+                    .padding(start = 36.dp)
+            ) {
+                Text(text = "Hello!", style = MaterialTheme.typography.h2, color = Color.White)
+                Spacer(modifier = Modifier.padding(8.dp))
+                Text(
+                    text = "To get started,please login",
+                    style = MaterialTheme.typography.subtitle1,
+                    color = Color.White
+                )
+                Text(
+                    text = "with your MM Gmail ID.", style = MaterialTheme.typography.subtitle1,
+                    color = Color.White
+                )
+            }
+
             val webClient = stringResource(id = R.string.default_web_client_id)
-            scope.launch {
-              if (clicked) {
-                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(webClient)
-                    .requestEmail()
-                    .build()
 
-                val googleSignInClient = GoogleSignIn.getClient(context, gso)
-                launcher.launch(googleSignInClient.signInIntent)
-              }
+            Column(
+                modifier = Modifier
+                    .layoutId("end_layout")
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Surface(
+                    modifier = modifier
+                        .clickable {
+                            clicked = !clicked
+                            scope.launch {
+                                val gso =
+                                    GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                        .requestIdToken(webClient)
+                                        .requestEmail()
+                                        .build()
+
+                                val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                                launcher.launch(googleSignInClient.signInIntent)
+                            }
+                        }
+                        .height(48.dp),
+                    shape = shape,
+                    border = BorderStroke(width = 1.dp, color = borderColor),
+                    color = backgroundColor
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(
+                                start = 12.dp,
+                                end = 16.dp,
+                                top = 12.dp,
+                                bottom = 12.dp
+                            )
+                            .animateContentSize(
+                                animationSpec = tween(
+                                    durationMillis = 300,
+                                    easing = LinearOutSlowInEasing
+                                )
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.google_icon_color),
+                            contentDescription = "Google Button",
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .width(16.dp)
+                                .height(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = if (clicked) loadingText else text)
+                        if (clicked) {
+                            Spacer(modifier = Modifier.width(16.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .height(16.dp)
+                                    .width(16.dp),
+                                strokeWidth = 2.dp,
+                                color = progressIndicatorColor
+                            )
+                            onClicked()
+                        }
+                    }
+                }
+
+                // Todo Why this Spacer is not working with Width??
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "NEED HELP? ")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "CONTACT SUPPORT", Modifier.clickable {
+                            // Todo Add a Web Link here
+                        },
+                        textDecoration = TextDecoration.Underline
+                    )
+                }
             }
-          }
         }
-
-        // Todo Why this Spacer is not working with Width??
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-          Text(text = "NEED HELP? ")
-          Spacer(modifier = Modifier.width(4.dp))
-          Text(
-              text = "CONTACT SUPPORT", Modifier.clickable {
-            // Todo Add a Web Link here
-          },
-              textDecoration = TextDecoration.Underline
-          )
-        }
-      }
     }
-  }
 }
 
 @Composable
 @Preview(showBackground = true)
 fun LandingPagePreview() {
-  LandingPageScreen(
-      navController = rememberNavController(),
-      text = "Sign Up with Google",
-      loadingText = "Creating Account...",
-      onClicked = {}
-  )
+    LandingPageScreen(
+        navController = rememberNavController(),
+        text = "Sign Up with Google",
+        loadingText = "Creating Account...",
+        onClicked = {}
+    )
 }
 
