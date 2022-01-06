@@ -3,20 +3,36 @@ package com.mutualmobile.mmleave.services.database.ptorequest.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.firestore.PtoProperties
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @HiltViewModel
 class PtoRequestViewModel @Inject constructor(private val ptoRequestService: PtoRequestServiceImpl) :
   ViewModel() {
 
+  init {
+      getAdminUserList()
+  }
+
   var ptoRequestState = mutableStateOf(PtoProperties())
     private set
 
+  private var _adminUserList : MutableList<MMUser> = mutableListOf()
+  val adminUserList : List<MMUser> = _adminUserList
+
+  private var _adminFilterList : MutableList<MMUser> = mutableListOf()
+  val adminFilterList : List<MMUser> = _adminFilterList
+
+  // Todo : Make sure User will get updated and get notified that Application has been sent
   fun applyPtoRequest(
     email: String,
     leaveDescriptionText: String
@@ -37,6 +53,23 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
 
   fun updateDateFrom(date: Date) {
     ptoRequestState.value = ptoRequestState.value.copy(dateFrom = date)
+  }
 
+  private fun getAdminUserList(){
+    viewModelScope.launch {
+      ptoRequestService.fetchAdminList().collect {
+        _adminUserList.addAll(it)
+      }
+    }
+  }
+
+  fun getFilteredAdminUserList(query : String?){
+    viewModelScope.launch {
+      query?.let { query ->
+        ptoRequestService.fetchUsersByUsername(query).collect {
+          _adminFilterList.addAll(it)
+        }
+      }
+    }
   }
 }

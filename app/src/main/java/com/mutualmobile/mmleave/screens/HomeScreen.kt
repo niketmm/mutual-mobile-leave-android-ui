@@ -133,7 +133,7 @@ fun HomeScreen(
             }
 
             OutlineCalendarButton(navController)
-            ProfileImageHolder()
+            ProfileImageHolder(navController = navController)
         }
 
         Surface(
@@ -361,6 +361,7 @@ fun ExpandableTextLayoutWithReadMoreFeature(
 @ExperimentalCoilApi
 @Composable
 fun ProfileImageHolder(
+    navController: NavHostController = rememberNavController(),
     imageUrl: String = "https://avatars.githubusercontent.com/u/66577?v=4"
 ) {
     Box(
@@ -395,6 +396,8 @@ fun ProfileImageHolder(
 //        }
 
         // Fetching the Image and populating Image
-        Image(painter = imagePainter, contentDescription = "profile image")
+        Image(painter = imagePainter, contentDescription = "profile image", modifier = Modifier.clickable {
+            navController.navigate(Screen.SearchScreen.route)
+        })
     }
 }

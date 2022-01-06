@@ -27,46 +27,62 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
+import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.firestore.Designation
 import com.mutualmobile.mmleave.model.User
+import com.mutualmobile.mmleave.services.database.ptorequest.viewmodel.PtoRequestViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
-fun SearchScreen() {
+fun SearchScreen(
+    viewModel: PtoRequestViewModel = hiltViewModel()
+) {
     // This contains the Search View and the Lazy Column with the details
-    val textState = remember { mutableStateOf(TextFieldValue("search_text")) }
-    val user = User(
-        "",
-        "",
-        "Anmol",
-        Designation.Admin("Android"),
-        "1",
-        "https://avatars.githubusercontent.com/u/66577?v=4"
-    )
+    val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
+    val adminList = viewModel.adminUserList
+    var filteredList: List<MMUser>
+
+    val searchedText = textState.value.text
     Column(modifier = Modifier.padding(8.dp)) {
-        SearchViewComposable(state = textState)
+        SearchViewComposable(state = textState, viewModel)
         Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn(modifier = Modifier.fillMaxWidth()){
-            items(listOf("Apple","Mango")){
-                ColumnCardViewComposable(firebaseAdminUser = user)
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            filteredList = if (searchedText.isEmpty() && searchedText == "Search Admins by here") {
+                adminList
+            } else {
+                viewModel.adminFilterList
+            }
+
+            items(filteredList) { adminList ->
+                ColumnCardViewComposable(firebaseAdminUser = adminList)
             }
         }
     }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
 fun SearchViewComposable(
-    state: MutableState<TextFieldValue>
+    state: MutableState<TextFieldValue>,
+    viewModel: PtoRequestViewModel
 ) {
     // Creating a Search View with Text Here
     TextField(
         value = state.value,
         onValueChange = { newValue ->
             state.value = newValue
+            viewModel.getFilteredAdminUserList(newValue.text)
         },
         modifier = Modifier.fillMaxWidth(),
         textStyle = TextStyle(
@@ -116,7 +132,7 @@ fun SearchViewComposable(
 
 @ExperimentalCoilApi
 @Composable
-fun ColumnCardViewComposable(firebaseAdminUser: User) {
+fun ColumnCardViewComposable(firebaseAdminUser: MMUser) {
     // This will display data in the card
     // Todo Change the Parameter later
     Card(
@@ -131,24 +147,24 @@ fun ColumnCardViewComposable(firebaseAdminUser: User) {
                 .fillMaxWidth()
                 .padding(all = 8.dp)
         ) {
-            firebaseAdminUser.imageUrl?.let {
-                ProfileImageHolder(it)
-            }
+            ProfileImageHolder(
+                rememberNavController(),
+                firebaseAdminUser.photoUrl
+            )
 
-            firebaseAdminUser.name.let {
-                Text(
-                    text = it,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    color = Color.Black,
-                    fontSize = 16.sp
-                )
-            }
+            Text(
+                text = firebaseAdminUser.displayName,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                color = Color.Black,
+                fontSize = 16.sp
+            )
         }
     }
 }
 
+@ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Preview(showBackground = true)
 @Composable

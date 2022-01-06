@@ -157,7 +157,6 @@ private fun ApplyPtoButton(
 ) {
     Button(
         onClick = {
-            navController.navigate(Screen.SearchScreen.route)
             requestPtoNow(
                 ptoViewModel,
                 FirebaseAuth.getInstance().currentUser?.email!!,
