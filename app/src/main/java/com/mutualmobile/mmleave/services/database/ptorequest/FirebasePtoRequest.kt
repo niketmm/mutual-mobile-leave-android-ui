@@ -5,7 +5,7 @@ import com.google.firebase.firestore.PropertyName
 
 data class FirebasePtoRequest(
   @PropertyName("pto_list")
-  var ptoList: List<Timestamp> = emptyList(),
-  var description: String = "",
-  var email: String = "",
+  var pto_list: List<Timestamp>? = null,
+  var description: String? = "",
+  var email: String? = "",
 )

@@ -6,9 +6,9 @@ import java.util.Date
 
 data class PtoRequest(
   @PropertyName("pto_list")
-  var ptoList: List<LocalDate> = emptyList(),
+  var ptoList: List<LocalDate>? = emptyList(),
   var email: String? = null,
-  var description: String = "",
+  var description: String? = "",
 )
 
 fun Date.withinRange(

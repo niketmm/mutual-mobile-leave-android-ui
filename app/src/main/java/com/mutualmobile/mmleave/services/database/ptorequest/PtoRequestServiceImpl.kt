@@ -20,19 +20,21 @@ class PtoRequestServiceImpl : PtoRequestService {
   override suspend fun makePtoRequest(
     ptoRequest: PtoRequest
   ) {
-    val duplicatePtoList = filterPtoRequests(ptoRequest.ptoList.toFirebaseTimestamp())
-    val size = duplicatePtoList.size
-    Log.d(TAG, "makePtoRequest:found Duplicate Ptos $size")
-    duplicatePtoList.forEach { request ->
-      request.ptoList.forEach {
-        Log.d(TAG, "makePtoRequest: ${it}")
+    val duplicatePtoList = ptoRequest.ptoList?.toFirebaseTimestamp()?.let { filterPtoRequests(it) }
+    var totalDuplicateDates = 0
+    duplicatePtoList?.forEach { request ->
+      request.pto_list?.forEach {
+        totalDuplicateDates++
+        Log.d(TAG, "makePtoRequest: ${it.toDate()}")
       }
     }
-    if (size == 0) {
+    if (totalDuplicateDates == 0) {
       FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
         getAllPtoRequestsCollection(safeEmail)
             .add(getPtoMap(ptoRequest))
       }
+    } else {
+      Log.d(TAG, "makePtoRequest:existing pto request found ")
     }
   }
 
@@ -40,7 +42,7 @@ class PtoRequestServiceImpl : PtoRequestService {
     val pto = HashMap<String, Any?>()
     pto["description"] = ptoRequest.description
     pto["email"] = ptoRequest.email
-    pto["pto_list"] = ptoRequest.ptoList.toFirebaseTimestamp()
+    pto["pto_list"] = ptoRequest.ptoList?.toFirebaseTimestamp()
     return pto
   }
 
@@ -52,8 +54,10 @@ class PtoRequestServiceImpl : PtoRequestService {
           .await()
           .documents
       documents.forEach { document ->
-        document.toObject<FirebasePtoRequest>()?.let { duplicatePtoRequestList.add(it) }
-        Log.d(TAG, "${document.id} => ${document.data}")
+        document.toObject<FirebasePtoRequest>()?.let {
+          duplicatePtoRequestList.add(it)
+          it.pto_list?.size
+        }
       }
     }
     return duplicatePtoRequestList
