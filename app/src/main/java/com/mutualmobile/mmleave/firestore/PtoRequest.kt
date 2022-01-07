@@ -2,12 +2,19 @@ package com.mutualmobile.mmleave.firestore
 
 import java.util.Date
 
-data class PtoProperties(
+data class PtoRequest(
   var dateFrom: Date? = Date(),
   var dateTo: Date? = Date(),
   var email: String? = null,
   var description: String = "",
 )
+
+fun Date.withinRange(
+  startDate: Date,
+  endDate: Date
+): Boolean {
+  return this.after(startDate) && this.before(endDate);
+}
 
 sealed class Designation {
   data class Employee(val department: String) : Designation()

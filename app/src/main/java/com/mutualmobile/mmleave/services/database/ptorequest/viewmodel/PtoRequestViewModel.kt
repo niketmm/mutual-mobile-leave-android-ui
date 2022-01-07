@@ -3,7 +3,7 @@ package com.mutualmobile.mmleave.services.database.ptorequest.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mutualmobile.mmleave.firestore.PtoProperties
+import com.mutualmobile.mmleave.firestore.PtoRequest
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ import javax.inject.Inject
 class PtoRequestViewModel @Inject constructor(private val ptoRequestService: PtoRequestServiceImpl) :
   ViewModel() {
 
-  var ptoRequestState = mutableStateOf(PtoProperties())
+  var ptoRequestState = mutableStateOf(PtoRequest())
     private set
 
   fun applyPtoRequest(

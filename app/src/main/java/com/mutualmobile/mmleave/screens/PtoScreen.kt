@@ -40,7 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.compose.components.TopAppBarLayout
-import com.mutualmobile.mmleave.firestore.PtoProperties
+import com.mutualmobile.mmleave.firestore.PtoRequest
 import com.mutualmobile.mmleave.services.database.ptorequest.viewmodel.PtoRequestViewModel
 import com.mutualmobile.mmleave.ui.theme.MMLeaveTheme
 import com.mutualmobile.mmleave.ui.theme.backgroundLight
@@ -169,7 +169,7 @@ private fun ApplyPtoButton(
 
 @Composable
 private fun DateTo(
-  ptoProp: PtoProperties,
+  ptoProp: PtoRequest,
   context: Context,
   ptoViewModel: PtoRequestViewModel
 ) {
@@ -206,7 +206,7 @@ private fun DateTo(
 
 @Composable
 private fun DateFrom(
-  ptoProp: PtoProperties,
+  ptoProp: PtoRequest,
   context: Context,
   ptoViewModel: PtoRequestViewModel
 ) {

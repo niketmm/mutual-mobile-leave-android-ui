@@ -4,9 +4,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mutualmobile.mmleave.services.auth.firebase.await
 
+const val USERS_LIST_COLLECTION = "users_list"
 class FirebaseUserDataService : UserDataService<FirebaseUser> {
   override suspend fun isUserExistInDB(email: String): Boolean {
-    val data = FirebaseFirestore.getInstance().collection("users_list")
+    val data = FirebaseFirestore.getInstance().collection(USERS_LIST_COLLECTION)
       .document(email).get().await()
     return data.exists()
   }
@@ -18,7 +19,7 @@ class FirebaseUserDataService : UserDataService<FirebaseUser> {
     user["photoUrl"] = currentUser.photoUrl.toString()
     user["userType"] = 1
     FirebaseFirestore.getInstance()
-      .collection("users_list")
+      .collection(USERS_LIST_COLLECTION)
       .document(currentUser.email!!)
       .set(user).await()
   }
@@ -28,7 +29,7 @@ class FirebaseUserDataService : UserDataService<FirebaseUser> {
     user["displayName"] = currentUser.displayName
     user["photoUrl"] = currentUser.photoUrl.toString()
     FirebaseFirestore.getInstance()
-      .collection("users_list")
+      .collection(USERS_LIST_COLLECTION)
       .document(currentUser.email!!)
       .update(user).await()
   }
