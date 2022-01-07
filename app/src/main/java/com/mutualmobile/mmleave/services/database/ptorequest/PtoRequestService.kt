@@ -9,6 +9,6 @@ interface PtoRequestService {
   suspend fun approvePtoRequest(ptoProperties: PtoProperties)
   // Todo: Separate interface and good Naming convention needed
   suspend fun fetchAdminList() : Flow<List<MMUser?>>
-  suspend fun fetchUsersByUsername(username : String) : Flow<List<MMUser>>
+  suspend fun fetchUsersByUsername(username : String) : Flow<List<MMUser?>>
 
 }

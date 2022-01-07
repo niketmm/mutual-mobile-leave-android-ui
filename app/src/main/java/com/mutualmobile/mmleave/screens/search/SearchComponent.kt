@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.screens.search
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,12 +34,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.firestore.Designation
-import com.mutualmobile.mmleave.model.User
+import com.mutualmobile.mmleave.screens.ProfileImageHolder
 import com.mutualmobile.mmleave.services.database.ptorequest.viewmodel.PtoRequestViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.callbackFlow
-import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi
@@ -49,9 +45,9 @@ fun SearchScreen(
     viewModel: PtoRequestViewModel = hiltViewModel()
 ) {
     // This contains the Search View and the Lazy Column with the details
-    val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
-    val adminList = viewModel.adminUserList
-    var filteredList: List<MMUser>
+    val textState = remember { mutableStateOf(TextFieldValue("nik")) }
+    val adminListState = viewModel.adminListState.value
+    var filteredList: List<MMUser?>
 
     val searchedText = textState.value.text
     Column(modifier = Modifier.padding(8.dp)) {
@@ -59,13 +55,13 @@ fun SearchScreen(
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             filteredList = if (searchedText.isEmpty() && searchedText == "Search Admins by here") {
-                adminList
+                adminListState.adminList
             } else {
-                viewModel.adminFilterList
+                adminListState.filteredAdminList
             }
 
-            items(filteredList) { adminList ->
-                ColumnCardViewComposable(firebaseAdminUser = adminList)
+            items(filteredList) { admin ->
+                ColumnCardViewComposable(firebaseAdminUser = admin)
             }
         }
     }
@@ -132,7 +128,7 @@ fun SearchViewComposable(
 
 @ExperimentalCoilApi
 @Composable
-fun ColumnCardViewComposable(firebaseAdminUser: MMUser) {
+fun ColumnCardViewComposable(firebaseAdminUser: MMUser?) {
     // This will display data in the card
     // Todo Change the Parameter later
     Card(
@@ -147,19 +143,23 @@ fun ColumnCardViewComposable(firebaseAdminUser: MMUser) {
                 .fillMaxWidth()
                 .padding(all = 8.dp)
         ) {
-            ProfileImageHolder(
-                rememberNavController(),
-                firebaseAdminUser.photoUrl
-            )
+            firebaseAdminUser?.photoUrl?.let {
+                ProfileImageHolder(
+                    rememberNavController(),
+                    it
+                )
+            }
 
-            Text(
-                text = firebaseAdminUser.displayName,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                color = Color.Black,
-                fontSize = 16.sp
-            )
+            firebaseAdminUser?.let {
+                Text(
+                    text = it.displayName ?: "Empty",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    color = Color.Black,
+                    fontSize = 16.sp
+                )
+            }
         }
     }
 }

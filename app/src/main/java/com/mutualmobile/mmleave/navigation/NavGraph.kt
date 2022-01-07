@@ -11,7 +11,7 @@ import com.mutualmobile.mmleave.screens.HomeScreen
 import com.mutualmobile.mmleave.screens.auth.LandingPageScreen
 import com.mutualmobile.mmleave.screens.PtoAvailedScreen
 import com.mutualmobile.mmleave.screens.PtoRequestScreen
-import com.mutualmobile.mmleave.screens.SearchScreen
+import com.mutualmobile.mmleave.screens.search.SearchScreen
 
 @ExperimentalCoilApi
 @Composable
