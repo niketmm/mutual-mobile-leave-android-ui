@@ -1,6 +1,7 @@
 package com.mutualmobile.mmleave.screens.pto
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -69,7 +70,11 @@ fun ApplyPtoScreen(ptoViewModel: PtoRequestViewModel = hiltViewModel()) {
     val ptoProp = ptoViewModel.ptoRequestState.value
 
     var leaveDescriptionText by remember { mutableStateOf("") }
-
+    if (!ptoViewModel.ptoRequestStatus.value) {
+      Toast.makeText(
+          context, "You have already applied for PTO within this date range", Toast.LENGTH_SHORT
+      ).show()
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()

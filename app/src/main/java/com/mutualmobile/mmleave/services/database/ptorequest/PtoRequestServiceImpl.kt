@@ -19,23 +19,18 @@ class PtoRequestServiceImpl : PtoRequestService {
   val TAG = PtoRequestServiceImpl::class.simpleName
   override suspend fun makePtoRequest(
     ptoRequest: PtoRequest
-  ) {
+  ): Boolean {
     val duplicatePtoList = ptoRequest.ptoList?.toFirebaseTimestamp()?.let { filterPtoRequests(it) }
-    var totalDuplicateDates = 0
-    duplicatePtoList?.forEach { request ->
-      request.pto_list?.forEach {
-        totalDuplicateDates++
-        Log.d(TAG, "makePtoRequest: ${it.toDate()}")
-      }
-    }
-    if (totalDuplicateDates == 0) {
+    if (duplicatePtoList?.isEmpty() == true) {
       FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
         getAllPtoRequestsCollection(safeEmail)
             .add(getPtoMap(ptoRequest))
       }
     } else {
       Log.d(TAG, "makePtoRequest:existing pto request found ")
+      return false
     }
+    return true
   }
 
   private fun getPtoMap(ptoRequest: PtoRequest): HashMap<String, Any?> {

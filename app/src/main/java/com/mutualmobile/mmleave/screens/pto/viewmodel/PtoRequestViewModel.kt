@@ -17,12 +17,14 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
   var ptoRequestState = mutableStateOf<PtoRequest>(PtoRequest())
     private set
 
+  var ptoRequestStatus = mutableStateOf(true)
+
   fun applyPtoRequest(
     email: String,
     leaveDescriptionText: String
   ) {
     viewModelScope.launch {
-      ptoRequestService.makePtoRequest(
+      ptoRequestStatus.value = ptoRequestService.makePtoRequest(
           ptoRequestState.value.copy(
               email = email,
               description = leaveDescriptionText
