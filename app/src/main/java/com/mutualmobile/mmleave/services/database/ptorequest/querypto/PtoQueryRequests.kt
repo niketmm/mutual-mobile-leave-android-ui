@@ -17,7 +17,6 @@ suspend fun PtoRequestServiceImpl.getAllPtoRequests(pto: PtoRequest): List<Fireb
   val documents = firebaseUser?.email?.let {
     userListCollectionRef.document(it)
         .collection(PTO_LIST_COLLECTION)
-        .whereLessThanOrEqualTo("dateFrom", pto.dateFrom!!)
         .get()
         .await()
   }
@@ -32,11 +31,11 @@ fun PtoRequestServiceImpl.filterDuplicatePtos(
 ): List<FirebasePtoRequest> {
   val duplicatePtoFound = mutableListOf<FirebasePtoRequest>()
   existingPtosList.forEach { pto ->
-    if (pto.dateFrom.toDate().withinRange(ptoRequest.dateFrom!!, ptoRequest.dateTo!!) ||
-        pto.dateTo.toDate().withinRange(ptoRequest.dateFrom!!, ptoRequest.dateTo!!)
-    ) {
-      duplicatePtoFound.add(pto)
-    }
+    // if (pto.dateFrom.toDate().withinRange(ptoRequest.dateFrom!!, ptoRequest.dateTo!!) ||
+    //     pto.dateTo.toDate().withinRange(ptoRequest.dateFrom!!, ptoRequest.dateTo!!)
+    // ) {
+    //   duplicatePtoFound.add(pto)
+    // }
   }
   return duplicatePtoFound
 }

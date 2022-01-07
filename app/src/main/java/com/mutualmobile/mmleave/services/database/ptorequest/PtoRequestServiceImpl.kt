@@ -17,15 +17,13 @@ class PtoRequestServiceImpl : PtoRequestService {
     ptoRequest: PtoRequest
   ) {
     val pto = HashMap<String, Any?>()
-    pto["dateFrom"] = ptoRequest.dateFrom
-    pto["dateTo"] = ptoRequest.dateTo
     pto["description"] = ptoRequest.description
     pto["email"] = ptoRequest.email
     var ptosList = listOf<FirebasePtoRequest>()
-    GlobalScope.launch {
-      ptosList = getAllPtoRequests(ptoRequest)
-    }.join()
-    val list =filterDuplicatePtos(ptosList, ptoRequest)
+    // GlobalScope.launch {
+    //   ptosList = getAllPtoRequests(ptoRequest)
+    // }.join()
+    // val list =filterDuplicatePtos(ptosList, ptoRequest)
 
     // FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
     //   FirebaseFirestore.getInstance()

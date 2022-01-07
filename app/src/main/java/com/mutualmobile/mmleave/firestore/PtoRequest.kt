@@ -1,10 +1,10 @@
 package com.mutualmobile.mmleave.firestore
 
+import java.time.LocalDate
 import java.util.Date
 
 data class PtoRequest(
-  var dateFrom: Date? = Date(),
-  var dateTo: Date? = Date(),
+  var ptoList: List<LocalDate> = emptyList(),
   var email: String? = null,
   var description: String = "",
 )
