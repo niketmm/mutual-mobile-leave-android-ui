@@ -45,7 +45,7 @@ fun SearchScreen(
     viewModel: PtoRequestViewModel = hiltViewModel()
 ) {
     // This contains the Search View and the Lazy Column with the details
-    val textState = remember { mutableStateOf(TextFieldValue("nik")) }
+    val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
     val adminListState = viewModel.adminListState.value
     var filteredList: List<MMUser?>
 
@@ -54,7 +54,7 @@ fun SearchScreen(
         SearchViewComposable(state = textState, viewModel)
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            filteredList = if (searchedText.isEmpty() && searchedText == "Search Admins by here") {
+            filteredList = if (searchedText.isEmpty() || searchedText == "Search Admins by here") {
                 adminListState.adminList
             } else {
                 adminListState.filteredAdminList
@@ -73,7 +73,6 @@ fun SearchViewComposable(
     state: MutableState<TextFieldValue>,
     viewModel: PtoRequestViewModel
 ) {
-    // Creating a Search View with Text Here
     TextField(
         value = state.value,
         onValueChange = { newValue ->

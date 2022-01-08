@@ -68,13 +68,13 @@ class PtoRequestServiceImpl : PtoRequestService {
     override suspend fun fetchUsersByUsername(username: String) = callbackFlow {
         val listenerRegistration = FirebaseFirestore.getInstance()
             .collection("users_list")
-            .whereEqualTo("displayName", "Niket Jain")
+            .whereArrayContains("nameAsArray", username)
             .addSnapshotListener { filteredAdmins, error ->
                 filteredAdmins?.let {
                     filteredAdmins.documents.map { doc ->
                         doc.toObject(MMUser::class.java)
                     }.let {
-                        Log.d(TAG, "fetchUsersByUsername: ${it.toString()}")
+                        Log.d(TAG, "fetchUsersByUsername: $it")
                         trySend(it).onFailure {
                         }
                     }
