@@ -21,15 +21,8 @@ import javax.inject.Inject
 class PtoRequestViewModel @Inject constructor(private val ptoRequestService: PtoRequestServiceImpl) :
     ViewModel() {
 
-    init {
-        getAdminUserList()
-    }
-
     var ptoRequestState = mutableStateOf(PtoProperties())
         private set
-
-    private val _adminListState = mutableStateOf(SearchResultState())
-    val adminListState: State<SearchResultState> = _adminListState
 
     // Todo : Make sure User will get updated and get notified that Application has been sent
     fun applyPtoRequest(
@@ -52,27 +45,5 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
 
     fun updateDateFrom(date: Date) {
         ptoRequestState.value = ptoRequestState.value.copy(dateFrom = date)
-    }
-
-    private fun getAdminUserList() {
-        viewModelScope.launch {
-            ptoRequestService.fetchAdminList().collect {
-                _adminListState.value = adminListState.value.copy(
-                    adminList = it
-                )
-            }
-        }
-    }
-
-    fun getFilteredAdminUserList(query: String?) {
-        viewModelScope.launch {
-            query?.let { query ->
-                ptoRequestService.fetchUsersByUsername(query).collect {
-                    _adminListState.value = adminListState.value.copy(
-                        filteredAdminList = it
-                    )
-                }
-            }
-        }
     }
 }

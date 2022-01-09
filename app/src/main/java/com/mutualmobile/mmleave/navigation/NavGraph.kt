@@ -12,7 +12,9 @@ import com.mutualmobile.mmleave.screens.auth.LandingPageScreen
 import com.mutualmobile.mmleave.screens.PtoAvailedScreen
 import com.mutualmobile.mmleave.screens.PtoRequestScreen
 import com.mutualmobile.mmleave.screens.search.SearchScreen
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
 fun SetUpNavGraph(

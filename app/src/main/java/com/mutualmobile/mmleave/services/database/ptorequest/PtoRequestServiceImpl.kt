@@ -48,41 +48,4 @@ class PtoRequestServiceImpl : PtoRequestService {
                 }
         }
     }
-
-    override suspend fun fetchAdminList() = callbackFlow {
-        val listenerRegistration = FirebaseFirestore
-            .getInstance()
-            .collection("users_list")
-            .whereEqualTo("userType", 1).addSnapshotListener { admins, error ->
-                admins?.documents?.map { doc -> doc.toObject(MMUser::class.java) }?.let {
-                    Log.d(TAG, "fetchAdminList: ${it.toString()}")
-                    trySend(it).onFailure {
-                    }
-                }
-            }
-        awaitClose {
-            listenerRegistration.remove()
-        }
-    }
-
-    override suspend fun fetchUsersByUsername(username: String) = callbackFlow {
-        val listenerRegistration = FirebaseFirestore.getInstance()
-            .collection("users_list")
-            .whereArrayContains("nameAsArray", username)
-            .addSnapshotListener { filteredAdmins, error ->
-                filteredAdmins?.let {
-                    filteredAdmins.documents.map { doc ->
-                        doc.toObject(MMUser::class.java)
-                    }.let {
-                        Log.d(TAG, "fetchUsersByUsername: $it")
-                        trySend(it).onFailure {
-                        }
-                    }
-                }
-            }
-
-        awaitClose {
-            listenerRegistration.remove()
-        }
-    }
 }

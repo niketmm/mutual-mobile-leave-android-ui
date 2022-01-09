@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.mutualmobile.mmleave.services.auth.firebase.AuthenticationService
 import com.mutualmobile.mmleave.services.auth.firebase.FirebaseAuthenticationService
 import com.mutualmobile.mmleave.services.auth.social.GoogleSocialService
-import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestService
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import com.mutualmobile.mmleave.services.database.user.FirebaseUserDataService
 import com.mutualmobile.mmleave.services.database.user.UserDataService
@@ -13,6 +12,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @InstallIn(ViewModelComponent::class)
 @Module
@@ -46,6 +46,7 @@ object UserDataModule {
   }
 }
 
+@ExperimentalCoroutinesApi
 @InstallIn(ViewModelComponent::class)
 @Module
 object PtoModule {

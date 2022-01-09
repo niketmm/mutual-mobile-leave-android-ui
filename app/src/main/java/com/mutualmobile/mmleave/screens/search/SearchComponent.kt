@@ -36,13 +36,14 @@ import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.screens.ProfileImageHolder
 import com.mutualmobile.mmleave.services.database.ptorequest.viewmodel.PtoRequestViewModel
+import com.mutualmobile.mmleave.services.database.search_user.SearchUserViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
 fun SearchScreen(
-    viewModel: PtoRequestViewModel = hiltViewModel()
+    viewModel: SearchUserViewModel = hiltViewModel()
 ) {
     // This contains the Search View and the Lazy Column with the details
     val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
@@ -57,7 +58,7 @@ fun SearchScreen(
             filteredList = if (searchedText.isEmpty() || searchedText == "Search Admins by here") {
                 adminListState.adminList
             } else {
-                adminListState.filteredAdminList
+                adminListState.filteredList
             }
 
             items(filteredList) { admin ->
@@ -71,7 +72,7 @@ fun SearchScreen(
 @Composable
 fun SearchViewComposable(
     state: MutableState<TextFieldValue>,
-    viewModel: PtoRequestViewModel
+    viewModel: SearchUserViewModel
 ) {
     TextField(
         value = state.value,
