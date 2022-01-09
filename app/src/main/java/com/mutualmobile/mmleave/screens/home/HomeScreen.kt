@@ -1,5 +1,6 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.screens.home
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -49,340 +50,377 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.R.string
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
+import com.mutualmobile.mmleave.screens.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.boguszpawlowski.composecalendar.SelectableCalendar
+import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
+import io.github.boguszpawlowski.composecalendar.selection.SelectionMode.Multiple
+import java.time.LocalDate
 
 @ExperimentalCoilApi
 @Composable
 fun HomeScreen(
-    navController: NavHostController
+  navController: NavHostController,
+  homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
+  homeScreenViewModel.getAllPtosList()
+  homeScreenViewModel.ptoListRequestState.value.forEach {
+    Log.d("HomeScreenViewModel", "HomeScreen: " + it.toString())
+  }
+  val constraints = ConstraintSet {
+    val topProfileAndGreetingLayout = createRefFor("topProfileAndGreetingLayout")
+    val upperMidTotalLeaveLayout = createRefFor("upperMidTotalLeaveLayout")
+    val middleLine = createRefFor("middleLine")
+    val lowerMidAppliedLeaveLayout = createRefFor("lowerMidAppliedLeaveLayout")
+    val lowerFooterLayout = createRefFor("lowerFooterLayout")
+    val lowerFooterButton = createRefFor("lowerFooterButton")
 
-    val constraints = ConstraintSet {
-        val topProfileAndGreetingLayout = createRefFor("topProfileAndGreetingLayout")
-        val upperMidTotalLeaveLayout = createRefFor("upperMidTotalLeaveLayout")
-        val middleLine = createRefFor("middleLine")
-        val lowerMidAppliedLeaveLayout = createRefFor("lowerMidAppliedLeaveLayout")
-        val lowerFooterLayout = createRefFor("lowerFooterLayout")
-        val lowerFooterButton = createRefFor("lowerFooterButton")
+    // Todo : Cross Check those guidelines using the Constraint ToolKit.
+    val midGuideline = createGuidelineFromTop(0.4f)
+    val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
 
-        // Todo : Cross Check those guidelines using the Constraint ToolKit.
-        val midGuideline = createGuidelineFromTop(0.4f)
-        val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
-
-        constrain(topProfileAndGreetingLayout) {
-            top.linkTo(parent.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        }
-
-        constrain(upperMidTotalLeaveLayout) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            bottom.linkTo(midGuideline)
-        }
-
-        constrain(middleLine){
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            top.linkTo(midGuideline)
-        }
-
-        constrain(lowerMidAppliedLeaveLayout) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            top.linkTo(middleLine.bottom)
-        }
-
-        constrain(lowerFooterLayout) {
-            start.linkTo(parent.start)
-            bottom.linkTo(parent.bottom)
-        }
-
-        constrain(lowerFooterButton){
-            start.linkTo(verticalMidGuideline)
-            bottom.linkTo(parent.bottom)
-        }
-
+    constrain(topProfileAndGreetingLayout) {
+      top.linkTo(parent.top)
+      start.linkTo(parent.start)
+      end.linkTo(parent.end)
     }
 
-    ConstraintLayout(constraintSet = constraints, modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.width(24.dp))
-        Row(
-            modifier = Modifier
-                .layoutId("topProfileAndGreetingLayout")
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    constrain(upperMidTotalLeaveLayout) {
+      start.linkTo(parent.start)
+      end.linkTo(parent.end)
+      bottom.linkTo(midGuideline)
+    }
+
+    constrain(middleLine) {
+      start.linkTo(parent.start)
+      end.linkTo(parent.end)
+      top.linkTo(midGuideline)
+    }
+
+    constrain(lowerMidAppliedLeaveLayout) {
+      start.linkTo(parent.start)
+      end.linkTo(parent.end)
+      top.linkTo(middleLine.bottom)
+    }
+
+    constrain(lowerFooterLayout) {
+      start.linkTo(parent.start)
+      bottom.linkTo(parent.bottom)
+    }
+
+    constrain(lowerFooterButton) {
+      start.linkTo(verticalMidGuideline)
+      bottom.linkTo(parent.bottom)
+    }
+
+  }
+
+  ConstraintLayout(constraintSet = constraints, modifier = Modifier.fillMaxSize()) {
+    Spacer(modifier = Modifier.width(24.dp))
+    Row(
+        modifier = Modifier
+            .layoutId("topProfileAndGreetingLayout")
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+      Column {
+        Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
+        Text(text = "Laksh", fontSize = 24.sp)
+      }
+
+      OutlineCalendarButton(navController)
+      ProfileImageHolder()
+    }
+
+    Surface(
+        modifier = Modifier
+            .layoutId("upperMidTotalLeaveLayout")
+            .padding(24.dp)
+            .height(158.dp)
+            .clickable { navController.navigate(Screen.Splash.route) },
+        shape = MaterialTheme.shapes.large,
+        color = primaryColorLight,
+
         ) {
-
-            Column {
-                Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
-                Text(text = "Laksh", fontSize = 24.sp)
-            }
-
-            OutlineCalendarButton(navController)
-            ProfileImageHolder()
+      Column() {
+        CalendarViewHomeScreen(
+            modifier = Modifier.fillMaxWidth(), homeScreenViewModel = homeScreenViewModel
+        )
+      }
+      Row(
+          modifier = Modifier
+              .fillMaxSize(),
+          horizontalArrangement = Arrangement.SpaceEvenly,
+          verticalAlignment = Alignment.CenterVertically
+      ) {
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .padding(start = 24.dp)
+        ) {
+          Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
+          Text(text = "PTOs availed", fontSize = 20.sp, color = secondaryTextColorDark)
+          Text(text = "SEE DETAILS -->", fontSize = 16.sp, color = Color.White)
         }
 
-        Surface(
-            modifier = Modifier
-                .layoutId("upperMidTotalLeaveLayout")
-                .padding(24.dp)
-                .height(158.dp)
-                .clickable { navController.navigate(Screen.Splash.route) },
-            shape = MaterialTheme.shapes.large,
-            color = primaryColorLight,
-
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier
-                        .padding(start = 24.dp)
-                ) {
-                    Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
-                    Text(text = "PTOs availed",fontSize = 20.sp, color = secondaryTextColorDark)
-                    Text(text = "SEE DETAILS -->",fontSize = 16.sp, color = Color.White)
-                }
-
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LeaveAnimatedCircularProgressBar(
-                        percentage = 0.77f,
-                        totalValue = 100
-                    )
-                }
-            }
+          LeaveAnimatedCircularProgressBar(
+              percentage = 0.77f,
+              totalValue = 100
+          )
         }
+      }
+    }
 
-        // Showing a line
-        Box(modifier = Modifier
+    // Showing a line
+    Box(
+        modifier = Modifier
             .layoutId("middleLine")
             .fillMaxWidth()
             .padding(24.dp)
             .height(1.dp)
             .background(color = secondaryTextColorDark)
-        ) {
-            // This is just a view (Line)
-        }
-
-        Column(
-            modifier = Modifier
-                .layoutId("lowerMidAppliedLeaveLayout")
-                .padding(start = 24.dp, end = 24.dp)
-                .fillMaxWidth()
-        ) {
-            Text(text = "Applied PTOs", modifier = Modifier.padding(bottom = 16.dp))
-            Surface(
-                modifier = Modifier
-                    .clickable { navController.navigate(Screen.PtoRequests.route) }
-                    .fillMaxWidth()
-                    .height(120.dp),
-                shape = MaterialTheme.shapes.large,
-                color = Color.White
-            ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp, end = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(text = "Feb 20, 2021 - Feb 25, 2021 ", fontSize = 14.sp)
-                        Text(text = "Approved", fontSize = 18.sp)
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ExpandingText(text = AnnotatedString(text =  stringResource(id = R.string.long_text)))
-                }
-            }
-        }
-
-        Box(
-            modifier = Modifier
-                .layoutId("lowerFooterLayout")
-                .fillMaxWidth()
-        ) {
-            Image(
-                painterResource(id = R.drawable.home_page_illus_mm_leave),
-                contentDescription = "two_people_illustration",
-                modifier = Modifier
-                    .height(200.dp)
-                    .width(270.dp),
-            )
-        }
-
-        Box(modifier = Modifier
-            .layoutId("lowerFooterButton")
-            .padding(bottom = 32.dp)) {
-            Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
-                Text(text = "APPLY PTO")
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "forward arrow for the button"
-                )
-            }
-        }
+    ) {
+      // This is just a view (Line)
     }
+
+    Column(
+        modifier = Modifier
+            .layoutId("lowerMidAppliedLeaveLayout")
+            .padding(start = 24.dp, end = 24.dp)
+            .fillMaxWidth()
+    ) {
+      Text(text = "Applied PTOs", modifier = Modifier.padding(bottom = 16.dp))
+      Surface(
+          modifier = Modifier
+              .clickable { navController.navigate(Screen.PtoRequests.route) }
+              .fillMaxWidth()
+              .height(120.dp),
+          shape = MaterialTheme.shapes.large,
+          color = Color.White
+      ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+          Row(
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(start = 4.dp, end = 4.dp),
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Text(text = "Feb 20, 2021 - Feb 25, 2021 ", fontSize = 14.sp)
+            Text(text = "Approved", fontSize = 18.sp)
+          }
+          Spacer(modifier = Modifier.height(16.dp))
+          ExpandingText(text = AnnotatedString(text = stringResource(id = string.long_text)))
+        }
+      }
+    }
+
+    Box(
+        modifier = Modifier
+            .layoutId("lowerFooterLayout")
+            .fillMaxWidth()
+    ) {
+      Image(
+          painterResource(id = R.drawable.home_page_illus_mm_leave),
+          contentDescription = "two_people_illustration",
+          modifier = Modifier
+              .height(200.dp)
+              .width(270.dp),
+      )
+    }
+
+    Box(
+        modifier = Modifier
+            .layoutId("lowerFooterButton")
+            .padding(bottom = 32.dp)
+    ) {
+      Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
+        Text(text = "APPLY PTO")
+        Icon(
+            imageVector = Icons.Default.ArrowForward,
+            contentDescription = "forward arrow for the button"
+        )
+      }
+    }
+  }
 }
 
+@ExperimentalCoilApi
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
+  HomeScreen(navController = rememberNavController())
 }
 
 @Composable
 fun LeaveAnimatedCircularProgressBar(
-    fontSize: TextUnit = 25.sp,
-    radius: Dp = 50.dp,
-    animationDelay: Int = 0,
-    animationDuration: Int = 1500,
-    stokeWidth: Dp = 8.dp,
-    color: Color = secondaryTextColorDark,
-    percentage: Float,
-    totalValue: Int
+  fontSize: TextUnit = 25.sp,
+  radius: Dp = 50.dp,
+  animationDelay: Int = 0,
+  animationDuration: Int = 1500,
+  stokeWidth: Dp = 8.dp,
+  color: Color = secondaryTextColorDark,
+  percentage: Float,
+  totalValue: Int
 ) {
 
-    var animationPlayed by remember {
-        mutableStateOf(false)
-    }
+  var animationPlayed by remember {
+    mutableStateOf(false)
+  }
 
-    val currentPercentage = animateFloatAsState(
-        targetValue = if (animationPlayed) percentage else 0F,
-        animationSpec = tween(
-            durationMillis = animationDuration,
-            delayMillis = animationDelay
-        )
+  val currentPercentage = animateFloatAsState(
+      targetValue = if (animationPlayed) percentage else 0F,
+      animationSpec = tween(
+          durationMillis = animationDuration,
+          delayMillis = animationDelay
+      )
+  )
+
+  LaunchedEffect(key1 = true) {
+    animationPlayed = true
+  }
+
+  // Box Which holds the Animation and TV
+  Box(contentAlignment = Alignment.Center, modifier = Modifier.size(radius * 2)) {
+    Canvas(modifier = Modifier.size(radius * 2), onDraw = {
+      // Method Provided in the DrawScope by Canvas
+      drawArc(
+          color = color,
+          startAngle = 30f,
+          360 * currentPercentage.value,
+          false,
+          style = Stroke(stokeWidth.toPx(), cap = StrokeCap.Round)
+      )
+    })
+    Text(
+        text = (currentPercentage.value * totalValue).toInt().toString(),
+        color = color,
+        fontSize = fontSize,
+        fontWeight = FontWeight.Bold
     )
-
-    LaunchedEffect(key1 = true) {
-        animationPlayed = true
-    }
-
-    // Box Which holds the Animation and TV
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(radius * 2)) {
-        Canvas(modifier = Modifier.size(radius * 2), onDraw = {
-            // Method Provided in the DrawScope by Canvas
-            drawArc(
-                color = color,
-                startAngle = 30f,
-                360 * currentPercentage.value,
-                false,
-                style = Stroke(stokeWidth.toPx(), cap = StrokeCap.Round)
-            )
-        })
-        Text(
-            text = (currentPercentage.value * totalValue).toInt().toString(),
-            color = color,
-            fontSize = fontSize,
-            fontWeight = FontWeight.Bold
-        )
-    }
+  }
 }
 
 @Composable
 fun ExpandableTextLayoutWithReadMoreFeature(
-    text : String
+  text: String
 ) {
-    val MINIMUM_LINE_SIZE = 2
-    // [TextLayoutResult] provides every details we need for the Expandable feature
-    var textLayoutResultState by remember { mutableStateOf<TextLayoutResult?>(null) }
-    var finalText by remember { mutableStateOf(text) }
+  val MINIMUM_LINE_SIZE = 2
+  // [TextLayoutResult] provides every details we need for the Expandable feature
+  var textLayoutResultState by remember { mutableStateOf<TextLayoutResult?>(null) }
+  var finalText by remember { mutableStateOf(text) }
 
-    // Click Events
-    var isClickable by remember{ mutableStateOf(false) }
-    var isExpandable by remember{ mutableStateOf(false) }
+  // Click Events
+  var isClickable by remember { mutableStateOf(false) }
+  var isExpandable by remember { mutableStateOf(false) }
 
-    // Whenever the Value of the state will be changed the Compose will be recomposed
-    LaunchedEffect(textLayoutResultState){
-        if (textLayoutResultState == null){
-            return@LaunchedEffect
-        }
-
-        when{
-            isExpandable -> {
-                finalText = "$text Show Less"
-            }
-
-            !isExpandable && textLayoutResultState!!.hasVisualOverflow -> {
-                val lastCharIndex = textLayoutResultState!!.getLineEnd(MINIMUM_LINE_SIZE - 1)
-                val showMoreString = "... Read More"
-                val adjustmentText = text
-                    .substring(startIndex = 0, endIndex = lastCharIndex)
-                    .dropLast(showMoreString.length)
-                    .dropLastWhile {
-                        it.equals(" ") || it.equals(".")
-                    }
-
-                finalText = "$adjustmentText $showMoreString"
-
-                isClickable = true
-            }
-        }
+  // Whenever the Value of the state will be changed the Compose will be recomposed
+  LaunchedEffect(textLayoutResultState) {
+    if (textLayoutResultState == null) {
+      return@LaunchedEffect
     }
 
-    Text(
-        text = finalText,
-        maxLines = if (isExpandable) Int.MAX_VALUE else MINIMUM_LINE_SIZE,
-        onTextLayout = {
-            textLayoutResultState = it
-        },
-        modifier = Modifier
-            .clickable(enabled = isClickable) {
-                isExpandable = !isExpandable
-            }
-            .animateContentSize()
+    when {
+      isExpandable -> {
+        finalText = "$text Show Less"
+      }
 
-            // Todo add a animation here to make it look smooth
-    )
+      !isExpandable && textLayoutResultState!!.hasVisualOverflow -> {
+        val lastCharIndex = textLayoutResultState!!.getLineEnd(MINIMUM_LINE_SIZE - 1)
+        val showMoreString = "... Read More"
+        val adjustmentText = text
+            .substring(startIndex = 0, endIndex = lastCharIndex)
+            .dropLast(showMoreString.length)
+            .dropLastWhile {
+              it.equals(" ") || it.equals(".")
+            }
+
+        finalText = "$adjustmentText $showMoreString"
+
+        isClickable = true
+      }
+    }
+  }
+
+  Text(
+      text = finalText,
+      maxLines = if (isExpandable) Int.MAX_VALUE else MINIMUM_LINE_SIZE,
+      onTextLayout = {
+        textLayoutResultState = it
+      },
+      modifier = Modifier
+          .clickable(enabled = isClickable) {
+            isExpandable = !isExpandable
+          }
+          .animateContentSize()
+
+      // Todo add a animation here to make it look smooth
+  )
+}
+
+@Composable
+fun CalendarViewHomeScreen(
+  modifier: Modifier,
+  homeScreenViewModel: HomeScreenViewModel
+) {
+  SelectableCalendar(
+      calendarState = rememberSelectableCalendarState(
+          initialSelection = listOf(LocalDate.now()),
+          initialSelectionMode = Multiple,
+          onSelectionChanged = { selectedDates ->
+            Log.d("CalenderView", "CalendarView: " + selectedDates.size)
+          }
+      )
+  )
 }
 
 @ExperimentalCoilApi
 @Composable
 fun ProfileImageHolder(
-    imageUrl: String = "https://avatars.githubusercontent.com/u/66577?v=4"
+  imageUrl: String = "https://avatars.githubusercontent.com/u/66577?v=4"
 ) {
-    Box(
-        modifier = Modifier
-            .width(40.dp)
-            .height(40.dp),
-        contentAlignment = Alignment.Center
-    ) {
+  Box(
+      modifier = Modifier
+          .width(40.dp)
+          .height(40.dp),
+      contentAlignment = Alignment.Center
+  ) {
 
-        val imagePainter = rememberImagePainter(
-            data = imageUrl,
-            builder = {
-                placeholder(R.drawable.mm_splash_logo)
-                crossfade(1000)
-                transformations(
-                    CircleCropTransformation()
-                )
-            }
-        )
-        // This is to control the State of the Async call of the Coil Image request
-        val imagePainterState = imagePainter.state
+    val imagePainter = rememberImagePainter(
+        data = imageUrl,
+        builder = {
+          placeholder(R.drawable.mm_splash_logo)
+          crossfade(1000)
+          transformations(
+              CircleCropTransformation()
+          )
+        }
+    )
+    // This is to control the State of the Async call of the Coil Image request
+    val imagePainterState = imagePainter.state
 
-        // Calling the sealed class from the Coil Lib
-        // This is Crashing the app for some reason
+    // Calling the sealed class from the Coil Lib
+    // This is Crashing the app for some reason
 //        when(imagePainterState){
 //            is ImagePainter.State.Loading -> {
 //
@@ -392,7 +430,7 @@ fun ProfileImageHolder(
 //            ImagePainter.State.Empty -> TODO()
 //        }
 
-        // Fetching the Image and populating Image
-        Image(painter = imagePainter, contentDescription = "profile image")
-    }
+    // Fetching the Image and populating Image
+    Image(painter = imagePainter, contentDescription = "profile image")
+  }
 }
