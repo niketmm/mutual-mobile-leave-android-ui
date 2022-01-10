@@ -8,4 +8,5 @@ data class User(
   val name: String,
   val designation: Designation,
   val userType: String,
+  val imageUrl : String?
 )

@@ -2,6 +2,7 @@ package com.mutualmobile.mmleave.screens.auth
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -27,6 +28,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,8 +55,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.screens.pto.PtoScreen
-import com.mutualmobile.mmleave.util.LoadingState
+import com.mutualmobile.mmleave.screens.PtoScreen
+import com.mutualmobile.mmleave.util.LandingPageState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -70,21 +72,48 @@ fun LandingPageScreen(
     onClicked: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+    val TAG = "LandingPage"
+
     val context = LocalContext.current
+
     var clicked by remember { mutableStateOf(false) }
+
     var navigateToPtoScreen by remember { mutableStateOf(false) }
+
     val scope = rememberCoroutineScope()
+
+    val viewState = viewModel.authFlow.collectAsState(initial = null).value
+
+    when (viewState) {
+        is LandingPageState.Loading -> {
+            Log.d(TAG, "LandingPageScreen: Loading Branch called")
+        }
+        is LandingPageState.Failed -> {
+            Log.d(TAG, "LandingPageScreen: Failed called")
+        }
+        else -> {
+            Log.d(TAG, "LandingPageScreen: Else Branch called")
+        }
+    }
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             it.data?.let { it1 -> viewModel.handleGoogleSignInResult(it1) }
         }
 
+    LaunchedEffect(viewState?.isSuccess) {
+        if (viewState?.isSuccess == true) {
+            navController.navigate(Screen.Home.route) {
+                launchSingleTop = true
+                Log.d(TAG, "LandingPageScreen: Success Callback")
+            }
+        }
+    }
+
     if (navigateToPtoScreen) {
         val intent = Intent(context, PtoScreen::class.java)
         context.startActivity(intent)
     }
-
     val constraint = ConstraintSet {
         val topLayout = createRefFor("top_layout")
         val midLayout = createRefFor("mid_layout")
@@ -157,6 +186,8 @@ fun LandingPageScreen(
                 )
             }
 
+            val webClient = stringResource(id = R.string.default_web_client_id)
+
             Column(
                 modifier = Modifier
                     .layoutId("end_layout")
@@ -166,7 +197,21 @@ fun LandingPageScreen(
             ) {
                 Surface(
                     modifier = modifier
-                        .clickable { clicked = !clicked }
+                        .clickable {
+                            clicked = !clicked
+                            if (clicked){
+                                scope.launch {
+                                    val gso =
+                                        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                            .requestIdToken(webClient)
+                                            .requestEmail()
+                                            .build()
+
+                                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                                    launcher.launch(googleSignInClient.signInIntent)
+                                }
+                            }
+                        }
                         .height(48.dp),
                     shape = shape,
                     border = BorderStroke(width = 1.dp, color = borderColor),
@@ -209,19 +254,6 @@ fun LandingPageScreen(
                                 color = progressIndicatorColor
                             )
                             onClicked()
-                        }
-                        val webClient = stringResource(id = R.string.default_web_client_id)
-                        scope.launch {
-                            if (clicked) {
-                                val gso =
-                                    GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                        .requestIdToken(webClient)
-                                        .requestEmail()
-                                        .build()
-
-                                val googleSignInClient = GoogleSignIn.getClient(context, gso)
-                                launcher.launch(googleSignInClient.signInIntent)
-                            }
                         }
                     }
                 }

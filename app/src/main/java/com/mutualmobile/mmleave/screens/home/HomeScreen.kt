@@ -58,6 +58,8 @@ import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.R.string
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
@@ -138,14 +140,14 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
+            val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
             Column {
                 Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
-                Text(text = "Laksh", fontSize = 24.sp)
+                Text(text = name, fontSize = 24.sp)
             }
 
             OutlineCalendarButton(navController)
-            ProfileImageHolder()
+            ProfileImageHolder(navController = navController)
         }
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -167,6 +169,7 @@ fun HomeScreen(
                 .clickable { navController.navigate(Screen.Splash.route) },
             shape = MaterialTheme.shapes.large,
             color = primaryColorLight,
+
         ) {
             Row(
                 modifier = Modifier
@@ -181,8 +184,8 @@ fun HomeScreen(
                         .padding(start = 24.dp)
                 ) {
                     Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
-                    Text(text = "PTOs availed", fontSize = 20.sp, color = secondaryTextColorDark)
-                    Text(text = "SEE DETAILS -->", fontSize = 16.sp, color = Color.White)
+                    Text(text = "PTOs availed",fontSize = 20.sp, color = secondaryTextColorDark)
+                    Text(text = "SEE DETAILS -->",fontSize = 16.sp, color = Color.White)
                 }
 
                 Box(
@@ -236,7 +239,7 @@ fun HomeScreen(
                         Text(text = "Approved", fontSize = 18.sp)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    ExpandingText(text = AnnotatedString(text = stringResource(id = string.long_text)))
+                    ExpandingText(text = AnnotatedString(text =  stringResource(id = R.string.long_text)))
                 }
             }
         }
@@ -387,6 +390,7 @@ fun ExpandableTextLayoutWithReadMoreFeature(
 @ExperimentalCoilApi
 @Composable
 fun ProfileImageHolder(
+    navController: NavHostController = rememberNavController(),
     imageUrl: String = "https://avatars.githubusercontent.com/u/66577?v=4"
 ) {
     Box(
@@ -421,6 +425,8 @@ fun ProfileImageHolder(
 //        }
 
         // Fetching the Image and populating Image
-        Image(painter = imagePainter, contentDescription = "profile image")
+        Image(painter = imagePainter, contentDescription = "profile image", modifier = Modifier.clickable {
+            navController.navigate(Screen.SearchScreen.route)
+        })
     }
 }

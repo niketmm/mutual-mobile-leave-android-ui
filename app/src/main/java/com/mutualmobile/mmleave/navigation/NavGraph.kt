@@ -5,12 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import coil.annotation.ExperimentalCoilApi
-import com.mutualmobile.mmleave.screens.home.HomeScreen
+import com.mutualmobile.mmleave.screens.splash.AnimatedSplashScreen
+import com.mutualmobile.mmleave.screens.ApplyPtoScreen
+import com.mutualmobile.mmleave.screens.HomeScreen
+import com.mutualmobile.mmleave.screens.auth.LandingPageScreen
 import com.mutualmobile.mmleave.screens.PtoAvailedScreen
 import com.mutualmobile.mmleave.screens.PtoRequestScreen
-import com.mutualmobile.mmleave.screens.auth.LandingPageScreen
-import com.mutualmobile.mmleave.screens.pto.ApplyPtoScreen
-import com.mutualmobile.mmleave.screens.splash.AnimatedSplashScreen
+import com.mutualmobile.mmleave.screens.search.SearchScreen
 
 @ExperimentalCoilApi
 @Composable
@@ -44,11 +45,11 @@ fun SetUpNavGraph(
       HomeScreen(navController)
     }
 
-    composable(
-        route = Screen.ApplyPto.route
-    ) {
-      ApplyPtoScreen()
-    }
+        composable(
+            route = Screen.ApplyPto.route
+        ) {
+            ApplyPtoScreen(navController = navController)
+        }
 
     composable(
         route = Screen.PtoRequests.route
@@ -56,10 +57,16 @@ fun SetUpNavGraph(
       PtoRequestScreen()
     }
 
-    composable(
-        route = Screen.PtoAvailed.route
-    ) {
-      PtoAvailedScreen()
+        composable(
+            route = Screen.PtoAvailed.route
+        ) {
+            PtoAvailedScreen()
+        }
+
+        composable(
+            Screen.SearchScreen.route
+        ){
+            SearchScreen()
+        }
     }
-  }
 }
