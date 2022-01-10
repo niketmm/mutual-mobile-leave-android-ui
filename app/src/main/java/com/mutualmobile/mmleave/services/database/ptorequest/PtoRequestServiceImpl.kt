@@ -58,6 +58,23 @@ class PtoRequestServiceImpl : PtoRequestService {
     return duplicatePtoRequestList
   }
 
+  suspend fun getAllPtoRequestsList(): List<FirebasePtoRequest> {
+    val allPtosList = mutableListOf<FirebasePtoRequest>()
+    FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
+      val userPtoListCollectionRef = getAllPtoRequestsCollection(safeEmail)
+      val documents = userPtoListCollectionRef.get()
+          .await()
+          .documents
+      documents.forEach { document ->
+        document.toObject<FirebasePtoRequest>()?.let {
+          allPtosList.add(it)
+          it.pto_list?.size
+        }
+      }
+    }
+    return allPtosList
+  }
+
   private fun getAllPtoRequestsCollection(safeEmail: String): CollectionReference {
     return FirebaseFirestore.getInstance()
         .collection(USERS_LIST_COLLECTION)

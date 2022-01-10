@@ -1,5 +1,6 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.screens.home
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -12,12 +13,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -49,14 +52,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.R.string
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
+import com.mutualmobile.mmleave.screens.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 
@@ -68,6 +74,7 @@ fun HomeScreen(
 
     val constraints = ConstraintSet {
         val topProfileAndGreetingLayout = createRefFor("topProfileAndGreetingLayout")
+        val topCalendarViewLayout = createRefFor("topCalendarViewLayout")
         val upperMidTotalLeaveLayout = createRefFor("upperMidTotalLeaveLayout")
         val middleLine = createRefFor("middleLine")
         val lowerMidAppliedLeaveLayout = createRefFor("lowerMidAppliedLeaveLayout")
@@ -75,7 +82,7 @@ fun HomeScreen(
         val lowerFooterButton = createRefFor("lowerFooterButton")
 
         // Todo : Cross Check those guidelines using the Constraint ToolKit.
-        val midGuideline = createGuidelineFromTop(0.4f)
+        val midGuideline = createGuidelineFromTop(0.7f)
         val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
 
         constrain(topProfileAndGreetingLayout) {
@@ -84,13 +91,20 @@ fun HomeScreen(
             end.linkTo(parent.end)
         }
 
+        constrain(topCalendarViewLayout) {
+            top.linkTo(topProfileAndGreetingLayout.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
+
         constrain(upperMidTotalLeaveLayout) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
+            top.linkTo(topCalendarViewLayout.bottom)
             bottom.linkTo(midGuideline)
         }
 
-        constrain(middleLine){
+        constrain(middleLine) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(midGuideline)
@@ -107,7 +121,7 @@ fun HomeScreen(
             bottom.linkTo(parent.bottom)
         }
 
-        constrain(lowerFooterButton){
+        constrain(lowerFooterButton) {
             start.linkTo(verticalMidGuideline)
             bottom.linkTo(parent.bottom)
         }
@@ -120,7 +134,7 @@ fun HomeScreen(
             modifier = Modifier
                 .layoutId("topProfileAndGreetingLayout")
                 .fillMaxWidth()
-                .padding(24.dp),
+                .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -134,15 +148,25 @@ fun HomeScreen(
             ProfileImageHolder()
         }
 
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Box(
+            modifier = Modifier
+                .layoutId("topCalendarViewLayout")
+                .padding(bottom = 12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            StaticHomeCalendar()
+        }
+
         Surface(
             modifier = Modifier
                 .layoutId("upperMidTotalLeaveLayout")
-                .padding(24.dp)
+                .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
                 .height(158.dp)
                 .clickable { navController.navigate(Screen.Splash.route) },
             shape = MaterialTheme.shapes.large,
             color = primaryColorLight,
-
         ) {
             Row(
                 modifier = Modifier
@@ -157,8 +181,8 @@ fun HomeScreen(
                         .padding(start = 24.dp)
                 ) {
                     Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
-                    Text(text = "PTOs availed",fontSize = 20.sp, color = secondaryTextColorDark)
-                    Text(text = "SEE DETAILS -->",fontSize = 16.sp, color = Color.White)
+                    Text(text = "PTOs availed", fontSize = 20.sp, color = secondaryTextColorDark)
+                    Text(text = "SEE DETAILS -->", fontSize = 16.sp, color = Color.White)
                 }
 
                 Box(
@@ -174,12 +198,13 @@ fun HomeScreen(
         }
 
         // Showing a line
-        Box(modifier = Modifier
-            .layoutId("middleLine")
-            .fillMaxWidth()
-            .padding(24.dp)
-            .height(1.dp)
-            .background(color = secondaryTextColorDark)
+        Box(
+            modifier = Modifier
+                .layoutId("middleLine")
+                .fillMaxWidth()
+                .padding(24.dp)
+                .height(1.dp)
+                .background(color = secondaryTextColorDark)
         ) {
             // This is just a view (Line)
         }
@@ -211,7 +236,7 @@ fun HomeScreen(
                         Text(text = "Approved", fontSize = 18.sp)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    ExpandingText(text = AnnotatedString(text =  stringResource(id = R.string.long_text)))
+                    ExpandingText(text = AnnotatedString(text = stringResource(id = string.long_text)))
                 }
             }
         }
@@ -230,9 +255,11 @@ fun HomeScreen(
             )
         }
 
-        Box(modifier = Modifier
-            .layoutId("lowerFooterButton")
-            .padding(bottom = 32.dp)) {
+        Box(
+            modifier = Modifier
+                .layoutId("lowerFooterButton")
+                .padding(bottom = 32.dp)
+        ) {
             Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
                 Text(text = "APPLY PTO")
                 Icon(
@@ -244,9 +271,10 @@ fun HomeScreen(
     }
 }
 
+@ExperimentalCoilApi
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+private fun HomeScreenPreview() {
     HomeScreen(navController = rememberNavController())
 }
 
@@ -301,7 +329,7 @@ fun LeaveAnimatedCircularProgressBar(
 
 @Composable
 fun ExpandableTextLayoutWithReadMoreFeature(
-    text : String
+    text: String
 ) {
     val MINIMUM_LINE_SIZE = 2
     // [TextLayoutResult] provides every details we need for the Expandable feature
@@ -309,16 +337,16 @@ fun ExpandableTextLayoutWithReadMoreFeature(
     var finalText by remember { mutableStateOf(text) }
 
     // Click Events
-    var isClickable by remember{ mutableStateOf(false) }
-    var isExpandable by remember{ mutableStateOf(false) }
+    var isClickable by remember { mutableStateOf(false) }
+    var isExpandable by remember { mutableStateOf(false) }
 
     // Whenever the Value of the state will be changed the Compose will be recomposed
-    LaunchedEffect(textLayoutResultState){
-        if (textLayoutResultState == null){
+    LaunchedEffect(textLayoutResultState) {
+        if (textLayoutResultState == null) {
             return@LaunchedEffect
         }
 
-        when{
+        when {
             isExpandable -> {
                 finalText = "$text Show Less"
             }
@@ -352,7 +380,7 @@ fun ExpandableTextLayoutWithReadMoreFeature(
             }
             .animateContentSize()
 
-            // Todo add a animation here to make it look smooth
+        // Todo add a animation here to make it look smooth
     )
 }
 
