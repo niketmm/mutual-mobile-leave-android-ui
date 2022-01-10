@@ -9,6 +9,7 @@ data class PtoRequest(
   var ptoList: List<LocalDate>? = emptyList(),
   var email: String? = null,
   var description: String? = "",
+  var assignedTo: String? = "",
 )
 
 fun Date.withinRange(
