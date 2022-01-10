@@ -55,7 +55,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.screens.PtoScreen
+import com.mutualmobile.mmleave.screens.pto.PtoScreen
 import com.mutualmobile.mmleave.util.LandingPageState
 import kotlinx.coroutines.launch
 

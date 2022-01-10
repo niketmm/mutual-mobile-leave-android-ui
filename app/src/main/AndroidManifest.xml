@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".screens.PtoScreen"/>
+        <activity android:name=".screens.pto.PtoScreen"/>
     </application>
 
 </manifest>

@@ -1,6 +1,6 @@
 package com.mutualmobile.mmleave.data.model
 
-data class PtoRequest(
+data class PtoRequestCompose(
   val name: String,
   val leavesLeft: Int,
   val date: String,
