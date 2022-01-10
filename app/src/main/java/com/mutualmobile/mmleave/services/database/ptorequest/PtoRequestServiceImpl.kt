@@ -6,9 +6,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.firestore.PtoRequest
 import com.mutualmobile.mmleave.services.auth.firebase.await
 import com.mutualmobile.mmleave.services.database.user.USERS_LIST_COLLECTION
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.onFailure
+import kotlinx.coroutines.flow.callbackFlow
 import java.sql.Date
 import java.time.LocalDate
 import java.time.ZoneId
