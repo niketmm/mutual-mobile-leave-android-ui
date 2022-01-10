@@ -42,7 +42,7 @@ class FirebaseUserDataService : UserDataService<FirebaseUser> {
     val keywords = mutableListOf<String>()
     for (i in displayName.indices) {
       for (j in (i+1)..displayName.length) {
-        keywords.add(displayName.slice(i until j))
+        keywords.add(displayName.slice(i until j).lowercase())
       }
     }
     return keywords
