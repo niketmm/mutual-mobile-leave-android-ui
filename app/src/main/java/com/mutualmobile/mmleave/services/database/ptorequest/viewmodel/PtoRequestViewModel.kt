@@ -4,14 +4,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.firestore.PtoProperties
+import com.mutualmobile.mmleave.firestore.PtoRequest
 import com.mutualmobile.mmleave.screens.search.SearchResultState
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -25,7 +23,7 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
         getAdminUserList()
     }
 
-    var ptoRequestState = mutableStateOf(PtoProperties())
+    var ptoRequestState = mutableStateOf(PtoRequest())
         private set
 
     private val _adminListState = mutableStateOf(SearchResultState())
@@ -44,14 +42,6 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
                 )
             )
         }
-    }
-
-    fun updateDateTo(time: Date) {
-        ptoRequestState.value = ptoRequestState.value.copy(dateTo = time)
-    }
-
-    fun updateDateFrom(date: Date) {
-        ptoRequestState.value = ptoRequestState.value.copy(dateFrom = date)
     }
 
     private fun getAdminUserList() {

@@ -34,7 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.screens.ProfileImageHolder
+import com.mutualmobile.mmleave.screens.home.ProfileImageHolder
 import com.mutualmobile.mmleave.services.database.ptorequest.viewmodel.PtoRequestViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -42,125 +42,125 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
 fun SearchScreen(
-    viewModel: PtoRequestViewModel = hiltViewModel()
+  viewModel: PtoRequestViewModel = hiltViewModel()
 ) {
-    // This contains the Search View and the Lazy Column with the details
-    val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
-    val adminListState = viewModel.adminListState.value
-    var filteredList: List<MMUser?>
+  // This contains the Search View and the Lazy Column with the details
+  val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
+  val adminListState = viewModel.adminListState.value
+  var filteredList: List<MMUser?>
 
-    val searchedText = textState.value.text
-    Column(modifier = Modifier.padding(8.dp)) {
-        SearchViewComposable(state = textState, viewModel)
-        Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            filteredList = if (searchedText.isEmpty() || searchedText == "Search Admins by here") {
-                adminListState.adminList
-            } else {
-                adminListState.filteredAdminList
-            }
+  val searchedText = textState.value.text
+  Column(modifier = Modifier.padding(8.dp)) {
+    SearchViewComposable(state = textState, viewModel)
+    Spacer(modifier = Modifier.height(16.dp))
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+      filteredList = if (searchedText.isEmpty() || searchedText == "Search Admins by here") {
+        adminListState.adminList
+      } else {
+        adminListState.filteredAdminList
+      }
 
-            items(filteredList) { admin ->
-                ColumnCardViewComposable(firebaseAdminUser = admin)
-            }
-        }
+      items(filteredList) { admin ->
+        ColumnCardViewComposable(firebaseAdminUser = admin)
+      }
     }
+  }
 }
 
 @ExperimentalCoroutinesApi
 @Composable
 fun SearchViewComposable(
-    state: MutableState<TextFieldValue>,
-    viewModel: PtoRequestViewModel
+  state: MutableState<TextFieldValue>,
+  viewModel: PtoRequestViewModel
 ) {
-    TextField(
-        value = state.value,
-        onValueChange = { newValue ->
-            state.value = newValue
-            viewModel.getFilteredAdminUserList(newValue.text)
-        },
-        modifier = Modifier.fillMaxWidth(),
-        textStyle = TextStyle(
-            color = Color.White,
-            fontSize = 18.sp
-        ),
-        leadingIcon = {
+  TextField(
+      value = state.value,
+      onValueChange = { newValue ->
+        state.value = newValue
+        viewModel.getFilteredAdminUserList(newValue.text)
+      },
+      modifier = Modifier.fillMaxWidth(),
+      textStyle = TextStyle(
+          color = Color.White,
+          fontSize = 18.sp
+      ),
+      leadingIcon = {
+        Icon(
+            imageVector = Icons.Default.Search,
+            contentDescription = "search_icon",
+            modifier = Modifier
+                .padding(15.dp)
+                .size(24.dp)
+        )
+      },
+      trailingIcon = {
+        // Checking the state of the Text
+        if (state.value != TextFieldValue("")) {
+          IconButton(onClick = {
+            state.value = TextFieldValue("")
+          }
+          ) {
             Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "search_icon",
+                imageVector = Icons.Default.Close,
+                contentDescription = "close_icon",
                 modifier = Modifier
                     .padding(15.dp)
                     .size(24.dp)
             )
-        },
-        trailingIcon = {
-            // Checking the state of the Text
-            if (state.value != TextFieldValue("")) {
-                IconButton(onClick = {
-                    state.value = TextFieldValue("")
-                }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "close_icon",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .size(24.dp)
-                    )
-                }
-            }
-        },
-        singleLine = true,
-        shape = MaterialTheme.shapes.medium,
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.White,
-            cursorColor = Color.White,
-            leadingIconColor = Color.White,
-            trailingIconColor = Color.White,
-            backgroundColor = MaterialTheme.colors.primary,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
-        )
-    )
+          }
+        }
+      },
+      singleLine = true,
+      shape = MaterialTheme.shapes.medium,
+      colors = TextFieldDefaults.textFieldColors(
+          textColor = Color.White,
+          cursorColor = Color.White,
+          leadingIconColor = Color.White,
+          trailingIconColor = Color.White,
+          backgroundColor = MaterialTheme.colors.primary,
+          focusedIndicatorColor = Color.Transparent,
+          unfocusedIndicatorColor = Color.Transparent,
+          disabledIndicatorColor = Color.Transparent
+      )
+  )
 }
 
 @ExperimentalCoilApi
 @Composable
 fun ColumnCardViewComposable(firebaseAdminUser: MMUser?) {
-    // This will display data in the card
-    // Todo Change the Parameter later
-    Card(
-        shape = MaterialTheme.shapes.small,
+  // This will display data in the card
+  // Todo Change the Parameter later
+  Card(
+      shape = MaterialTheme.shapes.small,
+      modifier = Modifier
+          .padding(4.dp)
+          .fillMaxWidth(),
+      elevation = 4.dp
+  ) {
+    Row(
         modifier = Modifier
-            .padding(4.dp)
-            .fillMaxWidth(),
-        elevation = 4.dp
+            .fillMaxWidth()
+            .padding(all = 8.dp)
     ) {
-        Row(
+      firebaseAdminUser?.photoUrl?.let {
+        ProfileImageHolder(
+            rememberNavController(),
+            it
+        )
+      }
+
+      firebaseAdminUser?.let {
+        Text(
+            text = it.displayName ?: "Empty",
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(all = 8.dp)
-        ) {
-            firebaseAdminUser?.photoUrl?.let {
-                ProfileImageHolder(
-                    rememberNavController(),
-                    it
-                )
-            }
-
-            firebaseAdminUser?.let {
-                Text(
-                    text = it.displayName ?: "Empty",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    color = Color.Black,
-                    fontSize = 16.sp
-                )
-            }
-        }
+                .padding(4.dp),
+            color = Color.Black,
+            fontSize = 16.sp
+        )
+      }
     }
+  }
 }
 
 @ExperimentalCoroutinesApi
@@ -168,5 +168,5 @@ fun ColumnCardViewComposable(firebaseAdminUser: MMUser?) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSearchComposable() {
-    SearchScreen()
+  SearchScreen()
 }
