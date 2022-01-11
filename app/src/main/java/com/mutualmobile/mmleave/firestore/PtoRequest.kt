@@ -20,13 +20,6 @@ enum class PtoStatus {
   PENDING
 }
 
-fun Date.withinRange(
-  startDate: Date,
-  endDate: Date
-): Boolean {
-  return this.after(startDate) && this.before(endDate);
-}
-
 sealed class Designation {
   data class Employee(val department: String) : Designation()
   data class Staff(val department: String) : Designation()

@@ -15,6 +15,9 @@ class HomeScreenViewModel @Inject constructor(private val ptoRequestService: Pto
   var ptoListRequestState = mutableStateOf<List<FirebasePtoRequest>>(mutableListOf())
     private set
 
+  init {
+    getAllPtosList()
+  }
   fun getAllPtosList() {
     viewModelScope.launch {
       ptoListRequestState.value = ptoRequestService.getAllPtoRequestsList()

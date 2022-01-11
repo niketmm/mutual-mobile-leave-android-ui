@@ -58,6 +58,7 @@ import coil.transform.CircleCropTransformation
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.R.string
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
+import com.mutualmobile.mmleave.firestore.PtoStatus
 import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.screens.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
@@ -72,8 +73,17 @@ fun HomeScreen(
   homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
   val selectedDatesList = homeScreenViewModel.ptoListRequestState
-  val toSelectDates: List<LocalDate> = selectedDatesList.value.map {
+  val toSelectDates= selectedDatesList.value.map {
     it.date?.toDate()?.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDate()!!
+  }
+  val ptosMap = mutableMapOf<LocalDate, PtoStatus>()
+  selectedDatesList.value.map { ptoRequest ->
+    ptoRequest.currentStatus?.let { safeStatus ->
+      ptosMap.put(
+          ptoRequest.date?.toDate()?.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDate()!!,
+          safeStatus
+      )
+    }
   }
   val constraints = ConstraintSet {
     val topProfileAndGreetingLayout = createRefFor("topProfileAndGreetingLayout")
@@ -159,7 +169,7 @@ fun HomeScreen(
             .padding(bottom = 12.dp),
         contentAlignment = Alignment.Center
     ) {
-        StaticHomeCalendar(toSelectDates)
+      StaticHomeCalendar(toSelectDates)
     }
 
     Surface(
