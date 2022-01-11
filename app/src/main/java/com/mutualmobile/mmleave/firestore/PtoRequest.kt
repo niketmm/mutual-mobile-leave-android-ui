@@ -1,6 +1,7 @@
 package com.mutualmobile.mmleave.firestore
 
 import com.google.firebase.firestore.PropertyName
+import com.mutualmobile.mmleave.firestore.PtoStatus.PENDING
 import java.time.LocalDate
 import java.util.Date
 
@@ -9,7 +10,15 @@ data class PtoRequest(
   var ptoList: List<LocalDate>? = emptyList(),
   var email: String? = null,
   var description: String? = "",
+  var assignedTo: String? = "",
+  var currentStatus: PtoStatus = PENDING
 )
+
+enum class PtoStatus {
+  APPROVED,
+  REJECTED,
+  PENDING
+}
 
 fun Date.withinRange(
   startDate: Date,
@@ -22,10 +31,4 @@ sealed class Designation {
   data class Employee(val department: String) : Designation()
   data class Staff(val department: String) : Designation()
   data class Admin(val department: String) : Designation()
-}
-
-sealed class Status {
-  data class Approved(val message: String) : Status()
-  data class NotDefined(val message: String) : Status()
-  data class Rejected(val reason: String) : Status()
 }

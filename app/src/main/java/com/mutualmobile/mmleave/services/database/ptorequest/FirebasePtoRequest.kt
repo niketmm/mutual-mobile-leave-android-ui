@@ -1,11 +1,12 @@
 package com.mutualmobile.mmleave.services.database.ptorequest
 
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.PropertyName
+import com.mutualmobile.mmleave.firestore.PtoStatus
+import com.mutualmobile.mmleave.firestore.PtoStatus.PENDING
 
 data class FirebasePtoRequest(
-  @PropertyName("pto_list")
-  var pto_list: List<Timestamp>? = null,
-  var description: String? = "",
-  var email: String? = "",
+  var description: String?="" ,
+  var assignedTo: String? ="",
+  var currentStatus: PtoStatus?= PENDING,
+  var date: Timestamp? = Timestamp.now()
 )

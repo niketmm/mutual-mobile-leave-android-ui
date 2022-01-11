@@ -41,8 +41,6 @@ import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
 import dagger.hilt.android.AndroidEntryPoint
 
-const val DEFAULT_PATTERN = "dd/MM/yyyy HH:mm"
-
 @AndroidEntryPoint
 class PtoScreen : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,17 +62,12 @@ fun ApplyPtoScreen(ptoViewModel: PtoRequestViewModel = hiltViewModel()) {
   Scaffold(
       topBar = { TopAppBarLayout() }
   ) {
-    val context = LocalContext.current
     val leavesLeft = 18
 
     val ptoProp = ptoViewModel.ptoRequestState.value
 
     var leaveDescriptionText by remember { mutableStateOf("") }
-    if (!ptoViewModel.ptoRequestStatus.value) {
-      Toast.makeText(
-          context, "You have already applied for PTO within this date range", Toast.LENGTH_SHORT
-      ).show()
-    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,13 +132,20 @@ private fun ApplyPtoButton(
   ptoViewModel: PtoRequestViewModel,
   leaveDescriptionText: String
 ) {
+  val context = LocalContext.current
   Button(
       onClick = {
+        if (!ptoViewModel.ptoRequestStatus.value) {
+          Toast.makeText(
+              context, "You have already applied for PTO within this date range", Toast.LENGTH_SHORT
+          ).show()
+        }
         requestPtoNow(
             ptoViewModel,
             FirebaseAuth.getInstance().currentUser?.email!!,
             leaveDescriptionText
         )
+
       },
       colors = ButtonDefaults.buttonColors(
           backgroundColor = primaryColorLight
