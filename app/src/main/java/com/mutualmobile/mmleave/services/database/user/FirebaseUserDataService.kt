@@ -3,6 +3,7 @@ package com.mutualmobile.mmleave.services.database.user
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mutualmobile.mmleave.services.auth.firebase.await
+const val USERS_LIST_COLLECTION = "users_list"
 
 class FirebaseUserDataService : UserDataService<FirebaseUser> {
   override suspend fun isUserExistInDB(email: String): Boolean {
