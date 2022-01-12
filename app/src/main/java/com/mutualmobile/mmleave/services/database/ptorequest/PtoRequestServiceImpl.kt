@@ -33,7 +33,7 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
         ptoRequest: List<SetGetPtoRequests?>
     ): Boolean {
         ptoRequest.forEach {
-            FirebaseModule.provideFirebaseUserCollectionReference()
+            FirebaseModule.provideUserPtoRequestDocReference()
                 .document(it?.date.toString())
                 .set(getPtoMap(ptoRequest = it!!))
         }

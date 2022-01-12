@@ -33,8 +33,8 @@ class HomeScreenViewModel @Inject constructor(
         getLocalDates()
     }
 
-    private val _allPtoSelectedList = mutableStateOf(CalendarUiState())
-    val allPtoSelectedList: State<CalendarUiState> = _allPtoSelectedList
+    private val _allPtoSelectedList = MutableStateFlow(CalendarUiState())
+    val allPtoSelectedList: StateFlow<CalendarUiState> = _allPtoSelectedList
 
     private val _state = MutableStateFlow<List<LocalDate>>(emptyList())
     val state: StateFlow<List<LocalDate>>
