@@ -8,6 +8,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.mutualmobile.mmleave.data.model.MMUser
+import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.firestore.PtoRequest
 import com.mutualmobile.mmleave.firestore.PtoRequestDateModel
 import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
@@ -24,22 +25,17 @@ import javax.inject.Inject
 import javax.inject.Named
 
 @ExperimentalCoroutinesApi
-class PtoRequestServiceImpl @Inject constructor(
-    @Named("firebaseUserCollectionReference")
-    private val firebaseUserCollectionReference: CollectionReference,
-    @Named("firebasePtoRequestCollectionReference")
-    private val firebasePtoRequestCollectionReference: CollectionReference
-) : PtoRequestService {
+class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
 
     val TAG = PtoRequestServiceImpl::class.simpleName
 
     override suspend fun makePtoRequest(
-        ptoRequest: List<SetGetPtoRequests>
+        ptoRequest: List<SetGetPtoRequests?>
     ): Boolean {
         ptoRequest.forEach {
-            firebasePtoRequestCollectionReference
-                .document(it.date.toString())
-                .set(getPtoMap(ptoRequest = it))
+            FirebaseModule.provideFirebaseUserCollectionReference()
+                .document(it?.date.toString())
+                .set(getPtoMap(ptoRequest = it!!))
         }
         return true
     }
@@ -48,7 +44,7 @@ class PtoRequestServiceImpl @Inject constructor(
         val ptoMap = HashMap<String, Any?>()
         ptoMap["description"] = ptoRequest.description
         ptoMap["email"] = ptoRequest.email
-        ptoMap["date"] = ptoRequest.date?.toFirebaseTimestamp()
+        ptoMap["date"] = ptoRequest.date.toFirebaseTimestamp()
         ptoMap["ptoStatus"] = ptoRequest.status
         return ptoMap
     }
@@ -89,7 +85,7 @@ class PtoRequestServiceImpl @Inject constructor(
     }
 
     private fun getAllPtoRequestsCollection(safeEmail: String): CollectionReference {
-        return firebaseUserCollectionReference
+        return FirebaseModule.provideFirebaseUserCollectionReference()
             .document(safeEmail)
             .collection(PTO_LIST_COLLECTION)
     }

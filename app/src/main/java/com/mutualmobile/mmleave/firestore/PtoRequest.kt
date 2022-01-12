@@ -15,7 +15,7 @@ data class PtoRequest(
 data class SetGetPtoRequests(
   var email: String? = null,
   var description: String? = "",
-  var date : LocalDate?,
+  var date : LocalDate,
   var status: PtoRequestDateModel.PtoGraphStatus = PtoRequestDateModel.PtoGraphStatus.APPLIED
 )
 

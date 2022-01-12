@@ -12,21 +12,13 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
 object FirebaseModule {
 
-    @Provides
-    @Singleton
-    @Named("firebaseUserCollectionReference")
     fun provideFirebaseUserCollectionReference() : CollectionReference {
         return FirebaseFirestore.getInstance()
             .collection(Constants.USERS_LIST_COLLECTION)
     }
 
-    @Provides
-    @Singleton
-    @Named("firebasePtoRequestCollectionReference")
     fun provideUserPtoRequestDocReference() : CollectionReference {
         val userEmail = FirebaseAuth.getInstance()
             .currentUser

@@ -56,11 +56,6 @@ object PtoModule {
     @Provides
     @ViewModelScoped
     fun providePtoRequestService(
-        @Named("firebaseUserCollectionReference") userCollectionReference: CollectionReference,
-        @Named("firebasePtoRequestCollectionReference") ptoRequestCollectionReference: CollectionReference
     ): PtoRequestServiceImpl =
-        PtoRequestServiceImpl(
-            userCollectionReference,
-            ptoRequestCollectionReference
-        )
+        PtoRequestServiceImpl()
 }

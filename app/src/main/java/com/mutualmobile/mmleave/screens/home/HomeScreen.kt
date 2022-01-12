@@ -67,11 +67,14 @@ import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.screens.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
 fun HomeScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
 
     val constraints = ConstraintSet {
@@ -158,7 +161,7 @@ fun HomeScreen(
                 .padding(bottom = 12.dp),
             contentAlignment = Alignment.Center
         ) {
-            StaticHomeCalendar()
+            StaticHomeCalendar(homeScreenViewModel)
         }
 
         Surface(
