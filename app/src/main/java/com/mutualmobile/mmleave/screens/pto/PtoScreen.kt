@@ -41,139 +41,149 @@ import com.mutualmobile.mmleave.ui.theme.backgroundLight
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 const val DEFAULT_PATTERN = "dd/MM/yyyy HH:mm"
 
 @AndroidEntryPoint
 class PtoScreen : ComponentActivity() {
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent {
-      MMLeaveTheme {
-        val context = LocalContext.current
-        // A surface container using the 'background' color from the theme
-        Surface(color = MaterialTheme.colors.background) {
-          ApplyPtoScreen()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MMLeaveTheme {
+                val context = LocalContext.current
+                // A surface container using the 'background' color from the theme
+                Surface(color = MaterialTheme.colors.background) {
+                    ApplyPtoScreen()
+                }
+            }
         }
-      }
     }
-  }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
 fun ApplyPtoScreen(ptoViewModel: PtoRequestViewModel = hiltViewModel()) {
-  Scaffold(
-      topBar = { TopAppBarLayout() }
-  ) {
-    val context = LocalContext.current
-    val leavesLeft = 18
-
-    val ptoProp = ptoViewModel.ptoRequestState.value
-
-    var leaveDescriptionText by remember { mutableStateOf("") }
-    if (!ptoViewModel.ptoRequestStatus.value) {
-      Toast.makeText(
-          context, "You have already applied for PTO within this date range", Toast.LENGTH_SHORT
-      ).show()
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(start = 16.dp, end = 16.dp)
+    Scaffold(
+        topBar = { TopAppBarLayout() }
     ) {
-      Text(
-          text = "Select Dates",
-          fontSize = 16.sp,
-          modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-      )
-      CalendarView(ptoViewModel)
+        val context = LocalContext.current
+        val leavesLeft = 18
 
-      /*Column {
-        DateFrom(ptoProp, context, ptoViewModel)
+        var leaveDescriptionText by remember { mutableStateOf("") }
 
-        DateTo(ptoProp, context, ptoViewModel)
-      }*/
-
-      Row(
-          horizontalArrangement = Arrangement.End,
-          modifier = Modifier.fillMaxWidth()
-      ) {
-        Text(
-            text = "Leaves Left: $leavesLeft",
-            color = purpleTextColorLight,
-            fontSize = 16.sp, modifier = Modifier
-            .padding(top = 4.dp, bottom = 4.dp)
-        )
-      }
-      Text(
-          text = "Add Reason Of Leave (Optional)",
-          fontSize = 16.sp, modifier = Modifier
-          .fillMaxWidth()
-          .padding(top = 8.dp, bottom = 8.dp)
-      )
-
-      Column(
-          verticalArrangement = Arrangement.SpaceBetween,
-          modifier = Modifier.fillMaxHeight()
-      ) {
-        OutlinedTextField(
-            value = leaveDescriptionText,
-            onValueChange = {
-              leaveDescriptionText = it
-            },
+        if (!ptoViewModel.ptoRequestStatus.value) {
+            Toast.makeText(
+                context,
+                "You have already applied for PTO within this date range",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .background(color = backgroundLight),
-            maxLines = 5,
-        )
-        ApplyPtoButton(ptoViewModel, leaveDescriptionText)
-      }
-    }
+                .fillMaxHeight()
+                .padding(start = 16.dp, end = 16.dp)
+        ) {
+            Text(
+                text = "Select Dates",
+                fontSize = 16.sp,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
 
-  }
+            CalendarView(
+                ptoViewModel,
+                FirebaseAuth.getInstance().currentUser?.email!!,
+                leaveDescriptionText
+            )
+
+            /*Column {
+              DateFrom(ptoProp, context, ptoViewModel)
+
+              DateTo(ptoProp, context, ptoViewModel)
+            }*/
+
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Leaves Left: $leavesLeft",
+                    color = purpleTextColorLight,
+                    fontSize = 16.sp, modifier = Modifier
+                        .padding(top = 4.dp, bottom = 4.dp)
+                )
+            }
+            Text(
+                text = "Add Reason Of Leave (Optional)",
+                fontSize = 16.sp, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 8.dp)
+            )
+
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                OutlinedTextField(
+                    value = leaveDescriptionText,
+                    onValueChange = {
+                        leaveDescriptionText = it
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .background(color = backgroundLight),
+                    maxLines = 5,
+                )
+                ApplyPtoButton(ptoViewModel, leaveDescriptionText)
+            }
+        }
+
+    }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
 private fun ApplyPtoButton(
-  ptoViewModel: PtoRequestViewModel,
-  leaveDescriptionText: String
+    ptoViewModel: PtoRequestViewModel,
+    leaveDescriptionText: String
 ) {
-  Button(
-      onClick = {
-        requestPtoNow(
-            ptoViewModel,
-            FirebaseAuth.getInstance().currentUser?.email!!,
-            leaveDescriptionText
+    Button(
+        onClick = {
+            requestPtoNow(
+                ptoViewModel,
+                FirebaseAuth.getInstance().currentUser?.email!!,
+                leaveDescriptionText
+            )
+        },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = primaryColorLight
+        ),
+        modifier = Modifier.padding(bottom = 40.dp)
+    ) {
+        Text(
+            text = "APPLY PTO",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            fontSize = 20.sp,
+            color = Color.White
         )
-      },
-      colors = ButtonDefaults.buttonColors(
-          backgroundColor = primaryColorLight
-      ),
-      modifier = Modifier.padding(bottom = 40.dp)
-  ) {
-    Text(
-        text = "APPLY PTO",
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        fontSize = 20.sp,
-        color = Color.White
-    )
-  }
+    }
 }
 
+@ExperimentalCoroutinesApi
 private fun requestPtoNow(
-  ptoViewModel: PtoRequestViewModel,
-  email: String,
-  leaveDescriptionText: String
+    ptoViewModel: PtoRequestViewModel,
+    email: String,
+    leaveDescriptionText: String
 ) {
-  ptoViewModel.applyPtoRequest(email, leaveDescriptionText)
+    ptoViewModel.applyPtoRequest(email, leaveDescriptionText)
 }
 
 @Preview
 @Composable
 fun PtoScreenPreview() {
-  MMLeaveTheme {
-  }
+    MMLeaveTheme {
+    }
 }

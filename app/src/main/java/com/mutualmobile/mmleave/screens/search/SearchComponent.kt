@@ -35,7 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.screens.home.ProfileImageHolder
-import com.mutualmobile.mmleave.services.database.ptorequest.viewmodel.PtoRequestViewModel
+import com.mutualmobile.mmleave.screens.pto.viewmodel.PtoRequestViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi

@@ -1,5 +1,6 @@
 package com.mutualmobile.mmleave.firestore
 
+import android.graphics.Color
 import com.google.firebase.firestore.PropertyName
 import java.time.LocalDate
 import java.util.Date
@@ -10,6 +11,37 @@ data class PtoRequest(
   var email: String? = null,
   var description: String? = "",
 )
+
+data class SetGetPtoRequests(
+  var email: String? = null,
+  var description: String? = "",
+  var date : LocalDate?,
+  var status: PtoRequestDateModel.PtoGraphStatus = PtoRequestDateModel.PtoGraphStatus.APPLIED
+)
+
+data class PtoRequestDateModel(
+  var status : PtoGraphStatus = PtoGraphStatus.APPLIED
+){
+  companion object{
+    val pending = PtoGraphStatus.PENDING
+    val applied = PtoGraphStatus.APPLIED
+    val approved = PtoGraphStatus.APPROVED
+    val updated = PtoGraphStatus.UPDATED
+    val holiday = PtoGraphStatus.HOLIDAY
+    fun rejected(reason : String?) = PtoGraphStatus.REJECTED
+  }
+
+  enum class PtoGraphStatus(val color: Int){
+    APPLIED(Color.GREEN),
+    APPROVED(Color.CYAN),
+    HOLIDAY(Color.YELLOW),
+    REJECTED(Color.RED),
+    PENDING(Color.BLUE),
+    UPDATED(Color.MAGENTA)
+  }
+}
+
+
 
 fun Date.withinRange(
   startDate: Date,

@@ -9,6 +9,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.firestore.PtoRequest
+import com.mutualmobile.mmleave.firestore.PtoRequestDateModel
+import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
 import com.mutualmobile.mmleave.services.auth.firebase.await
 import com.mutualmobile.mmleave.util.Constants.PTO_LIST_COLLECTION
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,33 +34,22 @@ class PtoRequestServiceImpl @Inject constructor(
     val TAG = PtoRequestServiceImpl::class.simpleName
 
     override suspend fun makePtoRequest(
-        ptoRequest: PtoRequest
+        ptoRequest: List<SetGetPtoRequests>
     ): Boolean {
-        val duplicatePtoList =
-            ptoRequest.ptoList?.toFirebaseTimestamp()?.let { filterPtoRequests(it) }
-        if (duplicatePtoList?.isEmpty() == true) {
-            ptoRequest.ptoList?.forEach {
-                firebasePtoRequestCollectionReference
-                    .document(it.toString())
-                    .set(getPtoMap(ptoRequest = ptoRequest))
-            }
-        } else {
-            // Updating if duplicate Exists
-            ptoRequest.ptoList?.forEach {
-                firebasePtoRequestCollectionReference
-                    .document(it.toString())
-                    .update(getPtoMap(ptoRequest = ptoRequest))
-            }
-            return false
+        ptoRequest.forEach {
+            firebasePtoRequestCollectionReference
+                .document(it.date.toString())
+                .set(getPtoMap(ptoRequest = it))
         }
         return true
     }
 
-    private fun getPtoMap(ptoRequest: PtoRequest): HashMap<String, Any?> {
+    private fun getPtoMap(ptoRequest: SetGetPtoRequests): HashMap<String, Any?> {
         val ptoMap = HashMap<String, Any?>()
         ptoMap["description"] = ptoRequest.description
         ptoMap["email"] = ptoRequest.email
-        ptoMap["pto_list"] = ptoRequest.ptoList?.toFirebaseTimestamp()
+        ptoMap["date"] = ptoRequest.date?.toFirebaseTimestamp()
+        ptoMap["ptoStatus"] = ptoRequest.status
         return ptoMap
     }
 
@@ -104,7 +95,7 @@ class PtoRequestServiceImpl @Inject constructor(
     }
 
     override suspend fun approvePtoRequest(
-        ptoRequest: PtoRequest
+        ptoRequest: SetGetPtoRequests
     ) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val ptoListCollectionRef = FirebaseFirestore.getInstance().collection(PTO_LIST_COLLECTION)
@@ -160,10 +151,28 @@ class PtoRequestServiceImpl @Inject constructor(
     }
 }
 
-fun List<LocalDate>.toFirebaseTimestamp(): List<Timestamp> {
-    return this.map { localDate ->
-        Timestamp(
-            Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
-        )
-    }
+fun LocalDate.toFirebaseTimestamp(): Timestamp {
+    return Timestamp(
+        Date.from(this.atStartOfDay(ZoneId.systemDefault()).toInstant())
+    )
 }
+
+//fun makePtoRequestOld(ptoRequest: PtoRequest) {
+//    val duplicatePtoList =
+//        ptoRequest.ptoList
+//    ptoRequest.ptoList?.toFirebaseTimestamp()?.let { filterPtoRequests(it) }
+//    if (duplicatePtoList?.isEmpty() == true) {
+//        ptoRequest.ptoList?.forEach {
+//            firebasePtoRequestCollectionReference
+//                .document(it.toString())
+//                .set(getPtoMap(ptoRequest = ptoRequest))
+//        }
+//    } else {
+//        // Updating if duplicate Exists
+//        ptoRequest.ptoList?.forEach {
+//            firebasePtoRequestCollectionReference
+//                .document(it.toString())
+//                .update(getPtoMap(ptoRequest = ptoRequest))
+//        }
+//    }
+//}
