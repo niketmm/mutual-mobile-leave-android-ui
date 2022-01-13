@@ -426,7 +426,7 @@ fun ExpandableTextLayoutWithReadMoreFeature(
 @Composable
 fun ProfileImageHolder(
     navController: NavHostController = rememberNavController(),
-    imageUrl: String = "https://avatars.githubusercontent.com/u/66577?v=4"
+    imageUrl : String? = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
 ) {
     Box(
         modifier = Modifier
@@ -434,7 +434,6 @@ fun ProfileImageHolder(
             .height(40.dp),
         contentAlignment = Alignment.Center
     ) {
-
         val imagePainter = rememberImagePainter(
             data = imageUrl,
             builder = {

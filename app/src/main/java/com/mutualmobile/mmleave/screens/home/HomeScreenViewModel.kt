@@ -30,17 +30,13 @@ class HomeScreenViewModel @Inject constructor(
 
     init {
         getLocalDateList()
-        getLocalDates()
+        displayDate()
     }
 
     private val _allPtoSelectedList = MutableStateFlow(CalendarUiState())
     val allPtoSelectedList: StateFlow<CalendarUiState> = _allPtoSelectedList
 
-    private val _state = MutableStateFlow<List<LocalDate>>(emptyList())
-    val state: StateFlow<List<LocalDate>>
-        get() = _state
-
-    suspend fun displayDate() {
+    private fun displayDate() {
         viewModelScope.launch {
             calendarDataService.fetchUserDatesList().collect {
                 _allPtoSelectedList.value = allPtoSelectedList.value.copy(
@@ -60,19 +56,6 @@ class HomeScreenViewModel @Inject constructor(
                         localDateList = it1.toLocalTime()
                     )
                 }
-            }
-        }
-    }
-
-    private fun getLocalDates() = viewModelScope.launch {
-        calendarDataService.fetchUserDatesList().collect { firebaseObjList ->
-            _state.value = firebaseObjList.map {
-                val localDate  = it!!.date!!.toDate().toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-
-                Log.d("TAG", "getLocalDates: $localDate")
-                localDate
             }
         }
     }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.contentColorFor
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mutualmobile.mmleave.firestore.PtoRequestDateModel
+import com.mutualmobile.mmleave.model.CalendarPtoRequest
 import io.github.boguszpawlowski.composecalendar.Calendar
 import io.github.boguszpawlowski.composecalendar.CalendarState
 import io.github.boguszpawlowski.composecalendar.day.DayState
@@ -42,8 +44,8 @@ fun StaticHomeCalendar(
     viewModel: HomeScreenViewModel
 ) {
 
-    val dateState by viewModel.state.collectAsState()
-    val ptoDates = viewModel.allPtoSelectedList.value.allPtoDatesList // Contains Date with Status
+    val dateState = viewModel.allPtoSelectedList.value.localDateList
+    val ptoDates = viewModel.allPtoSelectedList.value.allPtoDatesList
 
     val states = remember {
         CalendarState(MonthState(YearMonth.now()), object : SelectionState {
@@ -64,7 +66,14 @@ fun StaticHomeCalendar(
         calendarState = states,
         showAdjacentMonths = true,
         horizontalSwipeEnabled = true,
-        dayContent = { DefaultSelectedDay(state = it, toSelect = dateState.contains(it.date)) },
+        dayContent = {
+            DefaultSelectedDay(
+                state = it,
+                calendarPtoRequest = ptoDates.find { calendarDate ->
+                    calendarDate.date.toLocalDate() == it.date
+                },
+            )
+        },
         monthHeader = { DefaultMonthHeader(it) },
         weekHeader = { DefaultWeekHeader(it) },
         monthContainer = { content ->
@@ -80,22 +89,29 @@ fun <T : SelectionState> DefaultSelectedDay(
     selectionColor: Color = Color.White,
     currentDayColor: Color = MaterialTheme.colors.primary,
     onClick: (LocalDate) -> Unit = {},
-    toSelect: Boolean,
-    statusOfDay: String = PtoRequestDateModel.PtoGraphStatus.APPLIED.toString(),
-    ) {
+    calendarPtoRequest: CalendarPtoRequest?
+) {
     val date = state.date
     val selectionState = state.selectionState
-    val ptoDayColor = if (toSelect)
-        Color.Green
-    else
-        Color.White
+    val ptoDayColor = calendarPtoRequest?.let {
+        when (it.ptoStatus) {
+            PtoRequestDateModel.PtoGraphStatus.APPLIED.toString() -> Color.Green
+            PtoRequestDateModel.PtoGraphStatus.APPROVED.toString() -> Color.Cyan
+            PtoRequestDateModel.PtoGraphStatus.HOLIDAY.toString() -> Color.Yellow
+            PtoRequestDateModel.PtoGraphStatus.REJECTED.toString() -> Color.Red
+            PtoRequestDateModel.PtoGraphStatus.PENDING.toString() -> Color.Blue
+            PtoRequestDateModel.PtoGraphStatus.UPDATED.toString() -> Color.Magenta
+            else -> Color.White
+        }
+    } ?: Color.White
+
     Card(
         modifier = modifier
             .aspectRatio(1f)
             .padding(2.dp),
         elevation = if (state.isFromCurrentMonth) 4.dp else 0.dp,
         border = if (state.isCurrentDay) BorderStroke(1.dp, currentDayColor) else null,
-        contentColor = if (toSelect) selectionColor else contentColorFor(
+        contentColor = if (calendarPtoRequest != null) selectionColor else contentColorFor(
             backgroundColor = MaterialTheme.colors.surface
         )
     ) {
@@ -118,4 +134,10 @@ fun <T : SelectionState> DefaultSelectedDay(
 @Composable
 fun StaticHomeCalendarPreview() {
 
+}
+
+fun com.google.firebase.Timestamp?.toLocalDate(): LocalDate? {
+    return this?.toDate()?.toInstant()
+        ?.atZone(ZoneId.systemDefault())
+        ?.toLocalDate()
 }
