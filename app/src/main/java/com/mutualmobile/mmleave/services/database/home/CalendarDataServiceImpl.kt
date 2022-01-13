@@ -15,8 +15,6 @@ import javax.inject.Named
 @ExperimentalCoroutinesApi
 class CalendarDataServiceImpl @Inject constructor() : CalendarDataService {
 
-    // TODO: Replace @Named with @Qualifiers
-
     override suspend fun fetchUserDatesList() = callbackFlow {
         val listeners = FirebaseModule.provideUserPtoRequestDocReference()
             .addSnapshotListener { ptoRequest, error ->
