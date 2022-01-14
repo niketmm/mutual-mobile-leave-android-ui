@@ -2,28 +2,16 @@ package com.mutualmobile.mmleave.services.database.ptorequest
 
 import android.util.Log
 import com.google.firebase.Timestamp
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mutualmobile.mmleave.di.FirebaseModule
 import com.google.firebase.firestore.ktx.toObject
-import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.di.FirebaseModule
-import com.mutualmobile.mmleave.firestore.PtoRequest
-import com.mutualmobile.mmleave.firestore.PtoRequestDateModel
 import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
 import com.mutualmobile.mmleave.services.auth.firebase.await
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.time.LocalDate
-import java.util.*
-import javax.inject.Inject
 import kotlin.collections.HashMap
 import com.mutualmobile.mmleave.util.Constants.PTO_LIST_COLLECTION
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.onFailure
-import kotlinx.coroutines.flow.callbackFlow
 import java.sql.Date
 import java.time.LocalDate
 import java.time.ZoneId
@@ -36,13 +24,12 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
 
     override suspend fun makePtoRequest(
         ptoRequest: List<SetGetPtoRequests?>
-    ): Boolean {
+    ){
         ptoRequest.forEach {
             FirebaseModule.provideUserPtoRequestDocReference()
                 .document(it?.date.toString())
                 .set(getPtoMap(ptoRequest = it!!))
         }
-        return true
     }
 
     private fun getPtoMap(ptoRequest: SetGetPtoRequests): HashMap<String, Any?> {

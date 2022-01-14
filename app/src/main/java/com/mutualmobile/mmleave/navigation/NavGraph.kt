@@ -50,7 +50,7 @@ fun SetUpNavGraph(
         composable(
             route = Screen.ApplyPto.route
         ) {
-            ApplyPtoScreen(navController = navController)
+            ApplyPtoScreen()
         }
 
         composable(

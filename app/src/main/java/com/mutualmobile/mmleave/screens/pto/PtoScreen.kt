@@ -45,6 +45,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 const val DEFAULT_PATTERN = "dd/MM/yyyy HH:mm"
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class PtoScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

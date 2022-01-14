@@ -41,7 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.screens.ProfileImageHolder
+import com.mutualmobile.mmleave.screens.home.ProfileImageHolder
 import com.mutualmobile.mmleave.services.database.search_user.SearchUserViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
