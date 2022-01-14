@@ -2,7 +2,6 @@ package com.mutualmobile.mmleave.screens.auth
 
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
@@ -57,7 +56,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.screens.pto.PtoScreen
-import com.mutualmobile.mmleave.util.LandingPageState
+import com.mutualmobile.mmleave.data.data_state.LandingPageState
 import kotlinx.coroutines.launch
 
 @Composable

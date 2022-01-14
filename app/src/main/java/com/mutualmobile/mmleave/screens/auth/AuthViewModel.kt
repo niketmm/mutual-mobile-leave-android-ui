@@ -1,13 +1,12 @@
 package com.mutualmobile.mmleave.screens.auth
 
 import android.content.Intent
-import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutualmobile.mmleave.services.auth.firebase.AuthenticationService
 import com.mutualmobile.mmleave.services.auth.social.GoogleSocialService
-import com.mutualmobile.mmleave.util.LandingPageState
-import com.mutualmobile.mmleave.util.StoreUserInfo
+import com.mutualmobile.mmleave.data.data_state.LandingPageState
+import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

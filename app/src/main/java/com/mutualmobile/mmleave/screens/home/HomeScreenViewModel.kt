@@ -1,14 +1,9 @@
 package com.mutualmobile.mmleave.screens.home
 
-import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.type.DateTime
-import com.mutualmobile.mmleave.model.CalendarPtoRequest
-import com.mutualmobile.mmleave.model.CalendarUiState
-import com.mutualmobile.mmleave.model.PtoUiState
+import com.mutualmobile.mmleave.data.model.CalendarPtoRequest
+import com.mutualmobile.mmleave.data.data_state.CalendarUiState
 import com.mutualmobile.mmleave.services.database.home.CalendarDataServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,8 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.sql.Date
-import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject

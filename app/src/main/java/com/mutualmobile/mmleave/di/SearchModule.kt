@@ -9,14 +9,11 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-object SearchModule {
-
-    @ExperimentalCoroutinesApi
-    @InstallIn(ViewModelComponent::class)
-    @Module
-    object SearchUserModule {
-        @Provides
-        @ViewModelScoped
-        fun provideSearchService(): SearchUserService = FirebaseSearchUserServiceImpl()
-    }
+@ExperimentalCoroutinesApi
+@InstallIn(ViewModelComponent::class)
+@Module
+object SearchUserModule {
+    @Provides
+    @ViewModelScoped
+    fun provideSearchService(): SearchUserService = FirebaseSearchUserServiceImpl()
 }

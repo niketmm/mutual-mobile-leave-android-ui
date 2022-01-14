@@ -2,7 +2,6 @@ package com.mutualmobile.mmleave.services.auth.social
 
 import android.content.Intent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.mutualmobile.mmleave.services.auth.firebase.await

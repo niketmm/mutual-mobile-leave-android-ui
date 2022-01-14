@@ -7,7 +7,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mutualmobile.mmleave.di.FirebaseModule
 import com.google.firebase.firestore.ktx.toObject
-import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
+import com.mutualmobile.mmleave.data.model.SetGetPtoRequests
 import com.mutualmobile.mmleave.services.auth.firebase.await
 import kotlin.collections.HashMap
 import com.mutualmobile.mmleave.util.Constants.PTO_LIST_COLLECTION
@@ -23,9 +23,9 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
     val TAG = PtoRequestServiceImpl::class.simpleName
 
     override suspend fun makePtoRequest(
-        ptoRequest: List<SetGetPtoRequests?>
+        ptoProperties: List<SetGetPtoRequests?>
     ){
-        ptoRequest.forEach {
+        ptoProperties.forEach {
             FirebaseModule.provideUserPtoRequestDocReference()
                 .document(it?.date.toString())
                 .set(getPtoMap(ptoRequest = it!!))

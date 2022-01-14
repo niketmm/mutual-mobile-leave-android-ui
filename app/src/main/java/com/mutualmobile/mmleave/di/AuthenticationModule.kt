@@ -18,32 +18,32 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Module
 object AuthenticationModule {
 
-  @Provides
-  @ViewModelScoped
-  fun provideAuthenticationService(userDataService: UserDataService<FirebaseUser>): AuthenticationService {
-    return FirebaseAuthenticationService(userDataService)
-  }
+    @Provides
+    @ViewModelScoped
+    fun provideAuthenticationService(userDataService: UserDataService<FirebaseUser>): AuthenticationService {
+        return FirebaseAuthenticationService(userDataService)
+    }
 }
 
 @InstallIn(ViewModelComponent::class)
 @Module
 object GoogleAuthModule {
 
-  @Provides
-  @ViewModelScoped
-  fun provideGoogleAuthService(): GoogleSocialService {
-    return GoogleSocialService()
-  }
+    @Provides
+    @ViewModelScoped
+    fun provideGoogleAuthService(): GoogleSocialService {
+        return GoogleSocialService()
+    }
 }
 
 @InstallIn(ViewModelComponent::class)
 @Module
 object UserDataModule {
-  @Provides
-  @ViewModelScoped
-  fun provideUserDataService(): UserDataService<FirebaseUser> {
-    return FirebaseUserDataService()
-  }
+    @Provides
+    @ViewModelScoped
+    fun provideUserDataService(): UserDataService<FirebaseUser> {
+        return FirebaseUserDataService()
+    }
 }
 
 @ExperimentalCoroutinesApi

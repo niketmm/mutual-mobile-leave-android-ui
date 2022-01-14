@@ -4,7 +4,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.mutualmobile.mmleave.exceptions.UnauthorizedException
 import com.mutualmobile.mmleave.services.database.user.UserDataService
-import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 

@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.util
+package com.mutualmobile.mmleave.data.model
 
 data class LoadingState constructor(val status: Status, val msg: String? = null) {
     companion object {

@@ -7,8 +7,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,7 +61,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.screens.ExpandingText
+import com.mutualmobile.mmleave.screens.pto.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 import kotlinx.coroutines.ExperimentalCoroutinesApi
