@@ -13,6 +13,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @InstallIn(ViewModelComponent::class)
 @Module
@@ -46,10 +47,13 @@ object UserDataModule {
   }
 }
 
+@ExperimentalCoroutinesApi
 @InstallIn(ViewModelComponent::class)
 @Module
 object PtoModule {
-  @Provides
-  @ViewModelScoped
-  fun providePtoRequestService(): PtoRequestServiceImpl = PtoRequestServiceImpl()
+    @Provides
+    @ViewModelScoped
+    fun providePtoRequestService(
+    ): PtoRequestServiceImpl =
+        PtoRequestServiceImpl()
 }

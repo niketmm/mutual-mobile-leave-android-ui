@@ -7,145 +7,166 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.mutualmobile.mmleave.data.model.MMUser
+import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.firestore.PtoRequest
+import com.mutualmobile.mmleave.firestore.PtoRequestDateModel
+import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
 import com.mutualmobile.mmleave.services.auth.firebase.await
-import com.mutualmobile.mmleave.services.database.user.USERS_LIST_COLLECTION
+import com.mutualmobile.mmleave.util.Constants.PTO_LIST_COLLECTION
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.flow.callbackFlow
 import java.sql.Date
 import java.time.LocalDate
 import java.time.ZoneId
+import javax.inject.Inject
 
-const val PTO_LIST_COLLECTION = "pto_requests"
+@ExperimentalCoroutinesApi
+class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
 
-class PtoRequestServiceImpl : PtoRequestService {
-  val TAG = PtoRequestServiceImpl::class.simpleName
-  override suspend fun makePtoRequest(
-    ptoRequest: PtoRequest
-  ): Boolean {
-    val duplicatePtoList = ptoRequest.ptoList?.toFirebaseTimestamp()?.let { filterPtoRequests(it) }
-    if (duplicatePtoList?.isEmpty() == true) {
-      FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
-        getAllPtoRequestsCollection(safeEmail)
-            .add(getPtoMap(ptoRequest))
-      }
-    } else {
-      Log.d(TAG, "makePtoRequest:existing pto request found ")
-      return false
-    }
-    return true
-  }
+    val TAG = PtoRequestServiceImpl::class.simpleName
 
-  private fun getPtoMap(ptoRequest: PtoRequest): HashMap<String, Any?> {
-    val pto = HashMap<String, Any?>()
-    pto["description"] = ptoRequest.description
-    pto["email"] = ptoRequest.email
-    pto["pto_list"] = ptoRequest.ptoList?.toFirebaseTimestamp()
-    return pto
-  }
-
-  private suspend fun filterPtoRequests(newPtoList: List<Timestamp>): List<FirebasePtoRequest> {
-    val duplicatePtoRequestList = mutableListOf<FirebasePtoRequest>()
-    FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
-      val userPtoListCollectionRef = getAllPtoRequestsCollection(safeEmail)
-      val documents = userPtoListCollectionRef.whereArrayContainsAny("pto_list", newPtoList).get()
-          .await()
-          .documents
-      documents.forEach { document ->
-        document.toObject<FirebasePtoRequest>()?.let {
-          duplicatePtoRequestList.add(it)
-          it.pto_list?.size
+    override suspend fun makePtoRequest(
+        ptoRequest: List<SetGetPtoRequests?>
+    ): Boolean {
+        ptoRequest.forEach {
+            FirebaseModule.provideUserPtoRequestDocReference()
+                .document(it?.date.toString())
+                .set(getPtoMap(ptoRequest = it!!))
         }
-      }
+        return true
     }
-    return duplicatePtoRequestList
-  }
 
-  suspend fun getAllPtoRequestsList(): List<FirebasePtoRequest> {
-    val allPtosList = mutableListOf<FirebasePtoRequest>()
-    FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
-      val userPtoListCollectionRef = getAllPtoRequestsCollection(safeEmail)
-      val documents = userPtoListCollectionRef.get()
-          .await()
-          .documents
-      documents.forEach { document ->
-        document.toObject<FirebasePtoRequest>()?.let {
-          allPtosList.add(it)
-          it.pto_list?.size
-        }
-      }
+    private fun getPtoMap(ptoRequest: SetGetPtoRequests): HashMap<String, Any?> {
+        val ptoMap = HashMap<String, Any?>()
+        ptoMap["description"] = ptoRequest.description
+        ptoMap["email"] = ptoRequest.email
+        ptoMap["date"] = ptoRequest.date.toFirebaseTimestamp()
+        ptoMap["ptoStatus"] = ptoRequest.status
+        return ptoMap
     }
-    return allPtosList
-  }
 
-  private fun getAllPtoRequestsCollection(safeEmail: String): CollectionReference {
-    return FirebaseFirestore.getInstance()
-        .collection(USERS_LIST_COLLECTION)
-        .document(safeEmail)
-        .collection(PTO_LIST_COLLECTION)
-  }
-
-  override suspend fun approvePtoRequest(
-    ptoRequest: PtoRequest
-  ) {
-    val firebaseUser = FirebaseAuth.getInstance().currentUser
-    val ptoListCollectionRef = FirebaseFirestore.getInstance().collection(PTO_LIST_COLLECTION)
-
-    firebaseUser?.email?.let { email ->
-      ptoListCollectionRef.whereArrayContains("approver", email).get()
-          .addOnSuccessListener { documents ->
-            for (document in documents) {
-              Log.d(TAG, "${document.id} => ${document.data}")
+    private suspend fun filterPtoRequests(newPtoList: List<Timestamp>): List<FirebasePtoRequest> {
+        val duplicatePtoRequestList = mutableListOf<FirebasePtoRequest>()
+        FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
+            val userPtoListCollectionRef = getAllPtoRequestsCollection(safeEmail)
+            val documents =
+                userPtoListCollectionRef.whereArrayContainsAny("pto_list", newPtoList).get()
+                    .await()
+                    .documents
+            documents.forEach { document ->
+                document.toObject<FirebasePtoRequest>()?.let {
+                    duplicatePtoRequestList.add(it)
+                    it.pto_list?.size
+                }
             }
-          }
-          .addOnFailureListener { exception ->
-            Log.w(TAG, "Error getting documents: ", exception)
-          }
-    }
-  }
-  override suspend fun fetchAdminList() = callbackFlow {
-    val listenerRegistration = FirebaseFirestore
-        .getInstance()
-        .collection("users_list")
-        .whereEqualTo("userType", 1).addSnapshotListener { admins, error ->
-          admins?.documents?.map { doc -> doc.toObject(MMUser::class.java) }?.let {
-            Log.d(TAG, "fetchAdminList: ${it.toString()}")
-            trySend(it).onFailure {
-            }
-          }
         }
-    awaitClose {
-      listenerRegistration.remove()
+        return duplicatePtoRequestList
     }
-  }
 
-  override suspend fun fetchUsersByUsername(username: String) = callbackFlow {
-    val listenerRegistration = FirebaseFirestore.getInstance()
-        .collection("users_list")
-        .whereArrayContains("nameAsArray", username)
-        .addSnapshotListener { filteredAdmins, error ->
-          filteredAdmins?.let {
-            filteredAdmins.documents.map { doc ->
-              doc.toObject(MMUser::class.java)
-            }.let {
-              Log.d(TAG, "fetchUsersByUsername: $it")
-              trySend(it).onFailure {
-              }
+    suspend fun getAllPtoRequestsList(): List<FirebasePtoRequest> {
+        val allPtosList = mutableListOf<FirebasePtoRequest>()
+        FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
+            val userPtoListCollectionRef = getAllPtoRequestsCollection(safeEmail)
+            val documents = userPtoListCollectionRef.get()
+                .await()
+                .documents
+            documents.forEach { document ->
+                document.toObject<FirebasePtoRequest>()?.let {
+                    allPtosList.add(it)
+                    it.pto_list?.size
+                }
             }
-          }
         }
-
-    awaitClose {
-      listenerRegistration.remove()
+        return allPtosList
     }
-  }
+
+    private fun getAllPtoRequestsCollection(safeEmail: String): CollectionReference {
+        return FirebaseModule.provideFirebaseUserCollectionReference()
+            .document(safeEmail)
+            .collection(PTO_LIST_COLLECTION)
+    }
+
+    override suspend fun approvePtoRequest(
+        ptoRequest: SetGetPtoRequests
+    ) {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val ptoListCollectionRef = FirebaseFirestore.getInstance().collection(PTO_LIST_COLLECTION)
+
+        firebaseUser?.email?.let { email ->
+            ptoListCollectionRef.whereArrayContains("approver", email).get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        Log.d(TAG, "${document.id} => ${document.data}")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
+                }
+        }
+    }
+
+    override suspend fun fetchAdminList() = callbackFlow {
+        val listenerRegistration = FirebaseFirestore
+            .getInstance()
+            .collection("users_list")
+            .whereEqualTo("userType", 1).addSnapshotListener { admins, error ->
+                admins?.documents?.map { doc -> doc.toObject(MMUser::class.java) }?.let {
+                    Log.d(TAG, "fetchAdminList: ${it.toString()}")
+                    trySend(it).onFailure {
+                    }
+                }
+            }
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }
+
+    override suspend fun fetchUsersByUsername(username: String) = callbackFlow {
+        val listenerRegistration = FirebaseFirestore.getInstance()
+            .collection("users_list")
+            .whereArrayContains("nameAsArray", username)
+            .addSnapshotListener { filteredAdmins, error ->
+                filteredAdmins?.let {
+                    filteredAdmins.documents.map { doc ->
+                        doc.toObject(MMUser::class.java)
+                    }.let {
+                        Log.d(TAG, "fetchUsersByUsername: $it")
+                        trySend(it).onFailure {
+                        }
+                    }
+                }
+            }
+
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }
 }
 
-fun List<LocalDate>.toFirebaseTimestamp(): List<Timestamp> {
-  return this.map { localDate ->
-    Timestamp(
-        Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+fun LocalDate.toFirebaseTimestamp(): Timestamp {
+    return Timestamp(
+        Date.from(this.atStartOfDay(ZoneId.systemDefault()).toInstant())
     )
-  }
 }
+
+//fun makePtoRequestOld(ptoRequest: PtoRequest) {
+//    val duplicatePtoList =
+//        ptoRequest.ptoList
+//    ptoRequest.ptoList?.toFirebaseTimestamp()?.let { filterPtoRequests(it) }
+//    if (duplicatePtoList?.isEmpty() == true) {
+//        ptoRequest.ptoList?.forEach {
+//            firebasePtoRequestCollectionReference
+//                .document(it.toString())
+//                .set(getPtoMap(ptoRequest = ptoRequest))
+//        }
+//    } else {
+//        // Updating if duplicate Exists
+//        ptoRequest.ptoList?.forEach {
+//            firebasePtoRequestCollectionReference
+//                .document(it.toString())
+//                .update(getPtoMap(ptoRequest = ptoRequest))
+//        }
+//    }
+//}
