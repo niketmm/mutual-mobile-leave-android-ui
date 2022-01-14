@@ -1,6 +1,5 @@
 package com.mutualmobile.mmleave.screens.splash
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -16,11 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,10 +34,7 @@ fun AnimatedSplashScreen(
     navController: NavHostController,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-
     viewModel.getUserAuthState()
-
-    val TAG = "AnimatedSplashScreen"
 
     val userAuthState by viewModel.userAuthState.collectAsState()
 
@@ -78,7 +74,7 @@ fun Splash(alpha: Float) {
 
         Icon(
             painterResource(id = R.drawable.mm_splash_logo),
-            contentDescription = "splash_logo",
+            contentDescription = stringResource(R.string.splash_screen_mm_logo),
             modifier = Modifier
                 .size(52.dp)
                 .alpha(alpha)

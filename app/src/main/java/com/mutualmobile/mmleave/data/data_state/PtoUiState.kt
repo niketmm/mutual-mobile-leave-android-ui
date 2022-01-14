@@ -1,7 +1,6 @@
-package com.mutualmobile.mmleave.model
+package com.mutualmobile.mmleave.data.data_state
 
-import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
-import com.mutualmobile.mmleave.model.CalendarPtoRequest
+import com.mutualmobile.mmleave.data.model.SetGetPtoRequests
 import java.time.LocalDate
 
 data class PtoUiState(

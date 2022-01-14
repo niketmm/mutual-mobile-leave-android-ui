@@ -26,13 +26,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
+import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.TopAppBarLayout
 import com.mutualmobile.mmleave.screens.home.CalendarView
 import com.mutualmobile.mmleave.screens.pto.viewmodel.PtoRequestViewModel
@@ -43,8 +44,6 @@ import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-const val DEFAULT_PATTERN = "dd/MM/yyyy HH:mm"
-
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class PtoScreen : ComponentActivity() {
@@ -53,7 +52,6 @@ class PtoScreen : ComponentActivity() {
         setContent {
             MMLeaveTheme {
                 val context = LocalContext.current
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     ApplyPtoScreen()
                 }
@@ -76,7 +74,7 @@ fun ApplyPtoScreen(ptoViewModel: PtoRequestViewModel = hiltViewModel()) {
         if (!ptoViewModel.ptoRequestStatus.value) {
             Toast.makeText(
                 context,
-                "You have already applied for PTO within this date range",
+                stringResource(R.string.already_applied_pto_text),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -97,12 +95,6 @@ fun ApplyPtoScreen(ptoViewModel: PtoRequestViewModel = hiltViewModel()) {
                 FirebaseAuth.getInstance().currentUser?.email!!,
                 leaveDescriptionText
             )
-
-            /*Column {
-              DateFrom(ptoProp, context, ptoViewModel)
-
-              DateTo(ptoProp, context, ptoViewModel)
-            }*/
 
             Row(
                 horizontalArrangement = Arrangement.End,

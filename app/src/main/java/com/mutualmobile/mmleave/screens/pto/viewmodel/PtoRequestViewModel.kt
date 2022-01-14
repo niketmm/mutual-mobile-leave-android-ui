@@ -4,14 +4,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mutualmobile.mmleave.firestore.PtoRequestDateModel
-import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
-import com.mutualmobile.mmleave.model.PtoUiState
-import com.mutualmobile.mmleave.screens.search.SearchResultState
+import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
+import com.mutualmobile.mmleave.data.data_state.PtoUiState
+import com.mutualmobile.mmleave.data.model.SetGetPtoRequests
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -39,7 +37,6 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
         )
     }
 
-    // Todo : Make sure User will get updated and get notified that Application has been sent
     fun applyPtoRequest(
         email: String,
         leaveDescriptionText: String

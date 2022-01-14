@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.util
+package com.mutualmobile.mmleave.data.data_state
 
 sealed class LandingPageState<T> {
     class Loading<T> : LandingPageState<T>()

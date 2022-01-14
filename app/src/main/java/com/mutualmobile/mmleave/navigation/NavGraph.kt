@@ -5,8 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import coil.annotation.ExperimentalCoilApi
-import com.mutualmobile.mmleave.screens.PtoAvailedScreen
-import com.mutualmobile.mmleave.screens.PtoRequestScreen
+import com.mutualmobile.mmleave.screens.pto.PtoAvailedScreen
+import com.mutualmobile.mmleave.screens.pto.PtoRequestScreen
 import com.mutualmobile.mmleave.screens.auth.LandingPageScreen
 import com.mutualmobile.mmleave.screens.home.HomeScreen
 import com.mutualmobile.mmleave.screens.pto.ApplyPtoScreen

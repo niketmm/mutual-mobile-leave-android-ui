@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.screens.pto
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign.Companion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.data.model.PtoData
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
@@ -48,8 +50,7 @@ const val MINIMIZED_MAX_LINES = 2
 @Preview
 @Composable
 fun PtoAvailedScreen() {
-  val text =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+  val text = stringResource(R.string.loreum_ipsum_demo_text)
   PtosList(
       ptosList = listOf(
           PtoData(
@@ -113,10 +114,10 @@ fun PtoElement(data: PtoData) {
 
       OutlinedButton(
           onClick = { /*TODO*/ },
-          modifier = Modifier.size(30.dp),  //avoid the oval shape
+          modifier = Modifier.size(30.dp),
           shape = CircleShape,
           border = BorderStroke(1.dp, Color.White),
-          contentPadding = PaddingValues(0.dp),  //avoid the little icon
+          contentPadding = PaddingValues(0.dp),
           colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
       ) {
         Icon(

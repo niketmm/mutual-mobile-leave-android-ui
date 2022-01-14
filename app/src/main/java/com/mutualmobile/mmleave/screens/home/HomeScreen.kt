@@ -1,14 +1,11 @@
 package com.mutualmobile.mmleave.screens.home
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +41,6 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -63,7 +59,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.screens.ExpandingText
+import com.mutualmobile.mmleave.screens.pto.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -85,7 +81,6 @@ fun HomeScreen(
         val lowerFooterLayout = createRefFor("lowerFooterLayout")
         val lowerFooterButton = createRefFor("lowerFooterButton")
 
-        // Todo : Cross Check those guidelines using the Constraint ToolKit.
         val midGuideline = createGuidelineFromTop(0.7f)
         val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
 
@@ -159,7 +154,7 @@ fun HomeScreen(
             ) {
                 val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
                 Column {
-                    Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
+                    Text(text = stringResource(R.string.good_morning_home_screen_text), fontSize = 16.sp, color = secondaryTextColorDark)
                     Text(text = name, fontSize = 24.sp)
                 }
 
@@ -251,7 +246,7 @@ fun HomeScreen(
                     .padding(start = 24.dp, end = 24.dp)
                     .fillMaxWidth()
             ) {
-                Text(text = "Applied PTOs", modifier = Modifier.padding(bottom = 16.dp))
+                Text(text = stringResource(R.string.applied_pto_heading_home_screen), modifier = Modifier.padding(bottom = 16.dp))
                 Surface(
                     modifier = Modifier
                         .clickable { navController.navigate(Screen.PtoRequests.route) }
@@ -284,7 +279,7 @@ fun HomeScreen(
             ) {
                 Image(
                     painterResource(id = R.drawable.home_page_illus_mm_leave),
-                    contentDescription = "two_people_illustration",
+                    contentDescription = stringResource(R.string.bottom_home_img_illustration),
                     modifier = Modifier
                         .height(200.dp)
                         .width(270.dp),
@@ -300,7 +295,7 @@ fun HomeScreen(
                     Text(text = "APPLY PTO")
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
-                        contentDescription = "forward arrow for the button"
+                        contentDescription = stringResource(R.string.forward_arrow_icon_desc)
                     )
                 }
             }
@@ -363,63 +358,6 @@ fun LeaveAnimatedCircularProgressBar(
             fontWeight = FontWeight.Bold
         )
     }
-}
-
-@Composable
-fun ExpandableTextLayoutWithReadMoreFeature(
-    text: String
-) {
-    val MINIMUM_LINE_SIZE = 2
-    // [TextLayoutResult] provides every details we need for the Expandable feature
-    var textLayoutResultState by remember { mutableStateOf<TextLayoutResult?>(null) }
-    var finalText by remember { mutableStateOf(text) }
-
-    // Click Events
-    var isClickable by remember { mutableStateOf(false) }
-    var isExpandable by remember { mutableStateOf(false) }
-
-    // Whenever the Value of the state will be changed the Compose will be recomposed
-    LaunchedEffect(textLayoutResultState) {
-        if (textLayoutResultState == null) {
-            return@LaunchedEffect
-        }
-
-        when {
-            isExpandable -> {
-                finalText = "$text Show Less"
-            }
-
-            !isExpandable && textLayoutResultState!!.hasVisualOverflow -> {
-                val lastCharIndex = textLayoutResultState!!.getLineEnd(MINIMUM_LINE_SIZE - 1)
-                val showMoreString = "... Read More"
-                val adjustmentText = text
-                    .substring(startIndex = 0, endIndex = lastCharIndex)
-                    .dropLast(showMoreString.length)
-                    .dropLastWhile {
-                        it.equals(" ") || it.equals(".")
-                    }
-
-                finalText = "$adjustmentText $showMoreString"
-
-                isClickable = true
-            }
-        }
-    }
-
-    Text(
-        text = finalText,
-        maxLines = if (isExpandable) Int.MAX_VALUE else MINIMUM_LINE_SIZE,
-        onTextLayout = {
-            textLayoutResultState = it
-        },
-        modifier = Modifier
-            .clickable(enabled = isClickable) {
-                isExpandable = !isExpandable
-            }
-            .animateContentSize()
-
-        // Todo add a animation here to make it look smooth
-    )
 }
 
 @ExperimentalCoilApi
