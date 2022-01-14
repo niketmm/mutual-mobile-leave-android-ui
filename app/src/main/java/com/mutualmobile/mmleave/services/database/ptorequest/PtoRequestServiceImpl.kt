@@ -1,7 +1,6 @@
 package com.mutualmobile.mmleave.services.database.ptorequest
 
 import android.util.Log
-import androidx.navigation.Navigator
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -22,7 +21,6 @@ import java.sql.Date
 import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
-import javax.inject.Named
 
 @ExperimentalCoroutinesApi
 class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
