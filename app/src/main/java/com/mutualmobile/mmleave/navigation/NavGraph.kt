@@ -1,5 +1,6 @@
 package com.mutualmobile.mmleave.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -14,6 +15,7 @@ import com.mutualmobile.mmleave.screens.search.SearchScreen
 import com.mutualmobile.mmleave.screens.splash.AnimatedSplashScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalFoundationApi
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
