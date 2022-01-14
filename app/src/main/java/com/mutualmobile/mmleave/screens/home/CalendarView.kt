@@ -21,7 +21,6 @@ fun CalendarView(
           initialSelection = listOf(LocalDate.now()),
           initialSelectionMode = SelectionMode.Multiple,
           onSelectionChanged = { selectedDates ->
-            Log.d("CalenderView", "CalendarView: "+selectedDates.size)
             ptoViewModel.updatePtoList(selectedDates,email,description)
           }
       )

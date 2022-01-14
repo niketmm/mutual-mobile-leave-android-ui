@@ -3,4 +3,15 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="long_text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book</string>
     <string name="web_client_id">964855784492-emvhjgl3m4ma5oq4uloqsr91u6but84q.apps.googleusercontent.com</string>
+    <string name="landing_screen_bg_img_desc">rectangle_gradient_image</string>
+    <string name="google_logo_desc">Google Button</string>
+    <string name="need_help_landing_page_text">\"NEED HELP? \"</string>
+    <string name="contact_support_landing_page_text">CONTACT SUPPORT</string>
+    <string name="good_morning_home_screen_text">Good Morning</string>
+    <string name="applied_pto_heading_home_screen">Applied PTOs</string>
+    <string name="bottom_home_img_illustration">two_people_illustration</string>
+    <string name="forward_arrow_icon_desc">forward arrow for the button</string>
+    <string name="loreum_ipsum_demo_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="already_applied_pto_text">You have already applied for PTO within this date range</string>
+    <string name="splash_screen_mm_logo">splash_logo</string>
 </resources>

@@ -51,7 +51,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 fun SearchScreen(
     viewModel: SearchUserViewModel = hiltViewModel()
 ) {
-    // This contains the Search View and the Lazy Column with the details
     val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
 
     val ptoAppliedState = remember { mutableStateOf(false) }
@@ -141,7 +140,6 @@ fun SearchViewComposable(
             )
         },
         trailingIcon = {
-            // Checking the state of the Text
             if (state.value != TextFieldValue("")) {
                 IconButton(onClick = {
                     state.value = TextFieldValue("")
@@ -180,12 +178,10 @@ fun ColumnCardViewComposable(firebaseAdminUser: MMUser?) {
         modifier = Modifier
             .size(width = 240.dp, height = 40.dp)
             .padding(4.dp),
-//            .fillMaxWidth(),
         elevation = 4.dp
     ) {
         Row(
             modifier = Modifier
-//                .fillMaxWidth()
                 .padding(all = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center

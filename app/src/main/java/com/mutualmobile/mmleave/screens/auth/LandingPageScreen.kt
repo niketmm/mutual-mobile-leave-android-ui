@@ -1,6 +1,5 @@
 package com.mutualmobile.mmleave.screens.auth
 
-import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -55,7 +54,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.screens.pto.PtoScreen
 import com.mutualmobile.mmleave.data.data_state.LandingPageState
 import kotlinx.coroutines.launch
 
@@ -77,8 +75,6 @@ fun LandingPageScreen(
     val context = LocalContext.current
 
     var clicked by remember { mutableStateOf(false) }
-
-    var navigateToPtoScreen by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
@@ -110,10 +106,6 @@ fun LandingPageScreen(
         }
     }
 
-    if (navigateToPtoScreen) {
-        val intent = Intent(context, PtoScreen::class.java)
-        context.startActivity(intent)
-    }
     val constraint = ConstraintSet {
         val topLayout = createRefFor("top_layout")
         val midLayout = createRefFor("mid_layout")
@@ -145,7 +137,7 @@ fun LandingPageScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painterResource(id = R.drawable.rectangle_gradient_png_large),
-            contentDescription = "rectangle_gradient_image",
+            contentDescription = stringResource(R.string.landing_screen_bg_img_desc),
             contentScale = ContentScale.FillBounds
         )
         ConstraintLayout(constraintSet = constraint, modifier = Modifier.fillMaxSize()) {
@@ -163,9 +155,8 @@ fun LandingPageScreen(
                     tint = Color.Unspecified
                 )
                 Text(text = "MM PTOs", color = Color.White,
-                    modifier = Modifier.clickable {
-                        navigateToPtoScreen = true
-                    })
+                    modifier = Modifier
+                )
             }
 
             Column(
@@ -237,7 +228,7 @@ fun LandingPageScreen(
                     ) {
                         Icon(
                             painterResource(id = R.drawable.google_icon_color),
-                            contentDescription = "Google Button",
+                            contentDescription = stringResource(R.string.google_logo_desc),
                             tint = Color.Unspecified,
                             modifier = Modifier
                                 .width(16.dp)
@@ -259,7 +250,6 @@ fun LandingPageScreen(
                     }
                 }
 
-                // Todo Why this Spacer is not working with Width??
                 Spacer(modifier = Modifier.padding(8.dp))
 
                 Row(
@@ -267,12 +257,10 @@ fun LandingPageScreen(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "NEED HELP? ")
+                    Text(text = stringResource(R.string.need_help_landing_page_text))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "CONTACT SUPPORT", Modifier.clickable {
-                            // Todo Add a Web Link here
-                        },
+                        text = stringResource(R.string.contact_support_landing_page_text),
                         textDecoration = TextDecoration.Underline
                     )
                 }

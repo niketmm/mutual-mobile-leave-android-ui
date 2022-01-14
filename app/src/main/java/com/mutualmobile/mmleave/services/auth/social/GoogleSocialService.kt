@@ -7,8 +7,10 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.mutualmobile.mmleave.services.auth.firebase.await
 
 class GoogleSocialService : SocialService<Intent, AuthCredential> {
+
   override suspend fun signIn(input: Intent): AuthCredential {
     val account = GoogleSignIn.getSignedInAccountFromIntent(input).await()
     return GoogleAuthProvider.getCredential(account.idToken!!, null)
   }
+
 }

@@ -14,7 +14,6 @@ class FirebaseAuthenticationService @Inject constructor(private val dataCollecti
     if (authCredential is GoogleAuthCredential) {
       val authResult = FirebaseAuth.getInstance().signInWithCredential(authCredential).await()
       FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
-        // user email
         if (isUserExistsInDatabase(safeEmail)) {
           dataCollectionService.updateUser(FirebaseAuth.getInstance().currentUser!!)
         } else {

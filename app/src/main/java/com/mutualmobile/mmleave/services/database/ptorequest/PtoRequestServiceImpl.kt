@@ -41,49 +41,8 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
         return ptoMap
     }
 
-    private suspend fun filterPtoRequests(newPtoList: List<Timestamp>): List<FirebasePtoRequest> {
-        val duplicatePtoRequestList = mutableListOf<FirebasePtoRequest>()
-        FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
-            val userPtoListCollectionRef = getAllPtoRequestsCollection(safeEmail)
-            val documents =
-                userPtoListCollectionRef.whereArrayContainsAny("pto_list", newPtoList).get()
-                    .await()
-                    .documents
-            documents.forEach { document ->
-                document.toObject<FirebasePtoRequest>()?.let {
-                    duplicatePtoRequestList.add(it)
-                    it.pto_list?.size
-                }
-            }
-        }
-        return duplicatePtoRequestList
-    }
-
-    suspend fun getAllPtoRequestsList(): List<FirebasePtoRequest> {
-        val allPtosList = mutableListOf<FirebasePtoRequest>()
-        FirebaseAuth.getInstance().currentUser?.email?.let { safeEmail ->
-            val userPtoListCollectionRef = getAllPtoRequestsCollection(safeEmail)
-            val documents = userPtoListCollectionRef.get()
-                .await()
-                .documents
-            documents.forEach { document ->
-                document.toObject<FirebasePtoRequest>()?.let {
-                    allPtosList.add(it)
-                    it.pto_list?.size
-                }
-            }
-        }
-        return allPtosList
-    }
-
-    private fun getAllPtoRequestsCollection(safeEmail: String): CollectionReference {
-        return FirebaseModule.provideFirebaseUserCollectionReference()
-            .document(safeEmail)
-            .collection(PTO_LIST_COLLECTION)
-    }
-
     override suspend fun approvePtoRequest(
-        ptoRequest: SetGetPtoRequests
+        ptoProperties: SetGetPtoRequests
     ) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val ptoListCollectionRef = FirebaseFirestore.getInstance().collection(PTO_LIST_COLLECTION)
@@ -107,23 +66,3 @@ fun LocalDate.toFirebaseTimestamp(): Timestamp {
         Date.from(this.atStartOfDay(ZoneId.systemDefault()).toInstant())
     )
 }
-
-//fun makePtoRequestOld(ptoRequest: PtoRequest) {
-//    val duplicatePtoList =
-//        ptoRequest.ptoList
-//    ptoRequest.ptoList?.toFirebaseTimestamp()?.let { filterPtoRequests(it) }
-//    if (duplicatePtoList?.isEmpty() == true) {
-//        ptoRequest.ptoList?.forEach {
-//            firebasePtoRequestCollectionReference
-//                .document(it.toString())
-//                .set(getPtoMap(ptoRequest = ptoRequest))
-//        }
-//    } else {
-//        // Updating if duplicate Exists
-//        ptoRequest.ptoList?.forEach {
-//            firebasePtoRequestCollectionReference
-//                .document(it.toString())
-//                .update(getPtoMap(ptoRequest = ptoRequest))
-//        }
-//    }
-//}

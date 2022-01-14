@@ -37,7 +37,6 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
         )
     }
 
-    // Todo : Make sure User will get updated and get notified that Application has been sent
     fun applyPtoRequest(
         email: String,
         leaveDescriptionText: String
