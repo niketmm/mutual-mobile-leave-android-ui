@@ -1,10 +1,8 @@
 package com.mutualmobile.mmleave.services.database.ptorequest
 
-import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.firestore.PtoProperties
-import kotlinx.coroutines.flow.Flow
+import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
 
 interface PtoRequestService {
-  suspend fun makePtoRequest(ptoProperties: PtoProperties)
-  suspend fun approvePtoRequest(ptoProperties: PtoProperties)
+  suspend fun makePtoRequest(ptoProperties: List<SetGetPtoRequests?>)
+  suspend fun approvePtoRequest(ptoProperties: SetGetPtoRequests)
 }

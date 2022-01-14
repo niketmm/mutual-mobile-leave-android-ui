@@ -1,5 +1,6 @@
 package com.mutualmobile.mmleave.screens.splash
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -10,25 +11,36 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
+import com.mutualmobile.mmleave.screens.auth.AuthViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun AnimatedSplashScreen(
     navController: NavHostController,
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
+
+    viewModel.getUserAuthState()
+
+    val TAG = "AnimatedSplashScreen"
+
+    val userAuthState by viewModel.userAuthState.collectAsState()
 
     var startAnimation by remember {
         mutableStateOf(false)
@@ -44,10 +56,12 @@ fun AnimatedSplashScreen(
     LaunchedEffect(key1 = true) {
         startAnimation = true
         delay(3000)
-        // Clear the back Stack as well
         navController.popBackStack()
-        // After the delay navigate back to the sign up screen
-        navController.navigate(Screen.SignUp.route)
+        if (userAuthState) {
+            navController.navigate(Screen.Home.route)
+        } else {
+            navController.navigate(Screen.SignUp.route)
+        }
     }
 
     Splash(alphaAnim.value)
@@ -61,6 +75,7 @@ fun Splash(alpha: Float) {
             .background(MaterialTheme.colors.surface),
         contentAlignment = Alignment.Center
     ) {
+
         Icon(
             painterResource(id = R.drawable.mm_splash_logo),
             contentDescription = "splash_logo",

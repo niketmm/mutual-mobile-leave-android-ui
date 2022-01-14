@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -34,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.R
-import com.mutualmobile.mmleave.data.model.PtoRequest
+import com.mutualmobile.mmleave.data.model.PtoRequestCompose
 import com.mutualmobile.mmleave.ui.theme.alertRed
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
@@ -48,19 +49,19 @@ fun PtoRequestScreen() {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   PtosRequestList(
       ptosList = listOf(
-          PtoRequest(
+          PtoRequestCompose(
               "Rebecca Knight", 22,
               "Feb 20, 2021 - Feb 25, 2021", "" +
              text, "Debbie Reynolds",
               "approved"
           ),
-          PtoRequest(
+          PtoRequestCompose(
               "Rebecca Knight", 22,
               "Feb 20, 2021 - Feb 25, 2021", "" +
              text, "Debbie Reynolds",
               "approved"
           ),
-          PtoRequest(
+          PtoRequestCompose(
               "Rebecca Knight", 22,
               "Feb 20, 2021 - Feb 25, 2021", "" +
              text, "Debbie Reynolds",
@@ -71,7 +72,7 @@ fun PtoRequestScreen() {
 }
 
 @Composable
-fun PtosRequestList(ptosList: List<PtoRequest>) {
+fun PtosRequestList(ptosList: List<PtoRequestCompose>) {
   LazyColumn(
       contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -121,7 +122,7 @@ fun PtosRequestList(ptosList: List<PtoRequest>) {
 }
 
 @Composable
-fun PtoRequestElement(request: PtoRequest) {
+fun PtoRequestElement(request: PtoRequestCompose) {
   Column(
       modifier = Modifier
           .fillMaxWidth()

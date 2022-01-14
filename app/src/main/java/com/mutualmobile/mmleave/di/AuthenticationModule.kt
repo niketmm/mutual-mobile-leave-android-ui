@@ -50,7 +50,9 @@ object UserDataModule {
 @InstallIn(ViewModelComponent::class)
 @Module
 object PtoModule {
-  @Provides
-  @ViewModelScoped
-  fun providePtoRequestService(): PtoRequestServiceImpl = PtoRequestServiceImpl()
+    @Provides
+    @ViewModelScoped
+    fun providePtoRequestService(
+    ): PtoRequestServiceImpl =
+        PtoRequestServiceImpl()
 }

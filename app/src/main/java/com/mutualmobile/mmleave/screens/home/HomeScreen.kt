@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.screens
+package com.mutualmobile.mmleave.screens.home
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -7,6 +7,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +20,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -49,27 +53,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.navigation.Screen
+import com.mutualmobile.mmleave.screens.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
 fun HomeScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-
     val constraints = ConstraintSet {
         val topProfileAndGreetingLayout = createRefFor("topProfileAndGreetingLayout")
+        val topCalendarViewLayout = createRefFor("topCalendarViewLayout")
+        val calendarDetailViewLayout = createRefFor("calendarDetailViewLayout")
         val upperMidTotalLeaveLayout = createRefFor("upperMidTotalLeaveLayout")
         val middleLine = createRefFor("middleLine")
         val lowerMidAppliedLeaveLayout = createRefFor("lowerMidAppliedLeaveLayout")
@@ -77,7 +86,7 @@ fun HomeScreen(
         val lowerFooterButton = createRefFor("lowerFooterButton")
 
         // Todo : Cross Check those guidelines using the Constraint ToolKit.
-        val midGuideline = createGuidelineFromTop(0.4f)
+        val midGuideline = createGuidelineFromTop(0.7f)
         val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
 
         constrain(topProfileAndGreetingLayout) {
@@ -86,13 +95,26 @@ fun HomeScreen(
             end.linkTo(parent.end)
         }
 
+        constrain(topCalendarViewLayout) {
+            top.linkTo(topProfileAndGreetingLayout.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
+
+        constrain(calendarDetailViewLayout){
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(topCalendarViewLayout.bottom)
+        }
+
         constrain(upperMidTotalLeaveLayout) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
+            top.linkTo(calendarDetailViewLayout.bottom)
             bottom.linkTo(midGuideline)
         }
 
-        constrain(middleLine){
+        constrain(middleLine) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(midGuideline)
@@ -109,146 +131,188 @@ fun HomeScreen(
             bottom.linkTo(parent.bottom)
         }
 
-        constrain(lowerFooterButton){
+        constrain(lowerFooterButton) {
             start.linkTo(verticalMidGuideline)
             bottom.linkTo(parent.bottom)
         }
 
     }
 
+    val scrollableState = rememberScrollState()
+
+    LaunchedEffect(Unit) { scrollableState.animateScrollTo(10000) }
+
     ConstraintLayout(constraintSet = constraints, modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.width(24.dp))
-        Row(
-            modifier = Modifier
-                .layoutId("topProfileAndGreetingLayout")
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
-            Column {
-                Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
-                Text(text = name, fontSize = 24.sp)
-            }
-
-            OutlineCalendarButton(navController)
-            ProfileImageHolder(navController = navController)
-        }
-
-        Surface(
-            modifier = Modifier
-                .layoutId("upperMidTotalLeaveLayout")
-                .padding(24.dp)
-                .height(158.dp)
-                .clickable { navController.navigate(Screen.Splash.route) },
-            shape = MaterialTheme.shapes.large,
-            color = primaryColorLight,
-
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier
-                        .padding(start = 24.dp)
-                ) {
-                    Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
-                    Text(text = "PTOs availed",fontSize = 20.sp, color = secondaryTextColorDark)
-                    Text(text = "SEE DETAILS -->",fontSize = 16.sp, color = Color.White)
-                }
-
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LeaveAnimatedCircularProgressBar(
-                        percentage = 0.77f,
-                        totalValue = 100
-                    )
-                }
-            }
-        }
-
-        // Showing a line
-        Box(modifier = Modifier
-            .layoutId("middleLine")
-            .fillMaxWidth()
-            .padding(24.dp)
-            .height(1.dp)
-            .background(color = secondaryTextColorDark)
-        ) {
-            // This is just a view (Line)
-        }
-
         Column(
             modifier = Modifier
-                .layoutId("lowerMidAppliedLeaveLayout")
-                .padding(start = 24.dp, end = 24.dp)
-                .fillMaxWidth()
+                .fillMaxSize()
+                .verticalScroll(scrollableState)
         ) {
-            Text(text = "Applied PTOs", modifier = Modifier.padding(bottom = 16.dp))
-            Surface(
+            Spacer(modifier = Modifier.width(24.dp))
+            Row(
                 modifier = Modifier
-                    .clickable { navController.navigate(Screen.PtoRequests.route) }
+                    .layoutId("topProfileAndGreetingLayout")
                     .fillMaxWidth()
-                    .height(120.dp),
-                shape = MaterialTheme.shapes.large,
-                color = Color.White
+                    .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp, end = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(text = "Feb 20, 2021 - Feb 25, 2021 ", fontSize = 14.sp)
-                        Text(text = "Approved", fontSize = 18.sp)
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ExpandingText(text = AnnotatedString(text =  stringResource(id = R.string.long_text)))
+                val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
+                Column {
+                    Text(text = "Good Morning", fontSize = 16.sp, color = secondaryTextColorDark)
+                    Text(text = name, fontSize = 24.sp)
+                }
+
+                Row(horizontalArrangement = Arrangement.End) {
+                    OutlineCalendarButton(navController)
+                    ProfileImageHolder(navController = navController)
                 }
             }
-        }
 
-        Box(
-            modifier = Modifier
-                .layoutId("lowerFooterLayout")
-                .fillMaxWidth()
-        ) {
-            Image(
-                painterResource(id = R.drawable.home_page_illus_mm_leave),
-                contentDescription = "two_people_illustration",
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Box(
                 modifier = Modifier
-                    .height(200.dp)
-                    .width(270.dp),
-            )
-        }
+                    .layoutId("topCalendarViewLayout")
+                    .padding(bottom = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                StaticHomeCalendar(homeScreenViewModel)
+            }
 
-        Box(modifier = Modifier
-            .layoutId("lowerFooterButton")
-            .padding(bottom = 32.dp)) {
-            Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
-                Text(text = "APPLY PTO")
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "forward arrow for the button"
+            Box(
+                modifier = Modifier
+                    .layoutId("calendarDetailViewLayout")
+                    .padding(bottom = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CalendarDetailsCard()
+            }
+
+
+            Surface(
+                modifier = Modifier
+                    .layoutId("upperMidTotalLeaveLayout")
+                    .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
+                    .height(158.dp)
+                    .clickable { navController.navigate(Screen.Splash.route) },
+                shape = MaterialTheme.shapes.large,
+                color = primaryColorLight,
+
+                ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.Start,
+                        modifier = Modifier
+                            .padding(start = 24.dp)
+                    ) {
+                        Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
+                        Text(
+                            text = "PTOs availed",
+                            fontSize = 20.sp,
+                            color = secondaryTextColorDark
+                        )
+                        Text(text = "SEE DETAILS -->", fontSize = 16.sp, color = Color.White)
+                    }
+
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        LeaveAnimatedCircularProgressBar(
+                            percentage = 0.77f,
+                            totalValue = 100
+                        )
+                    }
+                }
+            }
+
+            // Showing a line
+            Box(
+                modifier = Modifier
+                    .layoutId("middleLine")
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .height(1.dp)
+                    .background(color = secondaryTextColorDark)
+            ) {
+                // This is just a view (Line)
+            }
+
+            Column(
+                modifier = Modifier
+                    .layoutId("lowerMidAppliedLeaveLayout")
+                    .padding(start = 24.dp, end = 24.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(text = "Applied PTOs", modifier = Modifier.padding(bottom = 16.dp))
+                Surface(
+                    modifier = Modifier
+                        .clickable { navController.navigate(Screen.PtoRequests.route) }
+                        .fillMaxWidth()
+                        .height(120.dp),
+                    shape = MaterialTheme.shapes.large,
+                    color = Color.White
+                ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 4.dp, end = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(text = "Feb 20, 2021 - Feb 25, 2021 ", fontSize = 14.sp)
+                            Text(text = "Approved", fontSize = 18.sp)
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        ExpandingText(text = AnnotatedString(text = stringResource(id = R.string.long_text)))
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .layoutId("lowerFooterLayout")
+                    .fillMaxWidth()
+            ) {
+                Image(
+                    painterResource(id = R.drawable.home_page_illus_mm_leave),
+                    contentDescription = "two_people_illustration",
+                    modifier = Modifier
+                        .height(200.dp)
+                        .width(270.dp),
                 )
+            }
+
+            Box(
+                modifier = Modifier
+                    .layoutId("lowerFooterButton")
+                    .padding(bottom = 32.dp)
+            ) {
+                Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
+                    Text(text = "APPLY PTO")
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = "forward arrow for the button"
+                    )
+                }
             }
         }
     }
 }
 
+@ExperimentalCoroutinesApi
+@ExperimentalCoilApi
 @Preview(showBackground = true)
 @Composable
-fun HomeScreenPreview() {
+private fun HomeScreenPreview() {
     HomeScreen(navController = rememberNavController())
 }
 
@@ -303,7 +367,7 @@ fun LeaveAnimatedCircularProgressBar(
 
 @Composable
 fun ExpandableTextLayoutWithReadMoreFeature(
-    text : String
+    text: String
 ) {
     val MINIMUM_LINE_SIZE = 2
     // [TextLayoutResult] provides every details we need for the Expandable feature
@@ -311,16 +375,16 @@ fun ExpandableTextLayoutWithReadMoreFeature(
     var finalText by remember { mutableStateOf(text) }
 
     // Click Events
-    var isClickable by remember{ mutableStateOf(false) }
-    var isExpandable by remember{ mutableStateOf(false) }
+    var isClickable by remember { mutableStateOf(false) }
+    var isExpandable by remember { mutableStateOf(false) }
 
     // Whenever the Value of the state will be changed the Compose will be recomposed
-    LaunchedEffect(textLayoutResultState){
-        if (textLayoutResultState == null){
+    LaunchedEffect(textLayoutResultState) {
+        if (textLayoutResultState == null) {
             return@LaunchedEffect
         }
 
-        when{
+        when {
             isExpandable -> {
                 finalText = "$text Show Less"
             }
@@ -354,7 +418,7 @@ fun ExpandableTextLayoutWithReadMoreFeature(
             }
             .animateContentSize()
 
-            // Todo add a animation here to make it look smooth
+        // Todo add a animation here to make it look smooth
     )
 }
 
@@ -362,7 +426,7 @@ fun ExpandableTextLayoutWithReadMoreFeature(
 @Composable
 fun ProfileImageHolder(
     navController: NavHostController = rememberNavController(),
-    imageUrl: String = "https://avatars.githubusercontent.com/u/66577?v=4"
+    imageUrl : String? = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
 ) {
     Box(
         modifier = Modifier
@@ -370,7 +434,6 @@ fun ProfileImageHolder(
             .height(40.dp),
         contentAlignment = Alignment.Center
     ) {
-
         val imagePainter = rememberImagePainter(
             data = imageUrl,
             builder = {
@@ -396,8 +459,11 @@ fun ProfileImageHolder(
 //        }
 
         // Fetching the Image and populating Image
-        Image(painter = imagePainter, contentDescription = "profile image", modifier = Modifier.clickable {
-            navController.navigate(Screen.SearchScreen.route)
-        })
+        Image(
+            painter = imagePainter,
+            contentDescription = "profile image",
+            modifier = Modifier.clickable {
+                navController.navigate(Screen.SearchScreen.route)
+            })
     }
 }

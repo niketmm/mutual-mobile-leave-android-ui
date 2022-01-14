@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,7 +56,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.screens.PtoScreen
+import com.mutualmobile.mmleave.screens.pto.PtoScreen
 import com.mutualmobile.mmleave.util.LandingPageState
 import kotlinx.coroutines.launch
 
@@ -145,7 +146,8 @@ fun LandingPageScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painterResource(id = R.drawable.rectangle_gradient_png_large),
-            contentDescription = "rectangle_gradient_image"
+            contentDescription = "rectangle_gradient_image",
+            contentScale = ContentScale.FillBounds
         )
         ConstraintLayout(constraintSet = constraint, modifier = Modifier.fillMaxSize()) {
             Row(
@@ -186,7 +188,7 @@ fun LandingPageScreen(
                 )
             }
 
-            val webClient = stringResource(id = R.string.default_web_client_id)
+            val webClient = stringResource(id = R.string.web_client_id)
 
             Column(
                 modifier = Modifier
