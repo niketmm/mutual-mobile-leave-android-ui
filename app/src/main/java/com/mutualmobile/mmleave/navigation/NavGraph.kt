@@ -18,57 +18,57 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
 fun SetUpNavGraph(
-  navController: NavHostController
+    navController: NavHostController
 ) {
-  NavHost(
-      navController = navController,
-      startDestination = Screen.Splash.route
-  ) {
-    composable(
-        route = Screen.Splash.route
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Splash.route
     ) {
-      AnimatedSplashScreen(navController = navController)
-    }
+        composable(
+            route = Screen.Splash.route
+        ) {
+            AnimatedSplashScreen(navController = navController)
+        }
 
-    composable(
-        route = Screen.SignUp.route
-    ) {
-      LandingPageScreen(
-          navController = navController,
-          text = "Continue with Google",
-          loadingText = "Signing up...",
-          onClicked = {}
-      )
-    }
+        composable(
+            route = Screen.SignUp.route
+        ) {
+            LandingPageScreen(
+                navController = navController,
+                text = "Continue with Google",
+                loadingText = "Signing up...",
+                onClicked = {}
+            )
+        }
 
-    composable(
-        route = Screen.Home.route
-    ) {
-      HomeScreen(navController)
-    }
+        composable(
+            route = Screen.Home.route
+        ) {
+            HomeScreen(navController)
+        }
 
-    composable(
-        route = Screen.ApplyPto.route
-    ) {
-      ApplyPtoScreen()
-    }
+        composable(
+            route = Screen.ApplyPto.route
+        ) {
+            ApplyPtoScreen()
+        }
 
-    composable(
-        route = Screen.PtoRequests.route
-    ) {
-      PtoRequestScreen()
-    }
+        composable(
+            route = Screen.PtoRequests.route
+        ) {
+            PtoRequestScreen()
+        }
 
-    composable(
-        route = Screen.PtoAvailed.route
-    ) {
-      PtoAvailedScreen()
-    }
+        composable(
+            route = Screen.PtoAvailed.route
+        ) {
+            PtoAvailedScreen()
+        }
 
-    composable(
-        Screen.SearchScreen.route
-    ) {
-      SearchScreen()
+        composable(
+            Screen.SearchScreen.route
+        ){
+            SearchScreen()
+        }
     }
-  }
 }

@@ -5,18 +5,13 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
-import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.di.FirebaseModule
-import com.mutualmobile.mmleave.firestore.PtoRequest
-import com.mutualmobile.mmleave.firestore.PtoRequestDateModel
+import com.google.firebase.firestore.ktx.toObject
 import com.mutualmobile.mmleave.firestore.SetGetPtoRequests
 import com.mutualmobile.mmleave.services.auth.firebase.await
+import kotlin.collections.HashMap
 import com.mutualmobile.mmleave.util.Constants.PTO_LIST_COLLECTION
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.onFailure
-import kotlinx.coroutines.flow.callbackFlow
 import java.sql.Date
 import java.time.LocalDate
 import java.time.ZoneId
@@ -29,13 +24,12 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
 
     override suspend fun makePtoRequest(
         ptoRequest: List<SetGetPtoRequests?>
-    ): Boolean {
+    ){
         ptoRequest.forEach {
             FirebaseModule.provideUserPtoRequestDocReference()
                 .document(it?.date.toString())
                 .set(getPtoMap(ptoRequest = it!!))
         }
-        return true
     }
 
     private fun getPtoMap(ptoRequest: SetGetPtoRequests): HashMap<String, Any?> {
@@ -104,43 +98,6 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error getting documents: ", exception)
                 }
-        }
-    }
-
-    override suspend fun fetchAdminList() = callbackFlow {
-        val listenerRegistration = FirebaseFirestore
-            .getInstance()
-            .collection("users_list")
-            .whereEqualTo("userType", 1).addSnapshotListener { admins, error ->
-                admins?.documents?.map { doc -> doc.toObject(MMUser::class.java) }?.let {
-                    Log.d(TAG, "fetchAdminList: ${it.toString()}")
-                    trySend(it).onFailure {
-                    }
-                }
-            }
-        awaitClose {
-            listenerRegistration.remove()
-        }
-    }
-
-    override suspend fun fetchUsersByUsername(username: String) = callbackFlow {
-        val listenerRegistration = FirebaseFirestore.getInstance()
-            .collection("users_list")
-            .whereArrayContains("nameAsArray", username)
-            .addSnapshotListener { filteredAdmins, error ->
-                filteredAdmins?.let {
-                    filteredAdmins.documents.map { doc ->
-                        doc.toObject(MMUser::class.java)
-                    }.let {
-                        Log.d(TAG, "fetchUsersByUsername: $it")
-                        trySend(it).onFailure {
-                        }
-                    }
-                }
-            }
-
-        awaitClose {
-            listenerRegistration.remove()
         }
     }
 }

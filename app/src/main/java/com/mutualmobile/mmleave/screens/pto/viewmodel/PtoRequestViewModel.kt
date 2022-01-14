@@ -21,15 +21,8 @@ import javax.inject.Inject
 class PtoRequestViewModel @Inject constructor(private val ptoRequestService: PtoRequestServiceImpl) :
     ViewModel() {
 
-    init {
-        getAdminUserList()
-    }
-
     private val _allPtoSelectedList = mutableStateOf(PtoUiState())
     val allPtoSelectedList: State<PtoUiState> = _allPtoSelectedList
-
-    private val _adminListState = mutableStateOf(SearchResultState())
-    val adminListState: State<SearchResultState> = _adminListState
 
     var ptoRequestStatus = mutableStateOf(true)
 
@@ -56,28 +49,6 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
                 ptoRequestService.makePtoRequest(
                     it
                 )
-            }
-        }
-    }
-
-    private fun getAdminUserList() {
-        viewModelScope.launch {
-            ptoRequestService.fetchAdminList().collect {
-                _adminListState.value = adminListState.value.copy(
-                    adminList = it
-                )
-            }
-        }
-    }
-
-    fun getFilteredAdminUserList(query: String?) {
-        viewModelScope.launch {
-            query?.let { query ->
-                ptoRequestService.fetchUsersByUsername(query).collect {
-                    _adminListState.value = adminListState.value.copy(
-                        filteredAdminList = it
-                    )
-                }
             }
         }
     }
