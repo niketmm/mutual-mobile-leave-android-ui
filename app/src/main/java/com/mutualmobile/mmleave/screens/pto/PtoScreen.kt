@@ -24,7 +24,11 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,9 +38,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.compose.components.AdminChip
+import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
+import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.screens.home.CalendarView
 import com.mutualmobile.mmleave.screens.pto.viewmodel.PtoRequestViewModel
 import com.mutualmobile.mmleave.screens.search.SearchScreen
@@ -44,6 +51,8 @@ import com.mutualmobile.mmleave.services.database.search_user.SearchUserViewMode
 import com.mutualmobile.mmleave.ui.theme.backgroundLight
 import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
@@ -51,11 +60,33 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun ApplyPtoScreen(
     ptoViewModel: PtoRequestViewModel = hiltViewModel(),
-    searchUserViewModel: SearchUserViewModel = hiltViewModel()
+    searchUserViewModel: SearchUserViewModel = hiltViewModel(),
+    navHostController: NavHostController
 ) {
     val TAG = "PtoScreen"
     val scrollableState = rememberScrollState()
+    val scaffoldState = rememberScaffoldState()
     var leaveDescriptionText by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = true) {
+        ptoViewModel.uiEvents.collectLatest { event ->
+            when (event) {
+                SavePtoRequestEvents.SavedPto -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = "PTO applied Successfully"
+                    )
+                    delay(1000)
+                    navHostController.popBackStack()
+                    navHostController.navigate(Screen.Home.route)
+                }
+                is SavePtoRequestEvents.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+            }
+        }
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -64,7 +95,8 @@ fun ApplyPtoScreen(
                     if (ptoViewModel.isValidPtoRequest(
                             ptoViewModel.allPtoSelectedList.value.localDateList,
                             searchUserViewModel.adminListState.value.selectedAdminList
-                        )){
+                        )
+                    ) {
                         ptoViewModel.updatePtoList(
                             ptoList = ptoViewModel.allPtoSelectedList.value.localDateList,
                             email = FirebaseAuth.getInstance().currentUser?.email,
@@ -74,15 +106,16 @@ fun ApplyPtoScreen(
                         ptoViewModel.applyPtoRequest(
                             selectedAdmins = searchUserViewModel.adminListState.value.selectedAdminList
                         )
-                    }else{
+                    } else {
                         Log.d(TAG, "ApplyPtoScreen: SOme properties are remaining")
                     }
                 }
             ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "add_pto_desc")
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "success_check_pto")
             }
         },
-        floatingActionButtonPosition = FabPosition.End
+        floatingActionButtonPosition = FabPosition.End,
+        scaffoldState = scaffoldState
     ) {
         Column(
             modifier = Modifier
@@ -153,13 +186,4 @@ fun ApplyPtoScreen(
             }
         }
     }
-}
-
-@ExperimentalCoilApi
-@ExperimentalFoundationApi
-@ExperimentalCoroutinesApi
-@Preview(showBackground = true)
-@Composable
-fun PtoScreenPreview() {
-    ApplyPtoScreen()
 }
