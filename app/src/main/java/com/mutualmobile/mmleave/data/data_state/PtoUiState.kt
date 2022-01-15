@@ -5,5 +5,5 @@ import java.time.LocalDate
 
 data class PtoUiState(
     var allPtoDatesList : List<SetGetPtoRequests?>? = emptyList(),
-    var localDateList : List<LocalDate?> = emptyList()
+    var localDateList : List<LocalDate> = emptyList()
 )

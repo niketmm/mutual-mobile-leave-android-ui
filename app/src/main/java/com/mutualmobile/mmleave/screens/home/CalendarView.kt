@@ -23,9 +23,7 @@ import java.time.LocalDate
 @ExperimentalCoroutinesApi
 @Composable
 fun CalendarView(
-    ptoViewModel: PtoRequestViewModel,
-    email: String?,
-    description: String?
+    ptoViewModel: PtoRequestViewModel
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxSize(0.6f),
@@ -37,7 +35,7 @@ fun CalendarView(
                 initialSelection = listOf(LocalDate.now()),
                 initialSelectionMode = SelectionMode.Multiple,
                 onSelectionChanged = { selectedDates ->
-                    ptoViewModel.updatePtoList(selectedDates, email, description)
+                    ptoViewModel.allPtoSelectedList.value.localDateList = selectedDates
                 }
             )
         )

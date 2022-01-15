@@ -1,5 +1,6 @@
 package com.mutualmobile.mmleave.screens.pto
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,9 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,7 +37,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.compose.components.AdminChip
-import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.screens.home.CalendarView
 import com.mutualmobile.mmleave.screens.pto.viewmodel.PtoRequestViewModel
 import com.mutualmobile.mmleave.screens.search.SearchScreen
@@ -55,11 +53,30 @@ fun ApplyPtoScreen(
     ptoViewModel: PtoRequestViewModel = hiltViewModel(),
     searchUserViewModel: SearchUserViewModel = hiltViewModel()
 ) {
+    val TAG = "PtoScreen"
+    val scrollableState = rememberScrollState()
+    var leaveDescriptionText by remember { mutableStateOf("") }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    ptoViewModel.applyPtoRequest("", "")
+                    if (ptoViewModel.isValidPtoRequest(
+                            ptoViewModel.allPtoSelectedList.value.localDateList,
+                            searchUserViewModel.adminListState.value.selectedAdminList
+                        )){
+                        ptoViewModel.updatePtoList(
+                            ptoList = ptoViewModel.allPtoSelectedList.value.localDateList,
+                            email = FirebaseAuth.getInstance().currentUser?.email,
+                            desc = leaveDescriptionText,
+                            selectedAdmins = searchUserViewModel.adminListState.value.selectedAdminList
+                        )
+                        ptoViewModel.applyPtoRequest(
+                            selectedAdmins = searchUserViewModel.adminListState.value.selectedAdminList
+                        )
+                    }else{
+                        Log.d(TAG, "ApplyPtoScreen: SOme properties are remaining")
+                    }
                 }
             ) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "add_pto_desc")
@@ -67,10 +84,6 @@ fun ApplyPtoScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) {
-
-        val scrollableState = rememberScrollState()
-        var leaveDescriptionText by remember { mutableStateOf("") }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -84,12 +97,10 @@ fun ApplyPtoScreen(
                     .padding(start = 16.dp, end = 16.dp)
             ) {
                 SearchScreen(searchUserViewModel)
-                Spacer(modifier = Modifier.height(16.dp))
-                CalendarView(
-                    ptoViewModel,
-                    FirebaseAuth.getInstance().currentUser?.email!!,
-                    leaveDescriptionText
-                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                CalendarView(ptoViewModel)
 
                 Row(
                     horizontalArrangement = Arrangement.End,
