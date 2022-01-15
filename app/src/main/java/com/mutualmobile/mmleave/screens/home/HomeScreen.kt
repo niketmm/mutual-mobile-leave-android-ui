@@ -96,7 +96,7 @@ fun HomeScreen(
             end.linkTo(parent.end)
         }
 
-        constrain(calendarDetailViewLayout){
+        constrain(calendarDetailViewLayout) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(topCalendarViewLayout.bottom)
@@ -154,7 +154,11 @@ fun HomeScreen(
             ) {
                 val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
                 Column {
-                    Text(text = stringResource(R.string.good_morning_home_screen_text), fontSize = 16.sp, color = secondaryTextColorDark)
+                    Text(
+                        text = stringResource(R.string.good_morning_home_screen_text),
+                        fontSize = 16.sp,
+                        color = secondaryTextColorDark
+                    )
                     Text(text = name, fontSize = 24.sp)
                 }
 
@@ -246,7 +250,10 @@ fun HomeScreen(
                     .padding(start = 24.dp, end = 24.dp)
                     .fillMaxWidth()
             ) {
-                Text(text = stringResource(R.string.applied_pto_heading_home_screen), modifier = Modifier.padding(bottom = 16.dp))
+                Text(
+                    text = stringResource(R.string.applied_pto_heading_home_screen),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
                 Surface(
                     modifier = Modifier
                         .clickable { navController.navigate(Screen.PtoRequests.route) }
@@ -364,8 +371,8 @@ fun LeaveAnimatedCircularProgressBar(
 @Composable
 fun ProfileImageHolder(
     navController: NavHostController = rememberNavController(),
-    imageUrl : String? = FirebaseAuth.getInstance().currentUser?.photoUrl.toString(),
-    size : Dp = 40.dp
+    imageUrl: String? = FirebaseAuth.getInstance().currentUser?.photoUrl.toString(),
+    size: Dp = 40.dp,
 ) {
     Box(
         modifier = Modifier
@@ -376,7 +383,7 @@ fun ProfileImageHolder(
             data = imageUrl,
             builder = {
                 placeholder(R.drawable.mm_splash_logo)
-                crossfade(1000)
+                crossfade(500)
                 transformations(
                     CircleCropTransformation()
                 )
@@ -399,9 +406,7 @@ fun ProfileImageHolder(
         // Fetching the Image and populating Image
         Image(
             painter = imagePainter,
-            contentDescription = "profile image",
-            modifier = Modifier.clickable {
-                navController.navigate(Screen.SearchScreen.route)
-            })
+            contentDescription = "profile image"
+        )
     }
 }

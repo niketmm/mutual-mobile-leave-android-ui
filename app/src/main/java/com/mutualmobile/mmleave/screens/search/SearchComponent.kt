@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
+import com.mutualmobile.mmleave.compose.components.AdminChip
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.screens.home.ProfileImageHolder
 import com.mutualmobile.mmleave.services.database.search_user.SearchUserViewModel
@@ -86,7 +87,17 @@ fun SearchScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ColumnCardViewComposable(firebaseAdminUser = admin)
+                   admin?.let {
+                       AdminChip(mmUser = admin, isSelected = it.isSelected!!, onSelectionChanged = { user ->
+                           user.isSelected = user.isSelected!!.not()
+                           Log.d(TAG, "SearchScreen: $it")
+                           viewModel.updateSelectedAdminList(
+                               filteredList.filter{ filteredMMUser ->
+                                   filteredMMUser!!.isSelected!!
+                               }
+                           )
+                       })
+                   }
                 }
             }
         }
@@ -148,55 +159,4 @@ fun SearchViewComposable(
             disabledIndicatorColor = Color.Transparent
         )
     )
-}
-
-@ExperimentalCoilApi
-@Composable
-fun ColumnCardViewComposable(firebaseAdminUser: MMUser?) {
-    Card(
-        shape = MaterialTheme.shapes.small,
-        modifier = Modifier
-            .wrapContentWidth()
-            .padding(4.dp),
-        elevation = 4.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(all = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-
-            firebaseAdminUser?.photoUrl?.let {
-                ProfileImageHolder(
-                    rememberNavController(),
-                    it
-                )
-            }
-
-            Column(modifier = Modifier.padding(start = 8.dp)) {
-                firebaseAdminUser?.let {
-                    Text(
-                        text = it.displayName ?: "Empty",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp),
-                        color = Color.Black,
-                        fontSize = 16.sp
-                    )
-                }
-
-                firebaseAdminUser?.let {
-                    Text(
-                        text = it.designation ?: "Empty",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp),
-                        color = Color.Black,
-                        fontSize = 12.sp
-                    )
-                }
-            }
-        }
-    }
 }

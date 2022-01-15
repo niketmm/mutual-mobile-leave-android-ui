@@ -134,28 +134,8 @@ fun ApplyPtoScreen(
                         .padding(all = 4.dp)
                 ) {
                     LazyRow(content = {
-                        val list = listOf<MMUser>(
-                            MMUser(
-                                "Niket",
-                                photoUrl = "https://www.denofgeek.com/wp-content/uploads/2017/10/batman-the-animated-series_0.jpg?resize=768%2C432"
-                            ), MMUser(
-                                "Anmol",
-                                photoUrl = "https://www.denofgeek.com/wp-content/uploads/2017/10/batman-the-animated-series_0.jpg?resize=768%2C432"
-                            ), MMUser(
-                                "Aditya",
-                                photoUrl = "https://www.denofgeek.com/wp-content/uploads/2017/10/batman-the-animated-series_0.jpg?resize=768%2C432"
-                            ),
-                            MMUser(
-                                "Ambar",
-                                photoUrl = "https://www.denofgeek.com/wp-content/uploads/2017/10/batman-the-animated-series_0.jpg?resize=768%2C432"
-                            ),
-                            MMUser(
-                                "Nikhil",
-                                photoUrl = "https://www.denofgeek.com/wp-content/uploads/2017/10/batman-the-animated-series_0.jpg?resize=768%2C432"
-                            )
-                        )
-                        items(list) { admin ->
-                            AdminChip(mmUser = admin)
+                        items(searchUserViewModel.adminListState.value.selectedAdminList) { admin ->
+                            admin?.let { it1 -> AdminChip(mmUser = it1) }
                         }
                     })
                 }

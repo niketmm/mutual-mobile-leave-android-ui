@@ -24,34 +24,33 @@ import com.mutualmobile.mmleave.screens.home.ProfileImageHolder
 fun AdminChip(
     mmUser: MMUser,
     isSelected: Boolean = false,
-    onSelectionChanged: (String) -> Unit = {},
+    onSelectionChanged: (MMUser) -> Unit = {},
 ) {
     Surface(
         modifier = Modifier.padding(4.dp),
-        elevation = 8.dp,
+        elevation = 4.dp,
         shape = RoundedCornerShape(16.dp),
-        color = if (isSelected) Color.LightGray else MaterialTheme.colors.primary
+        color = if (isSelected) MaterialTheme.colors.primary else  Color.LightGray
     ) {
         Row(modifier = Modifier
             .toggleable(
                 value = isSelected,
                 onValueChange = {
-                    mmUser.displayName?.let { name -> onSelectionChanged(name) }
+                   onSelectionChanged(mmUser)
                 }
             ),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileImageHolder(
-                imageUrl = mmUser.photoUrl.toString(),
-                size = 35.dp
+                imageUrl = mmUser.photoUrl.toString()
             )
             mmUser.displayName?.let { name ->
                 Text(
                     text = name,
                     style = MaterialTheme.typography.body2,
                     color = Color.White,
-                    modifier = Modifier.padding(2.dp).wrapContentWidth()
+                    modifier = Modifier.padding(4.dp).wrapContentWidth()
                 )
             }
         }
