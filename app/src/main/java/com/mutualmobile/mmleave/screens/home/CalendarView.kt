@@ -1,11 +1,14 @@
 package com.mutualmobile.mmleave.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,14 +27,12 @@ fun CalendarView(
     email: String?,
     description: String?
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+    Column(
+        modifier = Modifier.fillMaxWidth().fillMaxSize(0.6f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         SelectableCalendar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(320.dp),
             calendarState = rememberSelectableCalendarState(
                 initialSelection = listOf(LocalDate.now()),
                 initialSelectionMode = SelectionMode.Multiple,

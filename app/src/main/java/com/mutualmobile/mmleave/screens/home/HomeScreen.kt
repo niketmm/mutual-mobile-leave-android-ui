@@ -364,12 +364,12 @@ fun LeaveAnimatedCircularProgressBar(
 @Composable
 fun ProfileImageHolder(
     navController: NavHostController = rememberNavController(),
-    imageUrl : String? = FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
+    imageUrl : String? = FirebaseAuth.getInstance().currentUser?.photoUrl.toString(),
+    size : Dp = 40.dp
 ) {
     Box(
         modifier = Modifier
-            .width(40.dp)
-            .height(40.dp),
+            .size(size = size),
         contentAlignment = Alignment.Center
     ) {
         val imagePainter = rememberImagePainter(
