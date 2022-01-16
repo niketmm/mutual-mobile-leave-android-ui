@@ -1,6 +1,5 @@
 package com.mutualmobile.mmleave.screens.pto
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,19 +19,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign.Companion
@@ -41,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.R.drawable
+import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.data.model.PtoData
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
-import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 
 const val MINIMIZED_MAX_LINES = 2
 
@@ -145,64 +137,5 @@ fun PtoElement(data: PtoData) {
             .padding(bottom = 4.dp),
         style = TextStyle(color = blueTextColorLight)
     )
-  }
-}
-
-@Composable
-fun ExpandingText(
-  modifier: Modifier = Modifier,
-  text: AnnotatedString
-) {
-  var isExpanded by remember { mutableStateOf(false) }
-  val textLayoutResultState = remember { mutableStateOf<TextLayoutResult?>(null) }
-  var isClickable by remember { mutableStateOf(false) }
-  var finalText by remember {
-    mutableStateOf(text)
-  }
-  Text(
-      text = finalText,
-      maxLines = if (isExpanded) Int.MAX_VALUE else MINIMIZED_MAX_LINES,
-      onTextLayout = { textLayoutResultState.value = it },
-      modifier = modifier
-          .clickable(enabled = isClickable) { isExpanded = !isExpanded }
-          .animateContentSize(),
-  )
-  val textLayoutResult = textLayoutResultState.value
-  LaunchedEffect(textLayoutResult) {
-    if (textLayoutResult == null) return@LaunchedEffect
-
-    when {
-      isExpanded -> {
-        val showLessString = "Show Less"
-        finalText = AnnotatedString(
-            text = text.toString(),
-            spanStyle = SpanStyle(color = secondaryTextColorDark)
-        ).plus(
-            AnnotatedString(
-                text = showLessString,
-                spanStyle = SpanStyle(color = Color.Black)
-            )
-        )
-      }
-      !isExpanded && textLayoutResult.hasVisualOverflow -> {
-        val lastCharIndex = textLayoutResult.getLineEnd(MINIMIZED_MAX_LINES - 1)
-        val showMoreString = "... Show More"
-        val adjustedText = text
-            .substring(startIndex = 0, endIndex = lastCharIndex)
-            .dropLast(showMoreString.length)
-            .dropLastWhile { it == ' ' || it == '.' }
-
-        finalText = AnnotatedString(
-            text = adjustedText,
-            spanStyle = SpanStyle(color = secondaryTextColorDark)
-        ).plus(
-            AnnotatedString(
-                text = showMoreString,
-                spanStyle = SpanStyle(color = Color.Black)
-            )
-        )
-        isClickable = true
-      }
-    }
   }
 }

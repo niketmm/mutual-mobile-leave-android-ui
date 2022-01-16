@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -40,11 +41,12 @@ import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.compose.components.ExpandingText
+import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
 import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.compose.components.ProfileImageHolder
 import com.mutualmobile.mmleave.navigation.Screen
-import com.mutualmobile.mmleave.screens.pto.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -114,11 +116,9 @@ fun HomeScreen(
         Surface(
             modifier = Modifier
                 .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
-                .height(158.dp)
-                .clickable { navController.navigate(Screen.Splash.route) },
+                .height(158.dp),
             shape = MaterialTheme.shapes.large,
             color = primaryColorLight,
-
             ) {
             Row(
                 modifier = Modifier
@@ -133,11 +133,13 @@ fun HomeScreen(
                         .padding(start = 24.dp)
                 ) {
                     Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "PTOs availed",
                         fontSize = 20.sp,
                         color = secondaryTextColorDark
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "SEE DETAILS -->", fontSize = 16.sp, color = Color.White)
                 }
 
@@ -176,23 +178,27 @@ fun HomeScreen(
             Surface(
                 modifier = Modifier
                     .clickable { navController.navigate(Screen.PtoRequests.route) }
+                    .padding(all = 8.dp)
                     .fillMaxWidth()
-                    .height(120.dp),
-                shape = MaterialTheme.shapes.large,
-                color = Color.White
+                    .wrapContentHeight(unbounded = true),
+                shape = RoundedCornerShape(8.dp),
+                color = primaryColorLight
             ) {
-                Column(modifier = Modifier.fillMaxSize()) {
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(all = 8.dp)) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 4.dp, end = 4.dp),
+                            .padding(all = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(text = "Feb 20, 2021 - Feb 25, 2021 ", fontSize = 14.sp)
-                        Text(text = "Approved", fontSize = 18.sp)
+                        HomePtoAvailedChip()
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     ExpandingText(text = AnnotatedString(text = stringResource(id = R.string.long_text)))
                 }
             }
