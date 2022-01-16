@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.screens.search.SearchResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
@@ -51,6 +52,14 @@ class SearchUserViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun updateSelectedAdminList(selectedAdmins : List<MMUser?>){
+        viewModelScope.launch {
+            _adminListState.value = adminListState.value.copy(
+                selectedAdminList = selectedAdmins
+            )
         }
     }
 }

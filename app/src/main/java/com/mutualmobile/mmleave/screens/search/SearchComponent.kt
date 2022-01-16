@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -35,11 +37,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
+import com.mutualmobile.mmleave.compose.components.AdminChip
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.screens.home.ProfileImageHolder
 import com.mutualmobile.mmleave.services.database.search_user.SearchUserViewModel
@@ -53,8 +57,6 @@ fun SearchScreen(
 ) {
     val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
 
-    val ptoAppliedState = remember { mutableStateOf(false) }
-
     val adminListState = viewModel.adminListState.value
 
     var filteredList: List<MMUser?>
@@ -63,10 +65,10 @@ fun SearchScreen(
 
     val TAG = "Testing"
 
-    Column(modifier = Modifier.padding(8.dp)) {
+    Column(modifier = Modifier.padding(4.dp)) {
         SearchViewComposable(state = textState, viewModel)
-        Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        Spacer(modifier = Modifier.height(4.dp))
+        LazyRow(modifier = Modifier.fillMaxWidth()) {
             filteredList = if (searchedText.isEmpty() || searchedText == "Search Admins by here") {
                 adminListState.adminList
             } else {
@@ -85,30 +87,19 @@ fun SearchScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ColumnCardViewComposable(firebaseAdminUser = admin)
-                    if (admin?.isSelected == true) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "item_selected",
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
+                   admin?.let {
+                       AdminChip(mmUser = admin, isSelected = it.isSelected!!, onSelectionChanged = { user ->
+                           user.isSelected = user.isSelected!!.not()
+                           Log.d(TAG, "SearchScreen: $it")
+                           viewModel.updateSelectedAdminList(
+                               filteredList.filter{ filteredMMUser ->
+                                   filteredMMUser!!.isSelected!!
+                               }
+                           )
+                       })
+                   }
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                ptoAppliedState.value = !ptoAppliedState.value
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "Send Application",
-                color = MaterialTheme.colors.secondaryVariant,
-                fontSize = 18.sp,
-                fontStyle = FontStyle.Normal
-            )
         }
     }
 }
@@ -168,63 +159,4 @@ fun SearchViewComposable(
             disabledIndicatorColor = Color.Transparent
         )
     )
-}
-
-@ExperimentalCoilApi
-@Composable
-fun ColumnCardViewComposable(firebaseAdminUser: MMUser?) {
-    Card(
-        shape = MaterialTheme.shapes.small,
-        modifier = Modifier
-            .size(width = 240.dp, height = 40.dp)
-            .padding(4.dp),
-        elevation = 4.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(all = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-
-            firebaseAdminUser?.photoUrl?.let {
-                ProfileImageHolder(
-                    rememberNavController(),
-                    it
-                )
-            }
-
-            Column(modifier = Modifier.padding(start = 8.dp)) {
-                firebaseAdminUser?.let {
-                    Text(
-                        text = it.displayName ?: "Empty",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp),
-                        color = Color.Black,
-                        fontSize = 16.sp
-                    )
-                }
-
-                firebaseAdminUser?.let {
-                    Text(
-                        text = it.designation ?: "Empty",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp),
-                        color = Color.Black,
-                        fontSize = 12.sp
-                    )
-                }
-            }
-        }
-    }
-}
-
-@ExperimentalCoroutinesApi
-@ExperimentalCoilApi
-@Preview(showBackground = true)
-@Composable
-fun PreviewSearchComposable() {
-    SearchScreen()
 }

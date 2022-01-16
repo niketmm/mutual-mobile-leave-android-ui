@@ -1,17 +1,27 @@
 package com.mutualmobile.mmleave.services.database.ptorequest
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.mutualmobile.mmleave.data.model.Admins
+import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.di.FirebaseModule
-import com.google.firebase.firestore.ktx.toObject
 import com.mutualmobile.mmleave.data.model.SetGetPtoRequests
+import com.mutualmobile.mmleave.data.ui_event.PtoRequestEvents
+import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
 import com.mutualmobile.mmleave.services.auth.firebase.await
 import kotlin.collections.HashMap
 import com.mutualmobile.mmleave.util.Constants.PTO_LIST_COLLECTION
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import java.sql.Date
 import java.time.LocalDate
 import java.time.ZoneId
@@ -23,26 +33,49 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
     val TAG = PtoRequestServiceImpl::class.simpleName
 
     override suspend fun makePtoRequest(
-        ptoProperties: List<SetGetPtoRequests?>
-    ){
-        ptoProperties.forEach {
-            FirebaseModule.provideUserPtoRequestDocReference()
+        ptoRequests: List<SetGetPtoRequests?>,
+        selectedAdmins: List<Admins?>
+    ) = callbackFlow {
+        ptoRequests.forEach {
+            val listener = FirebaseModule.provideUserPtoRequestDocReference()
                 .document(it?.date.toString())
-                .set(getPtoMap(ptoRequest = it!!))
+                .set(getPtoMap(ptoRequest = it, selectedAdmins = selectedAdmins))
+                .addOnSuccessListener {
+                    trySend(PtoRequestEvents.Success)
+                }
+                .addOnFailureListener { exception ->
+                    trySend(
+                        PtoRequestEvents.Failed(
+                            exception.message ?: "Couldn't able to save the info"
+                        )
+                    )
+                }
+
+            awaitClose {
+                listener.isCanceled
+            }
+        }
+
+        awaitClose {
+            // Todo Better way to handle Events
         }
     }
 
-    private fun getPtoMap(ptoRequest: SetGetPtoRequests): HashMap<String, Any?> {
+    private fun getPtoMap(
+        ptoRequest: SetGetPtoRequests?,
+        selectedAdmins: List<Admins?>
+    ): HashMap<String, Any?> {
         val ptoMap = HashMap<String, Any?>()
-        ptoMap["description"] = ptoRequest.description
-        ptoMap["email"] = ptoRequest.email
-        ptoMap["date"] = ptoRequest.date.toFirebaseTimestamp()
-        ptoMap["ptoStatus"] = ptoRequest.status
+        ptoMap["description"] = ptoRequest?.description
+        ptoMap["email"] = ptoRequest?.email
+        ptoMap["date"] = ptoRequest?.date?.toFirebaseTimestamp()
+        ptoMap["ptoStatus"] = ptoRequest?.status
+        ptoMap["selectedAdmins"] = selectedAdmins
         return ptoMap
     }
 
     override suspend fun approvePtoRequest(
-        ptoProperties: SetGetPtoRequests
+        ptoRequests: SetGetPtoRequests
     ) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val ptoListCollectionRef = FirebaseFirestore.getInstance().collection(PTO_LIST_COLLECTION)

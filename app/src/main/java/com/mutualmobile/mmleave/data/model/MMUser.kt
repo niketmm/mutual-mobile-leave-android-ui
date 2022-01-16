@@ -10,5 +10,5 @@ data class MMUser(
     var leaveTaken : Int? = 0,
     var totalLeave : Int? = 20,
     var leaveLeft : Int? = 20,
-    var isSelected : Boolean? = true
+    var isSelected : Boolean? = false
 )
