@@ -1,8 +1,5 @@
 package com.mutualmobile.mmleave.screens.home
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,8 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -28,23 +25,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -53,11 +41,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.transform.CircleCropTransformation
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
+import com.mutualmobile.mmleave.compose.components.ProfileImageHolder
 import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.screens.pto.ExpandingText
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
@@ -81,8 +69,8 @@ fun HomeScreen(
         val lowerFooterLayout = createRefFor("lowerFooterLayout")
         val lowerFooterButton = createRefFor("lowerFooterButton")
 
-        val midGuideline = createGuidelineFromTop(0.7f)
-        val verticalMidGuideline = createGuidelineFromAbsoluteLeft(0.6f)
+//        val midGuideline = createGuidelineFromTop(0.7f)
+//        val verticalMidGuideline = createGuidelineFromAbsoluteRight(0.5f)
 
         constrain(topProfileAndGreetingLayout) {
             top.linkTo(parent.top)
@@ -106,13 +94,14 @@ fun HomeScreen(
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(calendarDetailViewLayout.bottom)
-            bottom.linkTo(midGuideline)
+            bottom.linkTo(middleLine.top)
         }
 
         constrain(middleLine) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
-            top.linkTo(midGuideline)
+            top.linkTo(upperMidTotalLeaveLayout.bottom)
+            bottom.linkTo(lowerMidAppliedLeaveLayout.top)
         }
 
         constrain(lowerMidAppliedLeaveLayout) {
@@ -127,7 +116,8 @@ fun HomeScreen(
         }
 
         constrain(lowerFooterButton) {
-            start.linkTo(verticalMidGuideline)
+            start.linkTo(parent.absoluteLeft)
+            end.linkTo(parent.end)
             bottom.linkTo(parent.bottom)
         }
 
@@ -137,11 +127,11 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(10000) }
 
-    ConstraintLayout(constraintSet = constraints, modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(constraintSet = constraints, modifier = Modifier.wrapContentHeight()) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollableState)
+                .wrapContentHeight()
+                .verticalScroll(scrollableState),
         ) {
             Spacer(modifier = Modifier.width(24.dp))
             Row(
@@ -164,7 +154,8 @@ fun HomeScreen(
 
                 Row(horizontalArrangement = Arrangement.End) {
                     OutlineCalendarButton(navController)
-                    ProfileImageHolder(navController = navController)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    ProfileImageHolder()
                 }
             }
 
@@ -179,15 +170,17 @@ fun HomeScreen(
                 StaticHomeCalendar(homeScreenViewModel)
             }
 
-            Box(
-                modifier = Modifier
-                    .layoutId("calendarDetailViewLayout")
-                    .padding(bottom = 12.dp),
-                contentAlignment = Alignment.Center
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CalendarDetailsCard()
+                Box(
+                    modifier = Modifier
+                        .layoutId("calendarDetailViewLayout")
+                ) {
+                    CalendarDetailsCard()
+                }
             }
-
 
             Surface(
                 modifier = Modifier
@@ -279,31 +272,36 @@ fun HomeScreen(
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .layoutId("lowerFooterLayout")
-                    .fillMaxWidth()
+            Column(
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.Start
             ) {
-                Image(
-                    painterResource(id = R.drawable.home_page_illus_mm_leave),
-                    contentDescription = stringResource(R.string.bottom_home_img_illustration),
-                    modifier = Modifier
-                        .height(200.dp)
-                        .width(270.dp),
-                )
+                Box {
+                    Image(
+                        painterResource(id = R.drawable.home_page_illus_mm_leave),
+                        contentDescription = stringResource(R.string.bottom_home_img_illustration),
+                        modifier = Modifier
+                            .height(200.dp)
+                            .width(270.dp),
+                    )
+                }
             }
 
-            Box(
-                modifier = Modifier
-                    .layoutId("lowerFooterButton")
-                    .padding(bottom = 32.dp)
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End
             ) {
-                Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
-                    Text(text = "APPLY PTO")
-                    Icon(
-                        imageVector = Icons.Default.ArrowForward,
-                        contentDescription = stringResource(R.string.forward_arrow_icon_desc)
-                    )
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                ) {
+                    Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
+                        Text(text = "APPLY PTO")
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = stringResource(R.string.forward_arrow_icon_desc)
+                        )
+                    }
                 }
             }
         }
@@ -316,97 +314,4 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenPreview() {
     HomeScreen(navController = rememberNavController())
-}
-
-@Composable
-fun LeaveAnimatedCircularProgressBar(
-    fontSize: TextUnit = 25.sp,
-    radius: Dp = 50.dp,
-    animationDelay: Int = 0,
-    animationDuration: Int = 1500,
-    stokeWidth: Dp = 8.dp,
-    color: Color = secondaryTextColorDark,
-    percentage: Float,
-    totalValue: Int
-) {
-
-    var animationPlayed by remember {
-        mutableStateOf(false)
-    }
-
-    val currentPercentage = animateFloatAsState(
-        targetValue = if (animationPlayed) percentage else 0F,
-        animationSpec = tween(
-            durationMillis = animationDuration,
-            delayMillis = animationDelay
-        )
-    )
-
-    LaunchedEffect(key1 = true) {
-        animationPlayed = true
-    }
-
-    // Box Which holds the Animation and TV
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(radius * 2)) {
-        Canvas(modifier = Modifier.size(radius * 2), onDraw = {
-            // Method Provided in the DrawScope by Canvas
-            drawArc(
-                color = color,
-                startAngle = 30f,
-                360 * currentPercentage.value,
-                false,
-                style = Stroke(stokeWidth.toPx(), cap = StrokeCap.Round)
-            )
-        })
-        Text(
-            text = (currentPercentage.value * totalValue).toInt().toString(),
-            color = color,
-            fontSize = fontSize,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@ExperimentalCoilApi
-@Composable
-fun ProfileImageHolder(
-    navController: NavHostController = rememberNavController(),
-    imageUrl: String? = FirebaseAuth.getInstance().currentUser?.photoUrl.toString(),
-    size: Dp = 40.dp,
-) {
-    Box(
-        modifier = Modifier
-            .size(size = size),
-        contentAlignment = Alignment.Center
-    ) {
-        val imagePainter = rememberImagePainter(
-            data = imageUrl,
-            builder = {
-                placeholder(R.drawable.mm_splash_logo)
-                crossfade(500)
-                transformations(
-                    CircleCropTransformation()
-                )
-            }
-        )
-        // This is to control the State of the Async call of the Coil Image request
-        val imagePainterState = imagePainter.state
-
-        // Calling the sealed class from the Coil Lib
-        // This is Crashing the app for some reason
-//        when(imagePainterState){
-//            is ImagePainter.State.Loading -> {
-//
-//            }
-//            is ImagePainter.State.Success -> TODO()
-//            is ImagePainter.State.Error -> TODO()
-//            ImagePainter.State.Empty -> TODO()
-//        }
-
-        // Fetching the Image and populating Image
-        Image(
-            painter = imagePainter,
-            contentDescription = "profile image"
-        )
-    }
 }

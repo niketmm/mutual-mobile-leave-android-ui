@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.screens.home.ProfileImageHolder
 
 @ExperimentalCoilApi
 @Composable
