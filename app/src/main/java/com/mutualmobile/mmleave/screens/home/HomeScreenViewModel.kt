@@ -2,7 +2,7 @@ package com.mutualmobile.mmleave.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mutualmobile.mmleave.data.model.CalendarPtoRequest
+import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
 import com.mutualmobile.mmleave.services.database.home.CalendarDataServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +33,7 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             calendarDataService.fetchUserDatesList().collect {
                 _allPtoSelectedList.value = allPtoSelectedList.value.copy(
-                    allPtoDatesList = it.toNonNullList()
+                    allPtoDatesListModel = it.toNonNullList()
                 )
             }
         }
@@ -53,7 +53,7 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    private fun List<CalendarPtoRequest?>.toNonNullList(): List<CalendarPtoRequest> {
+    private fun List<FirebasePtoRequestModel?>.toNonNullList(): List<FirebasePtoRequestModel> {
         return this.map {
             it!!
         }

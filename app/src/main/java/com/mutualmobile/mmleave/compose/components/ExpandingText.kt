@@ -15,9 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.unit.dp
-import com.mutualmobile.mmleave.screens.pto.MINIMIZED_MAX_LINES
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
+import com.mutualmobile.mmleave.util.Constants.MINIMIZED_MAX_LINES
 
 @Composable
 fun ExpandingText(

@@ -1,19 +1,18 @@
 package com.mutualmobile.mmleave.screens.pto.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
 import com.mutualmobile.mmleave.data.data_state.PtoUiState
 import com.mutualmobile.mmleave.data.model.Admins
 import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.data.model.SetGetPtoRequests
+import com.mutualmobile.mmleave.data.model.PtoRequestDomain
 import com.mutualmobile.mmleave.data.ui_event.PtoRequestEvents
 import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
+import com.mutualmobile.mmleave.services.database.availed.AvailedPtoServiceImpl
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,8 +25,10 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class PtoRequestViewModel @Inject constructor(private val ptoRequestService: PtoRequestServiceImpl) :
-    ViewModel() {
+class PtoRequestViewModel @Inject constructor(
+    private val ptoRequestService: PtoRequestServiceImpl,
+    private val availedPtoServiceImpl: AvailedPtoServiceImpl
+) : ViewModel() {
 
     private val _allPtoSelectedList = mutableStateOf(PtoUiState())
     val allPtoSelectedList: State<PtoUiState> = _allPtoSelectedList
@@ -35,6 +36,16 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
     // One time event only
     private val _uiEvents = MutableSharedFlow<SavePtoRequestEvents>()
     val uiEvents = _uiEvents.asSharedFlow()
+
+    fun getAllRemotePtoRequest(){
+        viewModelScope.launch {
+            availedPtoServiceImpl.fetchAllPtoRequests().collect { remotePtoRequestList ->
+                _allPtoSelectedList.value = allPtoSelectedList.value.copy(
+                    allPtoRequestRemoteList = remotePtoRequestList
+                )
+            }
+        }
+    }
 
     fun applyPtoRequest(
         selectedAdmins: List<MMUser?>
@@ -76,10 +87,10 @@ class PtoRequestViewModel @Inject constructor(private val ptoRequestService: Pto
         email: String?,
         desc: String?
     ) {
-        val list = mutableListOf<SetGetPtoRequests>()
+        val list = mutableListOf<PtoRequestDomain>()
         ptoList.forEach {
             val obj =
-                SetGetPtoRequests(
+                PtoRequestDomain(
                     email = email,
                     description = desc,
                     date = it,
