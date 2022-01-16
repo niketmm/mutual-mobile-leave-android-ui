@@ -198,6 +198,21 @@ fun HomeScreen(
             }
         }
 
+
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.Start
+        ) {
+            Box {
+                Image(
+                    painterResource(id = R.drawable.home_page_illus_mm_leave),
+                    contentDescription = stringResource(R.string.bottom_home_img_illustration),
+                    modifier = Modifier
+                        .height(200.dp)
+                        .width(270.dp),
+                )
+            }
+        }
         Column(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.End
@@ -214,21 +229,6 @@ fun HomeScreen(
                         contentDescription = stringResource(R.string.forward_arrow_icon_desc)
                     )
                 }
-            }
-        }
-
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Box {
-                Image(
-                    painterResource(id = R.drawable.home_page_illus_mm_leave),
-                    contentDescription = stringResource(R.string.bottom_home_img_illustration),
-                    modifier = Modifier
-                        .height(200.dp)
-                        .width(270.dp),
-                )
             }
         }
     }
