@@ -22,4 +22,9 @@ object FirebaseModule {
             .document(userEmail)
             .collection(Constants.PTO_LIST_COLLECTION)
     }
+
+    fun provideFirebaseNotificationCollectionReference(): CollectionReference {
+        return FirebaseFirestore.getInstance()
+            .collection(Constants.NOTIFICATION_COLLECTION)
+    }
 }

@@ -8,4 +8,5 @@ sealed class Screen(val route : String){
     object PtoRequests : Screen("pto_requests")
     object PtoAvailed : Screen("pto_availed")
     object SearchScreen : Screen("search_screen")
+    object NotificationScreen : Screen("notification_screen")
 }
