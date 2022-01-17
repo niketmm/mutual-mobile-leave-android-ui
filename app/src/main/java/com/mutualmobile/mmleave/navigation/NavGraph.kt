@@ -78,7 +78,7 @@ fun SetUpNavGraph(
         composable(
             Screen.NotificationScreen.route
         ){
-            NotificationScreen()
+            NotificationScreen(navController)
         }
     }
 }

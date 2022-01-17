@@ -45,6 +45,7 @@ import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
 import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
+import com.mutualmobile.mmleave.compose.components.OutlineNotificationButton
 import com.mutualmobile.mmleave.compose.components.ProfileImageHolder
 import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
@@ -86,6 +87,8 @@ fun HomeScreen(
             }
 
             Row(horizontalArrangement = Arrangement.End) {
+                OutlineNotificationButton(navController = navController)
+                Spacer(modifier = Modifier.width(8.dp))
                 OutlineCalendarButton(navController)
                 Spacer(modifier = Modifier.width(8.dp))
                 ProfileImageHolder()

@@ -7,6 +7,8 @@ import com.mutualmobile.mmleave.util.Constants
 
 object FirebaseModule {
 
+    val currentUser = FirebaseAuth.getInstance().currentUser?.email
+
     fun provideFirebaseUserCollectionReference(): CollectionReference {
         return FirebaseFirestore.getInstance()
             .collection(Constants.USERS_LIST_COLLECTION)

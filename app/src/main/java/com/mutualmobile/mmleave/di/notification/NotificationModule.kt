@@ -1,6 +1,6 @@
 package com.mutualmobile.mmleave.di.notification
 
-import com.mutualmobile.mmleave.services.database.notification.AdminNotificationServiceImpl
+import com.mutualmobile.mmleave.services.database.notification.MyAdminNotificationServiceImpl
 import com.mutualmobile.mmleave.services.database.notification.NotificationRequesterImpl
 import dagger.Module
 import dagger.Provides
@@ -19,7 +19,7 @@ object NotificationModule {
     }
 
     @Provides
-    fun provideNotificationSaverService() : AdminNotificationServiceImpl {
-        return AdminNotificationServiceImpl()
+    fun provideAdminNotificationSaverService() : MyAdminNotificationServiceImpl {
+        return MyAdminNotificationServiceImpl()
     }
 }
