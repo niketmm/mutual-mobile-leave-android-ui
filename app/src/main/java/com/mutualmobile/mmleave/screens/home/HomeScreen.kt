@@ -26,6 +26,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,7 +60,9 @@ fun HomeScreen(
     navController: NavHostController,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
+    homeScreenViewModel.getUserPtoLeft()
     val scrollableState = rememberScrollState()
+    val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
 
@@ -132,7 +136,8 @@ fun HomeScreen(
                     modifier = Modifier
                         .padding(start = 24.dp)
                 ) {
-                    Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
+
+                    Text(text = "$ptoLeft of 24", fontSize = 40.sp, color = Color.White)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "PTOs availed",
@@ -147,8 +152,9 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    val percentage = (ptoLeft.toDouble() / 24)
                     LeaveAnimatedCircularProgressBar(
-                        percentage = 0.77f,
+                        percentage = percentage.toFloat(),
                         totalValue = 100
                     )
                 }

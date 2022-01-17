@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
+import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import com.mutualmobile.mmleave.services.database.home.CalendarDataServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,8 +19,12 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val calendarDataService: CalendarDataServiceImpl
+    private val calendarDataService: CalendarDataServiceImpl,
+    private val storeUserInfo: StoreUserInfo
 ) : ViewModel() {
+
+    private val _userPtoLeftState = MutableStateFlow(0)
+    val userPtoLeftState = _userPtoLeftState
 
     init {
         getLocalDateList()
@@ -49,6 +54,14 @@ class HomeScreenViewModel @Inject constructor(
                         localDateList = it1.toLocalTime()
                     )
                 }
+            }
+        }
+    }
+
+    fun getUserPtoLeft(){
+        viewModelScope.launch {
+            storeUserInfo.getUserTotalPto.collect {
+                _userPtoLeftState.emit(it)
             }
         }
     }

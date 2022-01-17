@@ -29,7 +29,7 @@ fun LeaveAnimatedCircularProgressBar(
     fontSize: TextUnit = 25.sp,
     radius: Dp = 50.dp,
     animationDelay: Int = 0,
-    animationDuration: Int = 1500,
+    animationDuration: Int = 1000,
     stokeWidth: Dp = 8.dp,
     color: Color = secondaryTextColorDark,
     percentage: Float,

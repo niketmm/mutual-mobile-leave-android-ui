@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MMLeave">
         <activity
-            android:name=".MainActivity"
+            android:name=".MMLeave"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.MMLeave.NoActionBar">
