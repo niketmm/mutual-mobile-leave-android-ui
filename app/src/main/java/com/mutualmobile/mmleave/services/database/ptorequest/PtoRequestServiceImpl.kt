@@ -25,7 +25,7 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
 
     override suspend fun makePtoRequest(
         ptoRequests: List<PtoRequestDomain?>,
-        selectedAdmins: List<Admins?>
+        selectedAdmins: List<String?>
     ) = callbackFlow {
         ptoRequests.forEach {
             val listener = FirebaseModule.provideUserPtoRequestDocReference()
@@ -54,7 +54,7 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
 
     private fun getPtoMap(
         ptoRequest: PtoRequestDomain?,
-        selectedAdmins: List<Admins?>
+        selectedAdmins: List<String?>
     ): HashMap<String, Any?> {
         val ptoMap = HashMap<String, Any?>()
         ptoMap["description"] = ptoRequest?.description

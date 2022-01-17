@@ -138,7 +138,7 @@ fun PtoElement(pto : FirebasePtoRequestModel) {
         )
 
         pto.selectedAdmins?.forEach {
-            admins.add(it?.displayName)
+            admins.add(it)
         }
 
         Text(
