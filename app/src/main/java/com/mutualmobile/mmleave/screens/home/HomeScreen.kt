@@ -171,20 +171,19 @@ fun HomeScreen(
 
         Column(
             modifier = Modifier
-                .padding(start = 24.dp, end = 24.dp)
+                .padding(start = 18.dp, end = 18.dp)
                 .fillMaxWidth()
         ) {
             Text(
                 text = stringResource(R.string.applied_pto_heading_home_screen),
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 8.dp, start = 8.dp)
             )
             Surface(
                 modifier = Modifier
-                    .clickable { navController.navigate(Screen.PtoRequests.route) }
                     .padding(all = 8.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(unbounded = true),
-                shape = RoundedCornerShape(8.dp),
+                shape = MaterialTheme.shapes.medium,
                 color = primaryColorLight
             ) {
                 Column(modifier = Modifier
