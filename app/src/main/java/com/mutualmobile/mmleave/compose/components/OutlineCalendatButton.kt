@@ -25,7 +25,7 @@ fun OutlineCalendarButton(
 ) {
     OutlinedButton(
         onClick = { navController.navigate(Screen.PtoAvailed.route) },
-        modifier = Modifier.size(30.dp),
+        modifier = Modifier.size(35.dp),
         shape = CircleShape,
         border = BorderStroke(1.dp, color = secondaryColorLight),
         contentPadding = PaddingValues(0.dp),

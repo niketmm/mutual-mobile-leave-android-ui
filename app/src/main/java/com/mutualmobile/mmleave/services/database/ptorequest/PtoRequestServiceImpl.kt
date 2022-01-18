@@ -1,27 +1,18 @@
 package com.mutualmobile.mmleave.services.database.ptorequest
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
 import com.mutualmobile.mmleave.data.model.Admins
-import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.di.FirebaseModule
-import com.mutualmobile.mmleave.data.model.SetGetPtoRequests
+import com.mutualmobile.mmleave.data.model.PtoRequestDomain
 import com.mutualmobile.mmleave.data.ui_event.PtoRequestEvents
-import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
-import com.mutualmobile.mmleave.services.auth.firebase.await
 import kotlin.collections.HashMap
 import com.mutualmobile.mmleave.util.Constants.PTO_LIST_COLLECTION
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 import java.sql.Date
 import java.time.LocalDate
 import java.time.ZoneId
@@ -33,7 +24,7 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
     val TAG = PtoRequestServiceImpl::class.simpleName
 
     override suspend fun makePtoRequest(
-        ptoRequests: List<SetGetPtoRequests?>,
+        ptoRequests: List<PtoRequestDomain?>,
         selectedAdmins: List<Admins?>
     ) = callbackFlow {
         ptoRequests.forEach {
@@ -62,7 +53,7 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
     }
 
     private fun getPtoMap(
-        ptoRequest: SetGetPtoRequests?,
+        ptoRequest: PtoRequestDomain?,
         selectedAdmins: List<Admins?>
     ): HashMap<String, Any?> {
         val ptoMap = HashMap<String, Any?>()
@@ -75,7 +66,7 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
     }
 
     override suspend fun approvePtoRequest(
-        ptoRequests: SetGetPtoRequests
+        ptoRequestDomain: PtoRequestDomain
     ) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val ptoListCollectionRef = FirebaseFirestore.getInstance().collection(PTO_LIST_COLLECTION)

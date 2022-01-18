@@ -1,9 +1,7 @@
 package com.mutualmobile.mmleave.screens.pto
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,188 +19,134 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign.Companion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.R.drawable
+import com.mutualmobile.mmleave.compose.components.ExpandingText
+import com.mutualmobile.mmleave.data.model.Admins
+import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.model.PtoData
+import com.mutualmobile.mmleave.screens.home.toLocalDate
+import com.mutualmobile.mmleave.screens.pto.viewmodel.PtoRequestViewModel
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
-import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-const val MINIMIZED_MAX_LINES = 2
-
+@ExperimentalCoroutinesApi
 @Preview
 @Composable
-fun PtoAvailedScreen() {
-  val text = stringResource(R.string.loreum_ipsum_demo_text)
-  PtosList(
-      ptosList = listOf(
-          PtoData(
-              "Feb 20, 2021 - Feb 25, 2021", "" +
-              text, "Debbie Reynolds"
-          ),
-          PtoData(
-              "Feb 20, 2021 - Feb 25, 2021", "" +
-              text, "Debbie Reynolds"
-          ),
-          PtoData(
-              "Feb 20, 2021 - Feb 25, 2021", "" +
-              text, "Debbie Reynolds"
-          )
-      )
-  )
-}
-
-@Composable
-fun PtosList(ptosList: List<PtoData>) {
-  LazyColumn(
-      contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-      verticalArrangement = Arrangement.spacedBy(16.dp),
-      modifier = Modifier.padding(start = 8.dp, end = 8.dp)
-  ) {
-    item {
-      Text(
-          text = "18 of 24 PTOs Availed",
-          textAlign = Companion.Start,
-          style = TextStyle(
-              fontWeight = FontWeight.Bold,
-              fontSize = 20.sp
-          )
-      )
-    }
-    items(ptosList) { pto ->
-      Box(
-          modifier = Modifier
-              .border(1.dp, color = Color.Gray)
-      ) {
-        PtoElement(pto)
-      }
-    }
-  }
-}
-
-@Composable
-fun PtoElement(data: PtoData) {
-  Column(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(
-              top = 16.dp, bottom = 16.dp,
-              start = 16.dp, end = 16.dp
-          )
-  ) {
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-      OutlinedButton(
-          onClick = { /*TODO*/ },
-          modifier = Modifier.size(30.dp),
-          shape = CircleShape,
-          border = BorderStroke(1.dp, Color.White),
-          contentPadding = PaddingValues(0.dp),
-          colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
-      ) {
-        Icon(
-            painterResource(id = drawable.calendar_3x),
-            contentDescription = "content description"
-        )
-      }
-      Text(
-          text = data.date,
-          modifier = Modifier.padding(
-              bottom = 4.dp,
-              start = 4.dp
-          )
-      )
-    }
-    ExpandingText(
-        text = AnnotatedString(text = data.description),
-        modifier = Modifier
-            .padding(4.dp)
-    )
-    Text(
-        text = "Approved By: " + data.approvedBy,
-        modifier = Modifier
-            .align(Alignment.End)
-            .padding(bottom = 4.dp),
-        style = TextStyle(color = blueTextColorLight)
-    )
-  }
-}
-
-@Composable
-fun ExpandingText(
-  modifier: Modifier = Modifier,
-  text: AnnotatedString
+fun PtoAvailedScreen(
+    ptoRequestViewModel: PtoRequestViewModel = hiltViewModel()
 ) {
-  var isExpanded by remember { mutableStateOf(false) }
-  val textLayoutResultState = remember { mutableStateOf<TextLayoutResult?>(null) }
-  var isClickable by remember { mutableStateOf(false) }
-  var finalText by remember {
-    mutableStateOf(text)
-  }
-  Text(
-      text = finalText,
-      maxLines = if (isExpanded) Int.MAX_VALUE else MINIMIZED_MAX_LINES,
-      onTextLayout = { textLayoutResultState.value = it },
-      modifier = modifier
-          .clickable(enabled = isClickable) { isExpanded = !isExpanded }
-          .animateContentSize(),
-  )
-  val textLayoutResult = textLayoutResultState.value
-  LaunchedEffect(textLayoutResult) {
-    if (textLayoutResult == null) return@LaunchedEffect
 
-    when {
-      isExpanded -> {
-        val showLessString = "Show Less"
-        finalText = AnnotatedString(
-            text = text.toString(),
-            spanStyle = SpanStyle(color = secondaryTextColorDark)
-        ).plus(
-            AnnotatedString(
-                text = showLessString,
-                spanStyle = SpanStyle(color = Color.Black)
-            )
-        )
-      }
-      !isExpanded && textLayoutResult.hasVisualOverflow -> {
-        val lastCharIndex = textLayoutResult.getLineEnd(MINIMIZED_MAX_LINES - 1)
-        val showMoreString = "... Show More"
-        val adjustedText = text
-            .substring(startIndex = 0, endIndex = lastCharIndex)
-            .dropLast(showMoreString.length)
-            .dropLastWhile { it == ' ' || it == '.' }
-
-        finalText = AnnotatedString(
-            text = adjustedText,
-            spanStyle = SpanStyle(color = secondaryTextColorDark)
-        ).plus(
-            AnnotatedString(
-                text = showMoreString,
-                spanStyle = SpanStyle(color = Color.Black)
-            )
-        )
-        isClickable = true
-      }
+    LaunchedEffect(key1 = true){
+        ptoRequestViewModel.getAllRemotePtoRequest()
     }
-  }
+
+    PtoList(ptoRequestViewModel.allPtoSelectedList.value.allPtoRequestRemoteList)
+}
+
+@Composable
+fun PtoList(ptoList: List<FirebasePtoRequestModel?>) {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+    ) {
+        item {
+            Text(
+                text = "18 of 24 PTOs Availed",
+                textAlign = Companion.Start,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            )
+        }
+
+        items(ptoList){ item  ->
+            Box(
+                modifier = Modifier
+                    .border(1.dp, color = Color.Gray)
+            ) {
+                item?.let { pto ->
+                    PtoElement(pto = pto)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PtoElement(pto : FirebasePtoRequestModel) {
+
+    val admins = remember {
+        mutableListOf<String?>()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = 16.dp, bottom = 16.dp,
+                start = 16.dp, end = 16.dp
+            )
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            OutlinedButton(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.size(30.dp),
+                shape = CircleShape,
+                border = BorderStroke(1.dp, Color.White),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+            ) {
+                Icon(
+                    painterResource(id = drawable.calendar_3x),
+                    contentDescription = "content description"
+                )
+            }
+
+            Text(
+                text = pto.date.toLocalDate().toString(),
+                modifier = Modifier.padding(
+                    bottom = 4.dp,
+                    start = 4.dp
+                )
+            )
+        }
+        ExpandingText(
+            text = AnnotatedString(text = pto.description.toString()),
+            modifier = Modifier
+                .padding(4.dp)
+        )
+
+        pto.selectedAdmins?.forEach {
+            admins.add(it?.displayName)
+        }
+
+        Text(
+            text = "${pto.ptoStatus?.uppercase()} By : $admins",
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(all = 8.dp),
+            style = TextStyle(color = blueTextColorLight)
+        )
+    }
 }

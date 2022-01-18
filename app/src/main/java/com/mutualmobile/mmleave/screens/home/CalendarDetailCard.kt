@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,29 +27,34 @@ import com.mutualmobile.mmleave.data.CalendarDetailUtil
 @Composable
 fun CalendarDetailsCard() {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .padding(start = 12.dp, end = 12.dp)
+            .wrapContentWidth(
+            align = Alignment.CenterHorizontally
+        ).padding(all = 8.dp),
         shape = MaterialTheme.shapes.medium,
         elevation = 2.dp
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column {
             RowBoxItemForCalendar(rowList = CalendarDetailList.firstRowList)
-            RowBoxItemForCalendar(rowList = CalendarDetailList.secondRowList)
         }
     }
 }
 
 @Composable
 fun RowBoxItemForCalendar(rowList: List<CalendarDetailUtil>) {
-    LazyRow() {
+    LazyRow {
         items(rowList) { item ->
             Row(
-                modifier = Modifier.wrapContentWidth()
-                    .padding(start = 8.dp),
-                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(all = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
+                        .padding(all = 4.dp)
                         .height(16.dp)
                         .width(16.dp)
                         .background(item.boxColour),
@@ -57,7 +63,7 @@ fun RowBoxItemForCalendar(rowList: List<CalendarDetailUtil>) {
 
                 }
 
-                Text(text = item.title, fontSize = 16.sp)
+                Text(text = item.title, fontSize = 12.sp)
             }
         }
     }

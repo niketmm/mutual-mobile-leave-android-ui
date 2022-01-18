@@ -26,6 +26,7 @@ fun SetUpNavGraph(
         navController = navController,
         startDestination = Screen.Splash.route
     ) {
+
         composable(
             route = Screen.Splash.route
         ) {

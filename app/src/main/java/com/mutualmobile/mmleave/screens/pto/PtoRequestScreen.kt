@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.data.model.PtoRequestCompose
 import com.mutualmobile.mmleave.ui.theme.alertRed
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight

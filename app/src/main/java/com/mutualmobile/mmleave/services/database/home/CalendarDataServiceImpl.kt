@@ -1,7 +1,7 @@
 package com.mutualmobile.mmleave.services.database.home
 
 import com.mutualmobile.mmleave.di.FirebaseModule
-import com.mutualmobile.mmleave.data.model.CalendarPtoRequest
+import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -14,7 +14,7 @@ class CalendarDataServiceImpl @Inject constructor() : CalendarDataService {
         val listeners = FirebaseModule.provideUserPtoRequestDocReference()
             .addSnapshotListener { ptoRequest, error ->
                 ptoRequest?.documents?.map { doc ->
-                    doc.toObject(CalendarPtoRequest::class.java)
+                    doc.toObject(FirebasePtoRequestModel::class.java)
                 }?.let {
                     trySend(it)
                 }

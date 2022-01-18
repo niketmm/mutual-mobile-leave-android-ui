@@ -2,7 +2,7 @@ package com.mutualmobile.mmleave.data.model
 
 import java.time.LocalDate
 
-data class SetGetPtoRequests(
+data class PtoRequestDomain(
     var email: String? = null,
     var description: String? = "",
     var date : LocalDate,

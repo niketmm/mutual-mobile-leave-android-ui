@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
-import com.mutualmobile.mmleave.data.model.CalendarPtoRequest
+import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import io.github.boguszpawlowski.composecalendar.Calendar
 import io.github.boguszpawlowski.composecalendar.CalendarState
 import io.github.boguszpawlowski.composecalendar.day.DayState
@@ -41,7 +41,7 @@ fun StaticHomeCalendar(
 ) {
 
     val dateState = viewModel.allPtoSelectedList.value.localDateList
-    val ptoDates = viewModel.allPtoSelectedList.value.allPtoDatesList
+    val ptoDates = viewModel.allPtoSelectedList.value.allPtoDatesListModel
 
     val states = remember {
         CalendarState(MonthState(YearMonth.now()), object : SelectionState {
@@ -65,7 +65,7 @@ fun StaticHomeCalendar(
         dayContent = {
             DefaultSelectedDay(
                 state = it,
-                calendarPtoRequest = ptoDates.find { calendarDate ->
+                firebasePtoRequestModel = ptoDates.find { calendarDate ->
                     calendarDate.date.toLocalDate() == it.date
                 },
             )
@@ -85,11 +85,11 @@ fun <T : SelectionState> DefaultSelectedDay(
     selectionColor: Color = Color.White,
     currentDayColor: Color = MaterialTheme.colors.primary,
     onClick: (LocalDate) -> Unit = {},
-    calendarPtoRequest: CalendarPtoRequest?
+    firebasePtoRequestModel: FirebasePtoRequestModel?
 ) {
     val date = state.date
     val selectionState = state.selectionState
-    val ptoDayColor = calendarPtoRequest?.let {
+    val ptoDayColor = firebasePtoRequestModel?.let {
         when (it.ptoStatus) {
             PtoRequestDateModel.PtoGraphStatus.APPLIED.toString() -> Color.Green
             PtoRequestDateModel.PtoGraphStatus.APPROVED.toString() -> Color.Cyan
@@ -107,7 +107,7 @@ fun <T : SelectionState> DefaultSelectedDay(
             .padding(2.dp),
         elevation = if (state.isFromCurrentMonth) 4.dp else 0.dp,
         border = if (state.isCurrentDay) BorderStroke(1.dp, currentDayColor) else null,
-        contentColor = if (calendarPtoRequest != null) selectionColor else contentColorFor(
+        contentColor = if (firebasePtoRequestModel != null) selectionColor else contentColorFor(
             backgroundColor = MaterialTheme.colors.surface
         )
     ) {
