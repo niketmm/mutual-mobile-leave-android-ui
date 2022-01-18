@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,6 +61,7 @@ fun HomeScreen(
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val scrollableState = rememberScrollState()
+    val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = null).value
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
 
@@ -87,8 +89,10 @@ fun HomeScreen(
             }
 
             Row(horizontalArrangement = Arrangement.End) {
-                OutlineNotificationButton(navController = navController)
-                Spacer(modifier = Modifier.width(8.dp))
+                if (isUserAdmin == true) {
+                    OutlineNotificationButton(navController = navController)
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
                 OutlineCalendarButton(navController)
                 Spacer(modifier = Modifier.width(8.dp))
                 ProfileImageHolder()

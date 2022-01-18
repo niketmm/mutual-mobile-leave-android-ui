@@ -1,9 +1,13 @@
 package com.mutualmobile.mmleave.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
+import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
+import com.mutualmobile.mmleave.data.model.MMUser
+import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.services.database.home.CalendarDataServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,13 +22,19 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val calendarDataService: CalendarDataServiceImpl
+    private val calendarDataService: CalendarDataServiceImpl,
+    private val storeUserInfo: StoreUserInfo
 ) : ViewModel() {
 
     init {
+//        testingFirebaseQueries()
+//        isUserAdmin()
         getLocalDateList()
         displayDate()
     }
+
+    private val _isUserAdminState = MutableStateFlow(false)
+    val isUserAdminState = _isUserAdminState
 
     private val _allPtoSelectedList = MutableStateFlow(CalendarUiState())
     val allPtoSelectedList: StateFlow<CalendarUiState> = _allPtoSelectedList
@@ -66,4 +76,24 @@ class HomeScreenViewModel @Inject constructor(
                 ?.toLocalDate()
         }
     }
+
+    private fun isUserAdmin() {
+        viewModelScope.launch {
+            storeUserInfo.getIsUserAdminState.collect { prefBoolean ->
+                prefBoolean?.let { it1 -> _isUserAdminState.emit(it1) }
+            }
+        }
+    }
+
+//    private suspend fun testingFirebaseQueries(email : String? = "niket.jain@mutualmobile.com") {
+//        viewModelScope.launch {
+//            val isAdmin = FirebaseModule.provideFirebaseUserCollectionReference()
+//                .whereEqualTo("email", email)
+//                .addSnapshotListener { users, error ->
+//                    users?.toObjects(MMUser::class.java)?.let {
+//                        Log.d("TestingFirebase", "testingFirebaseQueries: $it")
+//                    }
+//                }
+//        }
+//    }
 }
