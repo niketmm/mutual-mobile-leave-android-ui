@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -16,8 +17,9 @@ class StoreUserInfo @Inject constructor(
 ) {
 
     companion object {
-        private val Context.authDataStore : DataStore<Preferences> by preferencesDataStore("auth_info")
+        private val Context.authDataStore: DataStore<Preferences> by preferencesDataStore("auth_info")
         val IS_USER_AUTHENTICATE = booleanPreferencesKey("is_user_authenticate")
+        val USER_TOTAL_PTO_LEFT = intPreferencesKey("user_total_pto_left")
     }
 
     val getUserAuthenticateState: Flow<Boolean> = context.authDataStore.data
@@ -28,6 +30,17 @@ class StoreUserInfo @Inject constructor(
     suspend fun setUserAuthenticateState(state: Boolean) {
         context.authDataStore.edit { pref ->
             pref[IS_USER_AUTHENTICATE] = state
+        }
+    }
+
+    val getUserTotalPto: Flow<Int> = context.authDataStore.data
+        .map { pref ->
+            pref[USER_TOTAL_PTO_LEFT] ?: 0
+        }
+
+    suspend fun setUserTotalPto(totalPtoLeavesLeft : Int){
+        context.authDataStore.edit { pref ->
+            pref[USER_TOTAL_PTO_LEFT] = totalPtoLeavesLeft
         }
     }
 }

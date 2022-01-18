@@ -8,5 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface PtoRequestService {
   suspend fun makePtoRequest(ptoRequests: List<PtoRequestDomain?>, selectedAdmins : List<Admins?>) : Flow<PtoRequestEvents>
+  suspend fun updateUserPtoDetails(leaveLeft : Int)
   suspend fun approvePtoRequest(ptoRequestDomain: PtoRequestDomain)
 }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +27,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +47,9 @@ import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
 import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
+import com.mutualmobile.mmleave.compose.components.ExpandingText
+import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
+import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.compose.components.ProfileImageHolder
 import com.mutualmobile.mmleave.navigation.Screen
@@ -59,8 +65,9 @@ fun HomeScreen(
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     homeScreenViewModel.getLatestPtoRequest()
-
+    homeScreenViewModel.getUserPtoLeft()
     val scrollableState = rememberScrollState()
+    val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
     val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
@@ -135,7 +142,8 @@ fun HomeScreen(
                     modifier = Modifier
                         .padding(start = 24.dp)
                 ) {
-                    Text(text = "18 of 24", fontSize = 40.sp, color = Color.White)
+
+                    Text(text = "$ptoLeft of 24", fontSize = 40.sp, color = Color.White)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "PTOs availed",
@@ -150,8 +158,9 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    val percentage = (ptoLeft.toDouble() / 24)
                     LeaveAnimatedCircularProgressBar(
-                        percentage = 0.77f,
+                        percentage = percentage.toFloat(),
                         totalValue = 100
                     )
                 }

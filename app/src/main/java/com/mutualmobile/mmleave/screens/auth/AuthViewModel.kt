@@ -41,6 +41,7 @@ class AuthViewModel @Inject constructor(
                 if (authResult.user != null) {
                     _authFlow.emit(LandingPageState.success("Logged In Successfully"))
                     storeUserInfo.setUserAuthenticateState(true)
+                    storeUserInfo.setUserTotalPto(24)
                 } else {
                     _authFlow.emit(LandingPageState.failed("Exception thrown: "))
                 }
