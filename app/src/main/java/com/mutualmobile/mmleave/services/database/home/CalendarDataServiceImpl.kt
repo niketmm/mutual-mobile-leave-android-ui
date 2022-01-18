@@ -2,8 +2,10 @@ package com.mutualmobile.mmleave.services.database.home
 
 import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
+import com.mutualmobile.mmleave.data.model.MMUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
@@ -22,6 +24,18 @@ class CalendarDataServiceImpl @Inject constructor() : CalendarDataService {
 
         awaitClose {
             listeners.remove()
+        }
+    }
+
+    override suspend fun fetchUserDetails(email: String?) = callbackFlow {
+        val userDetailListener = FirebaseModule.provideFirebaseUserCollectionReference()
+            .document(email.toString())
+            .addSnapshotListener { user, error ->
+                trySend(user?.toObject(MMUser::class.java))
+            }
+
+        awaitClose {
+            userDetailListener.remove()
         }
     }
 }

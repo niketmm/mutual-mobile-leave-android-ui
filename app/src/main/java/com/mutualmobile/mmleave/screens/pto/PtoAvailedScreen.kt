@@ -19,6 +19,7 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,16 +47,24 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 fun PtoAvailedScreen(
     ptoRequestViewModel: PtoRequestViewModel = hiltViewModel()
 ) {
+    ptoRequestViewModel.getUserPtoLeft()
+    val ptoLeft = ptoRequestViewModel.userPtoLeftState.collectAsState()
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         ptoRequestViewModel.getAllRemotePtoRequest()
     }
 
-    PtoList(ptoRequestViewModel.allPtoSelectedList.value.allPtoRequestRemoteList)
+    PtoList(
+        ptoRequestViewModel.allPtoSelectedList.value.allPtoRequestRemoteList,
+        totalPtoLeft = ptoLeft.value
+    )
 }
 
 @Composable
-fun PtoList(ptoList: List<FirebasePtoRequestModel?>) {
+fun PtoList(
+    ptoList: List<FirebasePtoRequestModel?>,
+    totalPtoLeft: Int? = 0
+) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -63,7 +72,7 @@ fun PtoList(ptoList: List<FirebasePtoRequestModel?>) {
     ) {
         item {
             Text(
-                text = "18 of 24 PTOs Availed",
+                text = "$totalPtoLeft of 24 PTOs Availed",
                 textAlign = Companion.Start,
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
@@ -72,7 +81,7 @@ fun PtoList(ptoList: List<FirebasePtoRequestModel?>) {
             )
         }
 
-        items(ptoList){ item  ->
+        items(ptoList) { item ->
             Box(
                 modifier = Modifier
                     .border(1.dp, color = Color.Gray)
@@ -86,7 +95,7 @@ fun PtoList(ptoList: List<FirebasePtoRequestModel?>) {
 }
 
 @Composable
-fun PtoElement(pto : FirebasePtoRequestModel) {
+fun PtoElement(pto: FirebasePtoRequestModel) {
 
     val admins = remember {
         mutableListOf<String?>()
