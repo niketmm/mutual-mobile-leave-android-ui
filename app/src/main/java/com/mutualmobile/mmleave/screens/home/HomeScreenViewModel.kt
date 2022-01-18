@@ -30,9 +30,14 @@ class HomeScreenViewModel @Inject constructor(
     val userPtoLeftState = _userPtoLeftState
 
     init {
+//        testingFirebaseQueries()
+//        isUserAdmin()
         getLocalDateList()
         displayDate()
     }
+
+    private val _isUserAdminState = MutableStateFlow(false)
+    val isUserAdminState = _isUserAdminState
 
     private val _allPtoSelectedList = MutableStateFlow(CalendarUiState())
     val allPtoSelectedList: StateFlow<CalendarUiState> = _allPtoSelectedList
@@ -93,4 +98,24 @@ class HomeScreenViewModel @Inject constructor(
                 ?.toLocalDate()
         }
     }
+
+    private fun isUserAdmin() {
+        viewModelScope.launch {
+            storeUserInfo.getIsUserAdminState.collect { prefBoolean ->
+                prefBoolean?.let { it1 -> _isUserAdminState.emit(it1) }
+            }
+        }
+    }
+
+//    private suspend fun testingFirebaseQueries(email : String? = "niket.jain@mutualmobile.com") {
+//        viewModelScope.launch {
+//            val isAdmin = FirebaseModule.provideFirebaseUserCollectionReference()
+//                .whereEqualTo("email", email)
+//                .addSnapshotListener { users, error ->
+//                    users?.toObjects(MMUser::class.java)?.let {
+//                        Log.d("TestingFirebase", "testingFirebaseQueries: $it")
+//                    }
+//                }
+//        }
+//    }
 }

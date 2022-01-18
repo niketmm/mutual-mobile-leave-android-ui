@@ -6,11 +6,11 @@ import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.services.auth.firebase.await
 
 class FirebaseUserDataService : UserDataService<FirebaseUser> {
-  override suspend fun isUserExistInDB(email: String): Boolean {
-    val data = FirebaseFirestore.getInstance().collection("users_list")
-      .document(email).get().await()
-    return data.exists()
-  }
+    override suspend fun isUserExistInDB(email: String): Boolean {
+        val data = FirebaseFirestore.getInstance().collection("users_list")
+            .document(email).get().await()
+        return data.exists()
+    }
 
   override suspend fun saveUser(currentUser: FirebaseUser) {
     val user = HashMap<String, Any?>()
@@ -42,13 +42,13 @@ class FirebaseUserDataService : UserDataService<FirebaseUser> {
       .update(user).await()
   }
 
-  private fun generateNameAsArray(displayName: String) : List<String> {
-    val keywords = mutableListOf<String>()
-    for (i in displayName.indices) {
-      for (j in (i+1)..displayName.length) {
-        keywords.add(displayName.slice(i until j).lowercase())
-      }
+    private fun generateNameAsArray(displayName: String): List<String> {
+        val keywords = mutableListOf<String>()
+        for (i in displayName.indices) {
+            for (j in (i + 1)..displayName.length) {
+                keywords.add(displayName.slice(i until j).lowercase())
+            }
+        }
+        return keywords
     }
-    return keywords
-  }
 }

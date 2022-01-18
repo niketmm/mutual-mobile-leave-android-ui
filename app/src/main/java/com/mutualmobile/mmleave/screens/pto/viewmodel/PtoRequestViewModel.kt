@@ -5,16 +5,21 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
 import com.mutualmobile.mmleave.data.data_state.PtoUiState
 import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import com.mutualmobile.mmleave.data.model.Admins
 import com.mutualmobile.mmleave.data.model.MMUser
+import com.mutualmobile.mmleave.data.model.NotificationModel
 import com.mutualmobile.mmleave.data.model.PtoRequestDomain
 import com.mutualmobile.mmleave.data.ui_event.PtoRequestEvents
 import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
 import com.mutualmobile.mmleave.services.database.availed.AvailedPtoServiceImpl
+import com.mutualmobile.mmleave.services.database.notification.NotificationRequesterImpl
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
+import com.mutualmobile.mmleave.services.database.ptorequest.toFirebaseTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,6 +35,7 @@ import javax.inject.Inject
 class PtoRequestViewModel @Inject constructor(
     private val ptoRequestService: PtoRequestServiceImpl,
     private val availedPtoServiceImpl: AvailedPtoServiceImpl,
+    private val notificationRequesterImpl: NotificationRequesterImpl,
     private val storeUserInfo: StoreUserInfo
 ) : ViewModel() {
 
@@ -65,17 +71,8 @@ class PtoRequestViewModel @Inject constructor(
             _allPtoSelectedList.value.allPtoDatesList?.let {
                 ptoRequestService.makePtoRequest(
                     ptoRequests = it,
-                    selectedAdmins = it.let {
-                        selectedAdmins.map { mmUser ->
-                            mmUser?.let { admins ->
-                                Admins(
-                                    displayName = admins.displayName!!,
-                                    userType = admins.userType!!,
-                                    photoUrl = admins.photoUrl!!,
-                                    designation = admins.designation!!
-                                )
-                            }
-                        }
+                    selectedAdmins = selectedAdmins.map { mmUser ->
+                        mmUser?.email
                     }
                 ).collect { events ->
                     when (events) {
@@ -83,12 +80,24 @@ class PtoRequestViewModel @Inject constructor(
                             _uiEvents.emit(SavePtoRequestEvents.ShowSnackBar(events.message))
                         }
                         PtoRequestEvents.Success -> {
+                            // Success PTO request Done, Save the Notification Data as well and Cache the PTO leaves
                             _uiEvents.emit(SavePtoRequestEvents.SavedPto)
                             // Update the cache and Remote
                             totalLeaveLeft = cachedLeaveLeft?.minus(_allPtoSelectedList.value.localDateList.size)
                             totalLeaveLeft?.let { leaves ->
                                 setUserPtoLeft(leaveLeft = leaves)
                                 ptoRequestService.updateUserPtoDetails(leaveLeft = leaves)
+                            }
+                            selectedAdmins.forEach { admins ->
+                                notificationRequesterImpl.saveNotification(
+                                    NotificationModel(
+                                        datesList = allPtoSelectedList.value.localDateList.toFirebaseTimeStamp(),
+                                        notify_to = admins?.email,
+                                        notify_from = FirebaseAuth.getInstance().currentUser?.email,
+                                        title = "Hi, this is the request for the PTO's",
+                                        notify_type = 1
+                                    )
+                                )
                             }
                         }
                     }
@@ -141,6 +150,12 @@ class PtoRequestViewModel @Inject constructor(
         viewModelScope.launch {
                 Log.d(TAG, "newCachedPtoLeave: $leaveLeft")
                 storeUserInfo.setUserTotalPto(leaveLeft)
+        }
+    }
+
+    fun List<LocalDate?>.toFirebaseTimeStamp() : List<Timestamp?>{
+        return this.map { localDate ->
+            localDate?.toFirebaseTimestamp()
         }
     }
 }

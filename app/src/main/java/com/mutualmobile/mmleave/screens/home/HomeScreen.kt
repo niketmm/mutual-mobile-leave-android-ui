@@ -27,6 +27,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -50,7 +52,11 @@ import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgress
 import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
 import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
+import com.mutualmobile.mmleave.compose.components.ExpandingText
+import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
+import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
+import com.mutualmobile.mmleave.compose.components.OutlineNotificationButton
 import com.mutualmobile.mmleave.compose.components.ProfileImageHolder
 import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
@@ -69,6 +75,7 @@ fun HomeScreen(
     val scrollableState = rememberScrollState()
     val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
     val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
+    val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = null).value
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
 
@@ -96,6 +103,10 @@ fun HomeScreen(
             }
 
             Row(horizontalArrangement = Arrangement.End) {
+                if (isUserAdmin == true) {
+                    OutlineNotificationButton(navController = navController)
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
                 OutlineCalendarButton(navController)
                 Spacer(modifier = Modifier.width(8.dp))
                 ProfileImageHolder()

@@ -10,6 +10,7 @@ import com.mutualmobile.mmleave.screens.pto.PtoAvailedScreen
 import com.mutualmobile.mmleave.screens.pto.PtoRequestScreen
 import com.mutualmobile.mmleave.screens.auth.LandingPageScreen
 import com.mutualmobile.mmleave.screens.home.HomeScreen
+import com.mutualmobile.mmleave.screens.notification.NotificationScreen
 import com.mutualmobile.mmleave.screens.pto.ApplyPtoScreen
 import com.mutualmobile.mmleave.screens.search.SearchScreen
 import com.mutualmobile.mmleave.screens.splash.AnimatedSplashScreen
@@ -72,6 +73,12 @@ fun SetUpNavGraph(
             Screen.SearchScreen.route
         ){
             SearchScreen()
+        }
+
+        composable(
+            Screen.NotificationScreen.route
+        ){
+            NotificationScreen(navController)
         }
     }
 }

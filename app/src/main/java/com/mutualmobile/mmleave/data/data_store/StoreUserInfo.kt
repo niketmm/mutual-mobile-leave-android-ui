@@ -19,6 +19,7 @@ class StoreUserInfo @Inject constructor(
     companion object {
         private val Context.authDataStore: DataStore<Preferences> by preferencesDataStore("auth_info")
         val IS_USER_AUTHENTICATE = booleanPreferencesKey("is_user_authenticate")
+        val IS_USER_ADMIN = booleanPreferencesKey("is_user_admin")
         val USER_TOTAL_PTO_LEFT = intPreferencesKey("user_total_pto_left")
     }
 
@@ -41,6 +42,17 @@ class StoreUserInfo @Inject constructor(
     suspend fun setUserTotalPto(totalPtoLeavesLeft : Int){
         context.authDataStore.edit { pref ->
             pref[USER_TOTAL_PTO_LEFT] = totalPtoLeavesLeft
+        }
+    }
+
+    val getIsUserAdminState : Flow<Boolean?> = context.authDataStore.data
+        .map { pref ->
+            pref[IS_USER_ADMIN] ?: false
+        }
+
+    suspend fun setIsUserAdminState(isAdmin : Boolean){
+        context.authDataStore.edit { pref ->
+            pref[IS_USER_ADMIN] = isAdmin
         }
     }
 }
