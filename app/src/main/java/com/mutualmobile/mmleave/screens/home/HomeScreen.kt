@@ -209,7 +209,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.Start
         ) {
-            Box {
+            Box(modifier = Modifier.fillMaxWidth()) {
                 Image(
                     painterResource(id = R.drawable.home_page_illus_mm_leave),
                     contentDescription = stringResource(R.string.bottom_home_img_illustration),
@@ -217,18 +217,10 @@ fun HomeScreen(
                         .height(200.dp)
                         .width(270.dp),
                 )
-            }
-        }
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.End
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 32.dp),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
+
+                Button(modifier = Modifier.align(Alignment.BottomEnd)
+                    .padding(bottom = 24.dp, end = 16.dp),
+                    onClick = { navController.navigate(Screen.ApplyPto.route) }) {
                     Text(text = "APPLY PTO")
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
