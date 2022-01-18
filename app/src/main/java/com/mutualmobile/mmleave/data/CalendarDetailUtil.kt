@@ -11,11 +11,11 @@ object CalendarDetailList {
     val firstRowList = listOf<CalendarDetailUtil>(
         CalendarDetailUtil(Color.Green,"Applied"),
         CalendarDetailUtil(Color.Cyan,"Approved"),
-        CalendarDetailUtil(Color.Yellow,"Holiday")
+        CalendarDetailUtil(Color.Yellow,"Holiday"),
+        CalendarDetailUtil(Color.Red,"Rejected"),
     )
 
     val secondRowList = listOf<CalendarDetailUtil>(
-        CalendarDetailUtil(Color.Red,"Rejected"),
         CalendarDetailUtil(Color.Blue,"Pending"),
         CalendarDetailUtil(Color.Magenta,"Updated")
     )

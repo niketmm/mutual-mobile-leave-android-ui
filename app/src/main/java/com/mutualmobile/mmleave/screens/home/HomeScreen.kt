@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -46,6 +47,9 @@ import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
 import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
+import com.mutualmobile.mmleave.compose.components.ExpandingText
+import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
+import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.compose.components.ProfileImageHolder
 import com.mutualmobile.mmleave.navigation.Screen
@@ -60,9 +64,11 @@ fun HomeScreen(
     navController: NavHostController,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
+    homeScreenViewModel.getLatestPtoRequest()
     homeScreenViewModel.getUserPtoLeft()
     val scrollableState = rememberScrollState()
     val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
+    val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
 
@@ -174,20 +180,19 @@ fun HomeScreen(
 
         Column(
             modifier = Modifier
-                .padding(start = 24.dp, end = 24.dp)
+                .padding(start = 18.dp, end = 18.dp)
                 .fillMaxWidth()
         ) {
             Text(
                 text = stringResource(R.string.applied_pto_heading_home_screen),
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 8.dp, start = 8.dp)
             )
             Surface(
                 modifier = Modifier
-                    .clickable { navController.navigate(Screen.PtoRequests.route) }
                     .padding(all = 8.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(unbounded = true),
-                shape = RoundedCornerShape(8.dp),
+                shape = MaterialTheme.shapes.medium,
                 color = primaryColorLight
             ) {
                 Column(modifier = Modifier
@@ -200,12 +205,16 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = "Feb 20, 2021 - Feb 25, 2021 ", fontSize = 14.sp)
-                        HomePtoAvailedChip()
+                        Text(text = latestPtoRequest?.date.toLocalDate().toString(), fontSize = 14.sp)
+                        HomePtoAvailedChip(latestPtoRequest?.ptoStatus)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    ExpandingText(text = AnnotatedString(text = stringResource(id = R.string.long_text)))
+                    latestPtoRequest?.description?.let { desc ->
+                        AnnotatedString(text = desc)
+                    }?.let {
+                        ExpandingText(text = it)
+                    }
                 }
             }
         }
@@ -215,7 +224,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.Start
         ) {
-            Box {
+            Box(modifier = Modifier.fillMaxWidth()) {
                 Image(
                     painterResource(id = R.drawable.home_page_illus_mm_leave),
                     contentDescription = stringResource(R.string.bottom_home_img_illustration),
@@ -223,18 +232,10 @@ fun HomeScreen(
                         .height(200.dp)
                         .width(270.dp),
                 )
-            }
-        }
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.End
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 32.dp),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                Button(onClick = { navController.navigate(Screen.ApplyPto.route) }) {
+
+                Button(modifier = Modifier.align(Alignment.BottomEnd)
+                    .padding(bottom = 24.dp, end = 16.dp),
+                    onClick = { navController.navigate(Screen.ApplyPto.route) }) {
                     Text(text = "APPLY PTO")
                     Icon(
                         imageVector = Icons.Default.ArrowForward,

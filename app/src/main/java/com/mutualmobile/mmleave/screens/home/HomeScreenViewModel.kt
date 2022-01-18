@@ -1,9 +1,11 @@
 package com.mutualmobile.mmleave.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
+import com.mutualmobile.mmleave.services.database.availed.AvailedPtoServiceImpl
 import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import com.mutualmobile.mmleave.services.database.home.CalendarDataServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val calendarDataService: CalendarDataServiceImpl,
+    private val availedPtoServiceImpl: AvailedPtoServiceImpl,
     private val storeUserInfo: StoreUserInfo
 ) : ViewModel() {
 
@@ -58,7 +61,18 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    fun getUserPtoLeft(){
+    fun getLatestPtoRequest() {
+        viewModelScope.launch {
+            availedPtoServiceImpl.fetchLatestPtoRequests().collect {
+                Log.d("LatestPtoRequest", "getLatestPtoRequest: $it")
+                _allPtoSelectedList.value = allPtoSelectedList.value.copy(
+                    latestPtoRequest = it
+                )
+            }
+        }
+    }
+
+    fun getUserPtoLeft() {
         viewModelScope.launch {
             storeUserInfo.getUserTotalPto.collect {
                 _userPtoLeftState.emit(it)

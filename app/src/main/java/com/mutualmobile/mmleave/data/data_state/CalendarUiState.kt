@@ -5,5 +5,6 @@ import java.time.LocalDate
 
 data class CalendarUiState(
     var allPtoDatesListModel : List<FirebasePtoRequestModel> = emptyList(),
-    var localDateList : List<LocalDate?> = emptyList()
+    var localDateList : List<LocalDate?> = emptyList(),
+    var latestPtoRequest : FirebasePtoRequestModel? = null
 )

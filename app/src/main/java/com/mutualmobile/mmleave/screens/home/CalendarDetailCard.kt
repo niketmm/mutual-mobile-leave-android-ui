@@ -28,7 +28,7 @@ import com.mutualmobile.mmleave.data.CalendarDetailUtil
 fun CalendarDetailsCard() {
     Card(
         modifier = Modifier
-            .padding(start = 24.dp, end = 24.dp)
+            .padding(start = 12.dp, end = 12.dp)
             .wrapContentWidth(
             align = Alignment.CenterHorizontally
         ).padding(all = 8.dp),
@@ -37,7 +37,6 @@ fun CalendarDetailsCard() {
     ) {
         Column {
             RowBoxItemForCalendar(rowList = CalendarDetailList.firstRowList)
-            RowBoxItemForCalendar(rowList = CalendarDetailList.secondRowList)
         }
     }
 }
