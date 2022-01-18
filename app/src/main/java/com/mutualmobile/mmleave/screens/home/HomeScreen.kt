@@ -49,12 +49,6 @@ import com.mutualmobile.mmleave.R
 import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
 import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
-import com.mutualmobile.mmleave.compose.components.ExpandingText
-import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
-import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
-import com.mutualmobile.mmleave.compose.components.ExpandingText
-import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
-import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.compose.components.OutlineNotificationButton
 import com.mutualmobile.mmleave.compose.components.ProfileImageHolder
@@ -112,7 +106,12 @@ fun HomeScreen(
                 }
                 OutlineCalendarButton(navController)
                 Spacer(modifier = Modifier.width(8.dp))
-                ProfileImageHolder()
+                ProfileImageHolder(
+                    navHostController = navController,
+                    logoutClickEvent = {
+                        homeScreenViewModel.logoutUser()
+                    }
+                )
             }
         }
 

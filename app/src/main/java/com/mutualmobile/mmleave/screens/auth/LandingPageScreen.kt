@@ -99,6 +99,7 @@ fun LandingPageScreen(
 
     LaunchedEffect(viewState?.isSuccess) {
         if (viewState?.isSuccess == true) {
+            navController.popBackStack()
             navController.navigate(Screen.Home.route) {
                 launchSingleTop = true
                 Log.d(TAG, "LandingPageScreen: Success Callback")

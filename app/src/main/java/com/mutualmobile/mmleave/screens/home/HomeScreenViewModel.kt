@@ -3,6 +3,7 @@ package com.mutualmobile.mmleave.screens.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
 import com.mutualmobile.mmleave.services.database.availed.AvailedPtoServiceImpl
@@ -118,6 +119,16 @@ class HomeScreenViewModel @Inject constructor(
                     storeUserInfo.setUserAuthenticateState(true)
                 }
             }
+        }
+    }
+
+    fun logoutUser() {
+        // Reset the Cache
+        viewModelScope.launch {
+            storeUserInfo.setIsUserAdminState(false)
+            storeUserInfo.setUserTotalPto(0)
+            storeUserInfo.setUserAuthenticateState(false)
+            FirebaseAuth.getInstance().signOut()
         }
     }
 
