@@ -18,17 +18,33 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomePtoAvailedChip(
-    isSelected : Boolean = false
+    currentStatus : String? = null
 ) {
-    var statusText by remember {
-        mutableStateOf("")
+    var statusText by remember { mutableStateOf("") }
+    var isSelected by remember {
+        mutableStateOf(false)
     }
+
+    when(currentStatus){
+       "APPLIED" -> {
+           isSelected = false
+           statusText = "Pending"
+       }
+       "APPROVED" -> {
+           isSelected = true
+           statusText = "Approved"
+       }
+       "REJECTED" -> {
+           isSelected = false
+           statusText = "Rejected"
+       }
+    }
+
     Surface(
         modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         color = if (isSelected) MaterialTheme.colors.primary else  Color.LightGray
     ){
-        statusText = if (isSelected) "Approved" else "Pending"
         Text(text = statusText, fontSize = 12.sp, modifier = Modifier.padding(all = 8.dp))
     }
 }

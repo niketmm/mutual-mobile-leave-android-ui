@@ -58,7 +58,10 @@ fun HomeScreen(
     navController: NavHostController,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
+    homeScreenViewModel.getLatestPtoRequest()
+
     val scrollableState = rememberScrollState()
+    val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
 
@@ -194,12 +197,16 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = "Feb 20, 2021 - Feb 25, 2021 ", fontSize = 14.sp)
-                        HomePtoAvailedChip()
+                        Text(text = latestPtoRequest?.date.toLocalDate().toString(), fontSize = 14.sp)
+                        HomePtoAvailedChip(latestPtoRequest?.ptoStatus)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    ExpandingText(text = AnnotatedString(text = stringResource(id = R.string.long_text)))
+                    latestPtoRequest?.description?.let { desc ->
+                        AnnotatedString(text = desc)
+                    }?.let {
+                        ExpandingText(text = it)
+                    }
                 }
             }
         }

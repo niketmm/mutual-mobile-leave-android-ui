@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface AvailedPtoService {
     suspend fun fetchAllPtoRequests() : Flow<List<FirebasePtoRequestModel?>>
+    suspend fun fetchLatestPtoRequests() : Flow<FirebasePtoRequestModel?>
 }

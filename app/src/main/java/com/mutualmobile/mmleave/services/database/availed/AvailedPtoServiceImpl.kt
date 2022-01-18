@@ -1,5 +1,7 @@
 package com.mutualmobile.mmleave.services.database.availed
 
+import android.util.Log
+import com.google.firebase.firestore.Query
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.di.FirebaseModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,6 +24,25 @@ class AvailedPtoServiceImpl : AvailedPtoService {
 
         awaitClose {
             listener.remove()
+        }
+    }
+
+    override suspend fun fetchLatestPtoRequests() = callbackFlow {
+        val listener = FirebaseModule.provideUserPtoRequestDocReference()
+            .orderBy("date",Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnCompleteListener { task ->
+                task.result.forEach { doc ->
+                    trySend(doc.toObject(FirebasePtoRequestModel::class.java))
+                }
+            }
+            .addOnFailureListener {
+                Log.d("LatestPtoRequest", "fetchLatestPtoRequests: $it")
+            }
+
+        awaitClose {
+            listener.isComplete
         }
     }
 }
