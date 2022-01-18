@@ -35,7 +35,7 @@ import javax.inject.Inject
 class PtoRequestViewModel @Inject constructor(
     private val ptoRequestService: PtoRequestServiceImpl,
     private val availedPtoServiceImpl: AvailedPtoServiceImpl,
-    private val notificationRequesterImpl: NotificationRequesterImpl
+    private val notificationRequesterImpl: NotificationRequesterImpl,
     private val storeUserInfo: StoreUserInfo
 ) : ViewModel() {
 
