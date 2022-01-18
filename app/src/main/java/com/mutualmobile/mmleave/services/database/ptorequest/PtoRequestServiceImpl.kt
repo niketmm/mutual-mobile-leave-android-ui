@@ -52,6 +52,17 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
         }
     }
 
+    override suspend fun updateUserPtoDetails(leaveLeft : Int) {
+        val updateUser = HashMap<String,Any>()
+        updateUser["leaveLeft"] = leaveLeft
+
+        FirebaseAuth.getInstance().currentUser?.email?.let { currentUserEmail ->
+            FirebaseModule.provideFirebaseUserCollectionReference()
+                .document(currentUserEmail)
+                .update(updateUser)
+        }
+    }
+
     private fun getPtoMap(
         ptoRequest: PtoRequestDomain?,
         selectedAdmins: List<String?>

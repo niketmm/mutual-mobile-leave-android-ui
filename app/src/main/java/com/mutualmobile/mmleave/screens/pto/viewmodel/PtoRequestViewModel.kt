@@ -9,6 +9,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
 import com.mutualmobile.mmleave.data.data_state.PtoUiState
+import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import com.mutualmobile.mmleave.data.model.Admins
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.data.model.NotificationModel
@@ -22,6 +23,7 @@ import com.mutualmobile.mmleave.services.database.ptorequest.toFirebaseTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -34,7 +36,10 @@ class PtoRequestViewModel @Inject constructor(
     private val ptoRequestService: PtoRequestServiceImpl,
     private val availedPtoServiceImpl: AvailedPtoServiceImpl,
     private val notificationRequesterImpl: NotificationRequesterImpl
+    private val storeUserInfo: StoreUserInfo
 ) : ViewModel() {
+
+    private val TAG = "PtoRequestViewModel"
 
     private val _allPtoSelectedList = mutableStateOf(PtoUiState())
     val allPtoSelectedList: State<PtoUiState> = _allPtoSelectedList
@@ -42,6 +47,12 @@ class PtoRequestViewModel @Inject constructor(
     // One time event only
     private val _uiEvents = MutableSharedFlow<SavePtoRequestEvents>()
     val uiEvents = _uiEvents.asSharedFlow()
+
+    private val _userPtoLeftState = MutableStateFlow(0)
+    val userPtoLeftState = _userPtoLeftState
+
+    private var cachedLeaveLeft : Int? = null
+    private var totalLeaveLeft : Int? = null
 
     fun getAllRemotePtoRequest(){
         viewModelScope.launch {
@@ -53,7 +64,9 @@ class PtoRequestViewModel @Inject constructor(
         }
     }
 
-    fun applyPtoRequest(selectedAdmins: List<MMUser?>) {
+    fun applyPtoRequest(
+        selectedAdmins: List<MMUser?>
+    ) {
         viewModelScope.launch {
             _allPtoSelectedList.value.allPtoDatesList?.let {
                 ptoRequestService.makePtoRequest(
@@ -67,8 +80,14 @@ class PtoRequestViewModel @Inject constructor(
                             _uiEvents.emit(SavePtoRequestEvents.ShowSnackBar(events.message))
                         }
                         PtoRequestEvents.Success -> {
-                            // Success PTO request Done, Save the Notification Data as well
+                            // Success PTO request Done, Save the Notification Data as well and Cache the PTO leaves
                             _uiEvents.emit(SavePtoRequestEvents.SavedPto)
+                            // Update the cache and Remote
+                            totalLeaveLeft = cachedLeaveLeft?.minus(_allPtoSelectedList.value.localDateList.size)
+                            totalLeaveLeft?.let { leaves ->
+                                setUserPtoLeft(leaveLeft = leaves)
+                                ptoRequestService.updateUserPtoDetails(leaveLeft = leaves)
+                            }
                             selectedAdmins.forEach { admins ->
                                 notificationRequesterImpl.saveNotification(
                                     NotificationModel(
@@ -116,6 +135,22 @@ class PtoRequestViewModel @Inject constructor(
         selectedAdmins: List<MMUser?>
     ): Boolean {
         return appliedPtoDates.isNotEmpty() && selectedAdmins.isNotEmpty()
+    }
+
+    fun getUserPtoLeft(){
+        viewModelScope.launch {
+            storeUserInfo.getUserTotalPto.collect {
+                cachedLeaveLeft = it
+                _userPtoLeftState.emit(it)
+            }
+        }
+    }
+
+    private fun setUserPtoLeft(leaveLeft : Int){
+        viewModelScope.launch {
+                Log.d(TAG, "newCachedPtoLeave: $leaveLeft")
+                storeUserInfo.setUserTotalPto(leaveLeft)
+        }
     }
 
     fun List<LocalDate?>.toFirebaseTimeStamp() : List<Timestamp?>{

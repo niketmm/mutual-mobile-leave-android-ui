@@ -12,32 +12,35 @@ class FirebaseUserDataService : UserDataService<FirebaseUser> {
         return data.exists()
     }
 
-    override suspend fun saveUser(currentUser: FirebaseUser) {
-        val user = HashMap<String, Any?>()
-        user["email"] = currentUser.email
-        user["displayName"] = currentUser.displayName
-        user["photoUrl"] = currentUser.photoUrl.toString()
-        user["userType"] = 1
-        user["nameAsArray"] = generateNameAsArray(currentUser.displayName!!)
-        FirebaseFirestore.getInstance()
-            .collection("users_list")
-            .document(currentUser.email!!)
-            .set(user).await()
-    }
+  override suspend fun saveUser(currentUser: FirebaseUser) {
+    val user = HashMap<String, Any?>()
+    user["email"] = currentUser.email
+    user["displayName"] = currentUser.displayName
+    user["photoUrl"] = currentUser.photoUrl.toString()
+    user["userType"] = 1
+    user["nameAsArray"] = generateNameAsArray(currentUser.displayName!!)
+    user["totalLeave"] = 24
+    user["leaveLeft"] = 24
 
-    /**
-     * If display name changes the NameArray will also get updated
-     */
-    override suspend fun updateUser(currentUser: FirebaseUser) {
-        val user = HashMap<String, Any?>()
-        user["displayName"] = currentUser.displayName
-        user["photoUrl"] = currentUser.photoUrl.toString()
-        user["nameAsArray"] = generateNameAsArray(currentUser.displayName!!)
-        FirebaseFirestore.getInstance()
-            .collection("users_list")
-            .document(currentUser.email!!)
-            .update(user).await()
-    }
+    FirebaseModule.provideFirebaseUserCollectionReference()
+      .document(currentUser.email!!)
+      .set(user)
+      .await()
+  }
+
+  /**
+   * If display name changes the NameArray will also get updated
+   */
+  override suspend fun updateUser(currentUser: FirebaseUser) {
+    val user = HashMap<String, Any?>()
+    user["displayName"] = currentUser.displayName
+    user["photoUrl"] = currentUser.photoUrl.toString()
+    user["nameAsArray"] = generateNameAsArray(currentUser.displayName!!)
+
+    FirebaseModule.provideFirebaseUserCollectionReference()
+      .document(currentUser.email!!)
+      .update(user).await()
+  }
 
     private fun generateNameAsArray(displayName: String): List<String> {
         val keywords = mutableListOf<String>()

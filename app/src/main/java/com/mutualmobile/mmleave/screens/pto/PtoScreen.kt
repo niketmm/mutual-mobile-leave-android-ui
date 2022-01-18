@@ -63,7 +63,9 @@ fun ApplyPtoScreen(
     searchUserViewModel: SearchUserViewModel = hiltViewModel(),
     navHostController: NavHostController
 ) {
+    ptoViewModel.getUserPtoLeft()
     val TAG = "PtoScreen"
+    val ptoLeft = ptoViewModel.userPtoLeftState.collectAsState()
     val scrollableState = rememberScrollState()
     val scaffoldState = rememberScaffoldState()
     var leaveDescriptionText by remember { mutableStateOf("") }
@@ -142,7 +144,7 @@ fun ApplyPtoScreen(
                         .padding(all = 8.dp)
                 ) {
                     Text(
-                        text = "Leaves Left: 18",
+                        text = "Leaves Left: ${ptoLeft.value}",
                         color = purpleTextColorLight,
                         fontSize = 16.sp, modifier = Modifier
                             .padding(top = 4.dp, bottom = 4.dp)

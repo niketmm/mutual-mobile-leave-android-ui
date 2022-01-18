@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
+import com.mutualmobile.mmleave.services.database.availed.AvailedPtoServiceImpl
+import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.di.FirebaseModule
@@ -23,8 +25,12 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val calendarDataService: CalendarDataServiceImpl,
+    private val availedPtoServiceImpl: AvailedPtoServiceImpl,
     private val storeUserInfo: StoreUserInfo
 ) : ViewModel() {
+
+    private val _userPtoLeftState = MutableStateFlow(0)
+    val userPtoLeftState = _userPtoLeftState
 
     init {
 //        testingFirebaseQueries()
@@ -59,6 +65,25 @@ class HomeScreenViewModel @Inject constructor(
                         localDateList = it1.toLocalTime()
                     )
                 }
+            }
+        }
+    }
+
+    fun getLatestPtoRequest() {
+        viewModelScope.launch {
+            availedPtoServiceImpl.fetchLatestPtoRequests().collect {
+                Log.d("LatestPtoRequest", "getLatestPtoRequest: $it")
+                _allPtoSelectedList.value = allPtoSelectedList.value.copy(
+                    latestPtoRequest = it
+                )
+            }
+        }
+    }
+
+    fun getUserPtoLeft() {
+        viewModelScope.launch {
+            storeUserInfo.getUserTotalPto.collect {
+                _userPtoLeftState.emit(it)
             }
         }
     }
