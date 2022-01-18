@@ -45,6 +45,7 @@ class NotificationViewModel @Inject constructor(
         viewModelScope.launch {
             myAdminNotificationServiceImpl.fetchNotificationsWhere(
                 adminEmailId = FirebaseModule.currentUser
+//                adminEmailId = "anmol.verma@mutualmobile.com"
             ).collect {
                 _notificationList.emit(it)
             }

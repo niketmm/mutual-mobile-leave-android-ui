@@ -14,11 +14,17 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -39,9 +45,8 @@ fun PtoRequestNotificationCard(
     mmUser: MMUser? = null,
     notificationModel: NotificationModel?,
     onApprovedClicked: (NotificationModel) -> Unit,
-    onRejectedClicked: (NotificationModel) -> Unit
+    onRejectedClicked: (NotificationModel) -> Unit,
 ) {
-
     val dateTitle = "${notificationModel?.datesList?.first().toLocalDate().toString()} " +
             " - " +
             notificationModel?.datesList?.last().toLocalDate().toString()
@@ -117,7 +122,8 @@ fun PtoRequestNotificationCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(
                     onClick = {
@@ -159,8 +165,9 @@ fun PtoRequestNotificationCard(
                         contentDescription = " cross icon reject button"
                     )
                 }
+
+                NotificationStateIcon(notifyType = notificationModel?.notify_type)
             }
         }
     }
-
 }
