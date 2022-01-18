@@ -70,12 +70,15 @@ fun HomeScreen(
     navController: NavHostController,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
+    homeScreenViewModel.fetchAndCacheUserData()
     homeScreenViewModel.getLatestPtoRequest()
     homeScreenViewModel.getUserPtoLeft()
+    homeScreenViewModel.isUserAdmin()
+
     val scrollableState = rememberScrollState()
     val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
     val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
-    val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = null).value
+    val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = false).value
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
 
@@ -103,7 +106,7 @@ fun HomeScreen(
             }
 
             Row(horizontalArrangement = Arrangement.End) {
-                if (isUserAdmin == true) {
+                if (isUserAdmin) {
                     OutlineNotificationButton(navController = navController)
                     Spacer(modifier = Modifier.width(8.dp))
                 }

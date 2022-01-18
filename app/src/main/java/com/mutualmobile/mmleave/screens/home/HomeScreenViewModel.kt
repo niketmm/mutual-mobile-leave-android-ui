@@ -7,6 +7,7 @@ import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
 import com.mutualmobile.mmleave.services.database.availed.AvailedPtoServiceImpl
 import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
+import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.services.database.home.CalendarDataServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,8 +31,6 @@ class HomeScreenViewModel @Inject constructor(
     val userPtoLeftState = _userPtoLeftState
 
     init {
-//        testingFirebaseQueries()
-//        isUserAdmin()
         getLocalDateList()
         displayDate()
     }
@@ -99,10 +98,25 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    private fun isUserAdmin() {
+    fun isUserAdmin() {
         viewModelScope.launch {
             storeUserInfo.getIsUserAdminState.collect { prefBoolean ->
                 prefBoolean?.let { it1 -> _isUserAdminState.emit(it1) }
+            }
+        }
+    }
+
+    fun fetchAndCacheUserData() {
+        viewModelScope.launch {
+            calendarDataService.fetchUserDetails(
+                FirebaseModule.currentUser
+            ).collect { user ->
+                user?.let {
+                    // Caching the Response Synced With the Data base
+                    storeUserInfo.setUserTotalPto(totalPtoLeavesLeft = it.leaveLeft ?: 0)
+                    storeUserInfo.setIsUserAdminState(isAdmin = it.userType == 1)
+                    storeUserInfo.setUserAuthenticateState(true)
+                }
             }
         }
     }
