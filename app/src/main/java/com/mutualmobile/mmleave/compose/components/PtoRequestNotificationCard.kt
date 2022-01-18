@@ -1,5 +1,6 @@
 package com.mutualmobile.mmleave.compose.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -71,23 +72,23 @@ fun PtoRequestNotificationCard(
                 verticalAlignment = Alignment.CenterVertically
 
             ) {
-                // TODO Remove this after testing
-                Image(
-                    painter = painterResource(id = R.drawable.mm_splash_logo),
-                    contentDescription = "dummy_image_holder"
-                )
-//            ProfileImageHolder(imageUrl = mmUser?.photoUrl)
+//                // TODO Remove this after testing
+//                Image(
+//                    painter = painterResource(id = R.drawable.mm_splash_logo),
+//                    contentDescription = "dummy_image_holder"
+//                )
+                ProfileImageHolder(imageUrl = mmUser?.photoUrl)
                 Row(
                     modifier = Modifier
                         .padding(start = 6.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    // TODO Remove this after testing
-                    Text(
-                        text = "Display Name here",
-                        style = TextStyle(color = blueTextColorLight)
-                    )
+//                    // TODO Remove this after testing
+//                    Text(
+//                        text = "Display Name here",
+//                        style = TextStyle(color = blueTextColorLight)
+//                    )
                     mmUser?.displayName?.let {
                         Text(
                             text = it,
@@ -99,7 +100,6 @@ fun PtoRequestNotificationCard(
                         style = TextStyle(color = purpleTextColorLight)
                     )
                 }
-
             }
             Text(
                 text = dateTitle,

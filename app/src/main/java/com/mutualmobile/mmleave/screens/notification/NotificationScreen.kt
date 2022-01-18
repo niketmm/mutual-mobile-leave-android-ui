@@ -30,6 +30,7 @@ import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
 import com.mutualmobile.mmleave.compose.components.PtoRequestNotificationCard
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @ExperimentalCoilApi
@@ -43,8 +44,8 @@ fun NotificationScreen(
         mutableStateOf(0)
     }
 
-    val scope = rememberCoroutineScope()
     val notificationList = notificationViewModel.notificationList.collectAsState()
+    val mmUserFlow = notificationViewModel.mmUserDetail.collectAsState(null)
 
     LaunchedEffect(key1 = true) {
         notificationViewModel.fetchNotificationList()
@@ -66,7 +67,12 @@ fun NotificationScreen(
         ){
             LazyColumn {
                 items(notificationList.value) { notificationModel ->
+                    Log.d("NotificationScreen", "NotificationScreen: ${notificationModel?.notify_to}")
+                    notificationModel?.notify_from?.let { email ->
+                        notificationViewModel.fetchUserInfo(email)
+                    }
                     PtoRequestNotificationCard(
+                        mmUser = mmUserFlow.value,
                         notificationModel = notificationModel,
                         onApprovedClicked = {
                             notificationViewModel.approvePtoRequest(it)
@@ -75,13 +81,6 @@ fun NotificationScreen(
                             notificationViewModel.rejectPtoRequest(it)
                         }
                     )
-
-//                    Log.d("NotificationScreen", "NotificationScreen: ${notificationModel?.notify_to}")
-//                    notificationModel?.notify_from?.let { email ->
-//                        notificationViewModel.fetchUserInfo(email)
-//                    }?.let { mmUser ->
-//                        PtoRequestNotificationCard(mmUser = mmUser, notificationModel = notificationModel)
-//                    }
                 }
             }
         }

@@ -12,8 +12,12 @@ import com.mutualmobile.mmleave.services.database.notification.MyAdminNotificati
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +32,9 @@ class NotificationViewModel @Inject constructor(
 
     private val _notificationList = MutableStateFlow<List<NotificationModel?>>(emptyList())
     var notificationList = _notificationList
+
+    private val _mmUserDetail = MutableSharedFlow<MMUser?>()
+    var mmUserDetail = _mmUserDetail
 
     fun approvePtoRequest(notificationModel: NotificationModel) {
         viewModelScope.launch {
@@ -52,16 +59,11 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
-    fun fetchUserInfo(email: String): MMUser? {
-        var user: MMUser? = null
+    fun fetchUserInfo(email: String) {
         viewModelScope.launch {
-            FirebaseModule.provideFirebaseUserCollectionReference()
-                .document(email)
-                .addSnapshotListener { mmUser, error ->
-                    user = mmUser?.toObject(MMUser::class.java)
-                }
+            myAdminNotificationServiceImpl.fetchMMUserDetails(email = email).collect {
+                mmUserDetail.emit(it)
+            }
         }
-
-        return user
     }
 }
