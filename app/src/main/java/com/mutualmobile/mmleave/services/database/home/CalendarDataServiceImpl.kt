@@ -1,5 +1,6 @@
 package com.mutualmobile.mmleave.services.database.home
 
+import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.model.MMUser
@@ -36,6 +37,19 @@ class CalendarDataServiceImpl @Inject constructor() : CalendarDataService {
 
         awaitClose {
             userDetailListener.remove()
+        }
+    }
+
+    override suspend fun fetchHolidays() = callbackFlow {
+        val holidayListener = FirebaseModule.provideFirebaseHolidayCollection()
+            .addSnapshotListener { holidays, error ->
+                holidays?.map {
+                    trySend(holidays.toObjects(DisplayDateModel::class.java))
+                }
+            }
+
+        awaitClose {
+            holidayListener.remove()
         }
     }
 }

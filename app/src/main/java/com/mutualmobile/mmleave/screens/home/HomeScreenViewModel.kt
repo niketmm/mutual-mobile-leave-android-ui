@@ -8,6 +8,7 @@ import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
 import com.mutualmobile.mmleave.services.database.availed.AvailedPtoServiceImpl
 import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
+import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.services.database.home.CalendarDataServiceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +35,7 @@ class HomeScreenViewModel @Inject constructor(
     init {
         getLocalDateList()
         displayDate()
+        fetchAllHolidays()
     }
 
     private val _isUserAdminState = MutableStateFlow(false)
@@ -122,6 +124,58 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    private fun fetchAllHolidays(){
+        viewModelScope.launch {
+            calendarDataService.fetchHolidays().collect { holidayList ->
+                _allPtoSelectedList.value = allPtoSelectedList.value.copy(
+                    allHolidayStatusList = holidayList
+                )
+                _allPtoSelectedList.value = allPtoSelectedList.value.copy(
+                    holidayDateList = holidayList.map {
+                        it.date.toLocalDate()
+                    }
+                )
+            }
+        }
+    }
+
+    /**
+     * `setHolidayAndSelectedLocalDateList()` method concatenate two list and
+     *  set the resultant list to `holidayAndSelectedLocalDateList`
+     */
+    fun setHolidayAndSelectedLocalDateList(){
+        viewModelScope.launch {
+            _allPtoSelectedList.value = allPtoSelectedList.value.copy(
+                holidayAndSelectedLocalDateList = concatenate(
+                    _allPtoSelectedList.value.holidayDateList,
+                    _allPtoSelectedList.value.localDateList
+                )
+            )
+        }
+    }
+
+    /**
+     * `setHolidayAndPtoRequestedStatusDateList()` method concatenate two list and
+     *  set the resultant list to `holidayAndPtoRequestedStatusDateList`
+     */
+    fun setHolidayAndPtoRequestedStatusDateList(){
+        viewModelScope.launch {
+            val ptoFetchedStatus = _allPtoSelectedList.value.allPtoDatesListModel.map { firebaseFetchedPtoItem ->
+                DisplayDateModel(
+                    date = firebaseFetchedPtoItem.date,
+                    ptoStatus = firebaseFetchedPtoItem.ptoStatus
+                )
+            }
+
+            _allPtoSelectedList.value = allPtoSelectedList.value.copy(
+                holidayAndPtoRequestedStatusDateList = concatenate(
+                    _allPtoSelectedList.value.allHolidayStatusList,
+                    ptoFetchedStatus
+                )
+            )
+        }
+    }
+
     fun logoutUser() {
         // Reset the Cache
         viewModelScope.launch {
@@ -130,6 +184,10 @@ class HomeScreenViewModel @Inject constructor(
             storeUserInfo.setUserAuthenticateState(false)
             FirebaseAuth.getInstance().signOut()
         }
+    }
+
+    fun <T> concatenate(vararg lists: List<T>): List<T> {
+        return listOf(*lists).flatten()
     }
 
 //    private suspend fun testingFirebaseQueries(email : String? = "niket.jain@mutualmobile.com") {

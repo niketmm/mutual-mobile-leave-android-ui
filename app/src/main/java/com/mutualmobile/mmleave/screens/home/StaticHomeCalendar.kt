@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import io.github.boguszpawlowski.composecalendar.Calendar
@@ -40,8 +41,16 @@ fun StaticHomeCalendar(
     viewModel: HomeScreenViewModel
 ) {
 
-    val dateState = viewModel.allPtoSelectedList.value.localDateList
-    val ptoDates = viewModel.allPtoSelectedList.value.allPtoDatesListModel
+    viewModel.setHolidayAndPtoRequestedStatusDateList()
+    viewModel.setHolidayAndSelectedLocalDateList()
+
+    // Instead of only Selected Dates we will display
+    // Selected Dates + Holiday Dates
+    val dateState = viewModel.allPtoSelectedList.value.holidayAndSelectedLocalDateList
+
+    // Instead of only Fetched PTO dates with Status we will display
+    // Fetched Dates + Fetched Holiday Dates
+    val ptoDates = viewModel.allPtoSelectedList.value.holidayAndPtoRequestedStatusDateList
 
     val states = remember {
         CalendarState(MonthState(YearMonth.now()), object : SelectionState {
@@ -66,7 +75,7 @@ fun StaticHomeCalendar(
             DefaultSelectedDay(
                 state = it,
                 firebasePtoRequestModel = ptoDates.find { calendarDate ->
-                    calendarDate.date.toLocalDate() == it.date
+                    calendarDate?.date.toLocalDate() == it.date
                 },
             )
         },
@@ -85,7 +94,7 @@ fun <T : SelectionState> DefaultSelectedDay(
     selectionColor: Color = Color.White,
     currentDayColor: Color = MaterialTheme.colors.primary,
     onClick: (LocalDate) -> Unit = {},
-    firebasePtoRequestModel: FirebasePtoRequestModel?
+    firebasePtoRequestModel: DisplayDateModel?
 ) {
     val date = state.date
     val selectionState = state.selectionState
