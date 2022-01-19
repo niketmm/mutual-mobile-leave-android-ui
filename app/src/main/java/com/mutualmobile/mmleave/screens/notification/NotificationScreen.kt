@@ -40,16 +40,14 @@ fun NotificationScreen(
     navHostController: NavHostController,
     notificationViewModel: NotificationViewModel = hiltViewModel(),
 ) {
+    notificationViewModel.fetchNotificationList()
+
     var totalPtoRequest by remember {
         mutableStateOf(0)
     }
 
     val notificationList = notificationViewModel.notificationList.collectAsState()
     val mmUserFlow = notificationViewModel.mmUserDetail.collectAsState(null)
-
-    LaunchedEffect(key1 = true) {
-        notificationViewModel.fetchNotificationList()
-    }
 
     Column(modifier = Modifier
         .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
@@ -67,7 +65,7 @@ fun NotificationScreen(
         ){
             LazyColumn {
                 items(notificationList.value) { notificationModel ->
-                    Log.d("NotificationScreen", "NotificationScreen: ${notificationModel?.notify_to}")
+                    Log.d("NotificationScreen", "NotificationScreen: ${notificationModel?.notificationDocumentId}")
                     notificationModel?.notify_from?.let { email ->
                         notificationViewModel.fetchUserInfo(email)
                     }

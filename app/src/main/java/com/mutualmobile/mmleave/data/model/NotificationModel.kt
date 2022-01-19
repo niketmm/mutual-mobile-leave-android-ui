@@ -7,5 +7,6 @@ data class NotificationModel(
     val notify_to : String? = null,
     val notify_from : String? = null,
     val title : String? = null,
-    val notify_type : Int? = 0
+    val notify_type : Int? = 0,
+    val notificationDocumentId : String? = null
 )

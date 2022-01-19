@@ -13,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -23,8 +24,11 @@ class MyAdminNotificationServiceImpl @Inject constructor() : AdminNotificationSe
             .whereEqualTo("notify_to", adminEmailId)
             .addSnapshotListener { notifications, error ->
                 notifications?.documents?.map {
-                    it.toObject(NotificationModel::class.java)
+                    it.toObject(NotificationModel::class.java)?.copy(
+                     notificationDocumentId = it.id
+                    )
                 }?.let { model ->
+                    updateNotificationObjectWithNotificationId(model)
                     trySend(model)
                 }
             }
@@ -52,22 +56,38 @@ class MyAdminNotificationServiceImpl @Inject constructor() : AdminNotificationSe
                     Log.d("FirebaseNotificationReq", "approvePtoRequest: ${it.message}")
                 }
         }
+    }
 
+    override suspend fun approvePtoRequestForAllOtherAdmin(notificationModel: List<NotificationModel?>) {
         // Update the Notification Type as well
-        notificationModel.datesList.forEach {
+        val approvedHash = HashMap<String, Any>()
+        approvedHash["notify_type"] = 1
+        notificationModel.forEach {
             FirebaseModule.provideFirebaseNotificationCollectionReference()
-                .whereArrayContains("datesList", it.toString())
-                .whereEqualTo("notify_to", notificationModel.notify_to)
-                .addSnapshotListener { value, error ->
-                    error?.let { exception ->
-                        Log.d("FirebaseNotificationReqError", exception.message.toString())
-                    }
-                    value?.documents?.forEach { doc ->
-                        Log.d("FirebaseNotificationReq", doc.id)
-                        FirebaseModule.provideFirebaseNotificationCollectionReference()
-                            .document(doc.id)
-                            .update("notify_type", 2)
-                    }
+                .document(it?.notificationDocumentId.toString())
+                .update(approvedHash)
+                .addOnCompleteListener {
+                    Log.d("approvePtoRequestForAllOtherAdmin", ": ${it.isComplete}")
+                }
+                .addOnFailureListener {
+                    Log.d("approvePtoRequestForAllOtherAdmin", ": ${it.message}")
+                }
+        }
+    }
+
+    override suspend fun rejectPtoRequestForAllOtherAdmin(notificationModel: List<NotificationModel?>) {
+        // Update the Notification Type as well
+        val rejectedHash = HashMap<String, Any>()
+        rejectedHash["notify_type"] = 0
+        notificationModel.forEach {
+            FirebaseModule.provideFirebaseNotificationCollectionReference()
+                .document(it?.notificationDocumentId.toString())
+                .update(rejectedHash)
+                .addOnCompleteListener {
+                    Log.d("approvePtoRequestForAllOtherAdmin", ": ${it.isComplete}")
+                }
+                .addOnFailureListener {
+                    Log.d("approvePtoRequestForAllOtherAdmin", ": ${it.message}")
                 }
         }
     }
@@ -117,6 +137,22 @@ class MyAdminNotificationServiceImpl @Inject constructor() : AdminNotificationSe
             awaitClose{
                 listener.remove()
             }
+        }
+    }
+
+    override fun updateNotificationObjectWithNotificationId(notificationModel: List<NotificationModel?>) {
+        notificationModel.forEach {
+            val updateDocumentIdMap = HashMap<String,Any>()
+            updateDocumentIdMap["notificationDocumentId"] = it?.notificationDocumentId ?: 0
+            FirebaseModule.provideFirebaseNotificationCollectionReference()
+                .document(it?.notificationDocumentId.toString())
+                .update(updateDocumentIdMap)
+                .addOnCompleteListener {
+                    Log.d("updateNotificationObjectWithNotificationId", "NotificationDocument Updated")
+                }
+                .addOnFailureListener {
+                    Log.d("updateNotificationObjectWithNotificationId", "NotificationDocument Cancelled due to ${it.message}")
+                }
         }
     }
 }
