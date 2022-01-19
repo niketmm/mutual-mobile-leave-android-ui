@@ -29,4 +29,9 @@ object FirebaseModule {
         return FirebaseFirestore.getInstance()
             .collection(Constants.NOTIFICATION_COLLECTION)
     }
+
+    fun provideFirebaseHolidayCollection() : CollectionReference {
+        return FirebaseFirestore.getInstance()
+            .collection(Constants.HOLIDAY_LIST_COLLECTION_FOR_22)
+    }
 }
