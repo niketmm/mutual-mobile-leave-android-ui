@@ -1,23 +1,37 @@
 package com.mutualmobile.mmleave.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.contentColorFor
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
@@ -40,7 +54,6 @@ import java.util.*
 fun StaticHomeCalendar(
     viewModel: HomeScreenViewModel
 ) {
-
     viewModel.setHolidayAndPtoRequestedStatusDateList()
     viewModel.setHolidayAndSelectedLocalDateList()
 
@@ -79,7 +92,9 @@ fun StaticHomeCalendar(
                 },
             )
         },
-        monthHeader = { DefaultMonthHeader(it) },
+        monthHeader = { state ->
+            CustomizedMonth(monthState = state)
+        },
         weekHeader = { DefaultWeekHeader(it) },
         monthContainer = { content ->
             Box { content(PaddingValues()) }
@@ -130,6 +145,58 @@ fun <T : SelectionState> DefaultSelectedDay(
             contentAlignment = Alignment.Center,
         ) {
             Text(text = date.dayOfMonth.toString(), color = Color.Black)
+        }
+    }
+}
+
+@Composable
+fun CustomizedMonth(
+    monthState : MonthState,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            modifier = Modifier.testTag("Decrement"),
+            onClick = { monthState.currentMonth = monthState.currentMonth.minusMonths(1) }
+        ) {
+            Image(
+                imageVector = Icons.Default.KeyboardArrowLeft,
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface),
+                contentDescription = "Previous",
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.testTag("MonthLabel"),
+                text = monthState.currentMonth.month.name.lowercase()
+                    .replaceFirstChar { it.titlecase() },
+                style = MaterialTheme.typography.h5,
+                fontSize = 24.sp,
+                color = Color.DarkGray
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = monthState.currentMonth.year.toString(),
+                style = MaterialTheme.typography.h5,
+                fontSize = 20.sp,
+                color = Color.LightGray
+            )
+        }
+        IconButton(
+            modifier = Modifier.testTag("Increment"),
+            onClick = { monthState.currentMonth = monthState.currentMonth.plusMonths(1) }
+        ) {
+            Image(
+                imageVector = Icons.Default.KeyboardArrowRight,
+                colorFilter = ColorFilter.tint(MaterialTheme.colors.onSurface),
+                contentDescription = "Next",
+            )
         }
     }
 }

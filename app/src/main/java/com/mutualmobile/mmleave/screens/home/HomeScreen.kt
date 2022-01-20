@@ -130,8 +130,6 @@ fun HomeScreen(
                     }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                OutlineCalendarButton(navController)
-                Spacer(modifier = Modifier.width(8.dp))
                 ProfileImageHolder(
                     navHostController = navController,
                     logoutClickEvent = {
@@ -192,7 +190,10 @@ fun HomeScreen(
         Surface(
             modifier = Modifier
                 .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
-                .height(158.dp),
+                .height(158.dp)
+                .clickable {
+                    navController.navigate(Screen.PtoAvailed.route)
+                },
             shape = MaterialTheme.shapes.large,
             color = primaryColorLight,
             ) {
