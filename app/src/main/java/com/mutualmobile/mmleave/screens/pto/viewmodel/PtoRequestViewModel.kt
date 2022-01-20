@@ -95,7 +95,7 @@ class PtoRequestViewModel @Inject constructor(
                                         notify_to = admins?.email,
                                         notify_from = FirebaseAuth.getInstance().currentUser?.email,
                                         title = "Hi, this is the request for the PTO's",
-                                        notify_type = 1
+                                        notify_type = 0
                                     )
                                 )
                             }
