@@ -100,6 +100,9 @@ class PtoRequestViewModel @Inject constructor(
                                 )
                             }
                         }
+                        PtoRequestEvents.Loading -> {
+                            _uiEvents.emit(SavePtoRequestEvents.ShowSnackBar("Processing"))
+                        }
                     }
                 }
             }
