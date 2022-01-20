@@ -36,7 +36,7 @@ fun AnimatedSplashScreen(
 ) {
     viewModel.getUserAuthState()
 
-    val userAuthState by viewModel.userAuthState.collectAsState()
+    val userAuthState by viewModel.userAuthState.collectAsState(false)
 
     var startAnimation by remember {
         mutableStateOf(false)

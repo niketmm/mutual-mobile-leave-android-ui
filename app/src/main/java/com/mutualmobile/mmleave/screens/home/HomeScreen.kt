@@ -1,5 +1,9 @@
 package com.mutualmobile.mmleave.screens.home
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +23,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -31,6 +37,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,12 +49,14 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.R
+import com.mutualmobile.mmleave.compose.components.ExpandCalendar
 import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
 import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
@@ -60,6 +71,7 @@ import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 import com.mutualmobile.mmleave.util.ConnectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalMaterialApi
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
@@ -76,6 +88,7 @@ fun HomeScreen(
     val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
     val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
     val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = false).value
+    var expandedState by remember { mutableStateOf(true) }
     val connection by connectivityState()
     val isConnected = connection === ConnectionState.Available
 
@@ -105,14 +118,17 @@ fun HomeScreen(
             }
 
             Row(horizontalArrangement = Arrangement.End) {
+                OutlineConnectionButton(isConnected = isConnected)
+                Spacer(modifier = Modifier.width(8.dp))
                 if (isUserAdmin) {
                     OutlineNotificationButton(navController = navController)
                     Spacer(modifier = Modifier.width(8.dp))
                 }
-                OutlineConnectionButton(isConnected = isConnected)
-                Spacer(modifier = Modifier.width(8.dp))
-
-                OutlineCalendarButton(navController)
+                ExpandCalendar(
+                    onClickEvent = {
+                        expandedState = !expandedState
+                    }
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 ProfileImageHolder(
                     navHostController = navController,
@@ -125,29 +141,59 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        Box(
+        Column(
             modifier = Modifier
-                .padding(bottom = 12.dp),
-            contentAlignment = Alignment.Center
+                .padding(bottom = 12.dp, start = 16.dp,end = 16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            StaticHomeCalendar(homeScreenViewModel)
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 4.dp)
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = FastOutSlowInEasing
+                        )
+                    ),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                if (expandedState) {
+                    StaticHomeCalendar(homeScreenViewModel)
+                }
+            }
         }
 
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
+            Card(
                 modifier = Modifier
-            ) {
-                CalendarDetailsCard()
+                    .fillMaxWidth()
+                    .padding(all = 4.dp)
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = FastOutSlowInEasing
+                        )
+                    ),
+                shape = MaterialTheme.shapes.medium,
+            ){
+                if (expandedState) {
+                    CalendarDetailsCard()
+                }
             }
         }
 
         Surface(
             modifier = Modifier
                 .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
-                .height(158.dp),
+                .height(158.dp)
+                .clickable {
+                    navController.navigate(Screen.PtoAvailed.route)
+                },
             shape = MaterialTheme.shapes.large,
             color = primaryColorLight,
             ) {
@@ -269,6 +315,7 @@ fun HomeScreen(
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Preview(showBackground = true)
