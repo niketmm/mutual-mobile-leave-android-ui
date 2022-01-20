@@ -1,8 +1,8 @@
 package com.mutualmobile.mmleave.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -29,8 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,6 +55,7 @@ import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 import com.mutualmobile.mmleave.util.ConnectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.*
 
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi
@@ -94,15 +91,27 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
             Column {
+                val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
+                val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+                val time = Calendar.getInstance().time
+                Log.d("Time", "HomeScreen: $time")
+
+                var greeting : String? = null
+                greeting = if (currentHour in 18 downTo 7){
+                    "Good Night"
+                }else {
+                    "Good Morning"
+                }
                 Text(
-                    text = stringResource(R.string.good_morning_home_screen_text),
+                    text = greeting,
                     fontSize = 16.sp,
                     color = secondaryTextColorDark
                 )
                 Text(text = name, fontSize = 24.sp)
             }
+
 
             Row(horizontalArrangement = Arrangement.End) {
                 if (isUserAdmin) {
