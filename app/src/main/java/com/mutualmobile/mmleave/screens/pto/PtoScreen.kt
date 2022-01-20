@@ -1,6 +1,7 @@
 package com.mutualmobile.mmleave.screens.pto
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +25,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,6 +43,7 @@ import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.compose.components.AdminChip
+import com.mutualmobile.mmleave.compose.components.connectivityState
 import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
 import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.screens.home.CalendarView
@@ -50,6 +52,7 @@ import com.mutualmobile.mmleave.screens.search.SearchScreen
 import com.mutualmobile.mmleave.services.database.search_user.SearchUserViewModel
 import com.mutualmobile.mmleave.ui.theme.backgroundLight
 import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
+import com.mutualmobile.mmleave.util.ConnectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -63,12 +66,15 @@ fun ApplyPtoScreen(
     searchUserViewModel: SearchUserViewModel = hiltViewModel(),
     navHostController: NavHostController
 ) {
-    ptoViewModel.getUserPtoLeft()
-    val TAG = "PtoScreen"
+    val context = LocalContext.current
+    val connection by connectivityState()
+    val isConnected = connection === ConnectionState.Available
     val ptoLeft = ptoViewModel.userPtoLeftState.collectAsState()
     val scrollableState = rememberScrollState()
     val scaffoldState = rememberScaffoldState()
     var leaveDescriptionText by remember { mutableStateOf("") }
+
+    ptoViewModel.getUserPtoLeft()
 
     LaunchedEffect(key1 = true) {
         ptoViewModel.uiEvents.collectLatest { event ->
@@ -97,7 +103,7 @@ fun ApplyPtoScreen(
                     if (ptoViewModel.isValidPtoRequest(
                             ptoViewModel.allPtoSelectedList.value.localDateList,
                             searchUserViewModel.adminListState.value.selectedAdminList
-                        )
+                        ) && isConnected
                     ) {
                         ptoViewModel.updatePtoList(
                             ptoList = ptoViewModel.allPtoSelectedList.value.localDateList,
@@ -109,11 +115,14 @@ fun ApplyPtoScreen(
                             selectedAdmins = searchUserViewModel.adminListState.value.selectedAdminList
                         )
                     } else {
-                        Log.d(TAG, "ApplyPtoScreen: SOme properties are remaining")
+                       Toast.makeText(context,"Some properties are blank",Toast.LENGTH_SHORT).show()
                     }
                 }
             ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "success_check_pto")
+                if (isConnected)
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "success_check_pto")
+                else
+                    Icon(imageVector = Icons.Filled.Cancel, contentDescription = "success_check_pto")
             }
         },
         floatingActionButtonPosition = FabPosition.End,
@@ -189,3 +198,4 @@ fun ApplyPtoScreen(
         }
     }
 }
+
