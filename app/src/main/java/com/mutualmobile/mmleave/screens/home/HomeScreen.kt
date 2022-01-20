@@ -50,11 +50,14 @@ import com.mutualmobile.mmleave.compose.components.ExpandingText
 import com.mutualmobile.mmleave.compose.components.HomePtoAvailedChip
 import com.mutualmobile.mmleave.compose.components.LeaveAnimatedCircularProgressBar
 import com.mutualmobile.mmleave.compose.components.OutlineCalendarButton
+import com.mutualmobile.mmleave.compose.components.OutlineConnectionButton
 import com.mutualmobile.mmleave.compose.components.OutlineNotificationButton
 import com.mutualmobile.mmleave.compose.components.ProfileImageHolder
+import com.mutualmobile.mmleave.compose.components.connectivityState
 import com.mutualmobile.mmleave.navigation.Screen
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
+import com.mutualmobile.mmleave.util.ConnectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
@@ -73,6 +76,8 @@ fun HomeScreen(
     val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
     val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
     val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = false).value
+    val connection by connectivityState()
+    val isConnected = connection === ConnectionState.Available
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
 
@@ -104,6 +109,9 @@ fun HomeScreen(
                     OutlineNotificationButton(navController = navController)
                     Spacer(modifier = Modifier.width(8.dp))
                 }
+                OutlineConnectionButton(isConnected = isConnected)
+                Spacer(modifier = Modifier.width(8.dp))
+
                 OutlineCalendarButton(navController)
                 Spacer(modifier = Modifier.width(8.dp))
                 ProfileImageHolder(
@@ -246,7 +254,8 @@ fun HomeScreen(
                         .width(270.dp),
                 )
 
-                Button(modifier = Modifier.align(Alignment.BottomEnd)
+                Button(modifier = Modifier
+                    .align(Alignment.BottomEnd)
                     .padding(bottom = 24.dp, end = 16.dp),
                     onClick = { navController.navigate(Screen.ApplyPto.route) }) {
                     Text(text = "APPLY PTO")
