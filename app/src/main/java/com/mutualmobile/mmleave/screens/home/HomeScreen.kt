@@ -89,7 +89,7 @@ fun HomeScreen(
     val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
     val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
     val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = false).value
-    var expandedState by remember { mutableStateOf(true) }
+    var expandedState by remember { mutableStateOf(false) }
     val connection by connectivityState()
     val isConnected = connection === ConnectionState.Available
 
@@ -290,7 +290,7 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = latestPtoRequest?.date.toLocalDate().toString(), fontSize = 14.sp)
+                        Text(text = latestPtoRequest?.date.toLocalDate().toString(), fontSize = 24.sp)
                         HomePtoAvailedChip(latestPtoRequest?.ptoStatus)
                     }
                     Spacer(modifier = Modifier.height(8.dp))

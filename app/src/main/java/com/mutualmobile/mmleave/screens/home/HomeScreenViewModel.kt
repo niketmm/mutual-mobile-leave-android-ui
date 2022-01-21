@@ -3,6 +3,8 @@ package com.mutualmobile.mmleave.screens.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.data_state.CalendarUiState
@@ -183,23 +185,10 @@ class HomeScreenViewModel @Inject constructor(
             storeUserInfo.setUserTotalPto(0)
             storeUserInfo.setUserAuthenticateState(false)
             FirebaseAuth.getInstance().signOut()
-            // Todo Add Google Sign out
         }
     }
 
-    fun <T> concatenate(vararg lists: List<T>): List<T> {
+    private fun <T> concatenate(vararg lists: List<T>): List<T> {
         return listOf(*lists).flatten()
     }
-
-//    private suspend fun testingFirebaseQueries(email : String? = "niket.jain@mutualmobile.com") {
-//        viewModelScope.launch {
-//            val isAdmin = FirebaseModule.provideFirebaseUserCollectionReference()
-//                .whereEqualTo("email", email)
-//                .addSnapshotListener { users, error ->
-//                    users?.toObjects(MMUser::class.java)?.let {
-//                        Log.d("TestingFirebase", "testingFirebaseQueries: $it")
-//                    }
-//                }
-//        }
-//    }
 }

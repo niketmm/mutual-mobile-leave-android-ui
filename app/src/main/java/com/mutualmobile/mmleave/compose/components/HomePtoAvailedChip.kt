@@ -45,7 +45,7 @@ fun HomePtoAvailedChip(
         shape = RoundedCornerShape(16.dp),
         color = if (isSelected) MaterialTheme.colors.primary else  Color.LightGray
     ){
-        Text(text = statusText, fontSize = 12.sp, modifier = Modifier.padding(all = 8.dp))
+        Text(text = statusText, fontSize = 16.sp, modifier = Modifier.padding(all = 8.dp),color = Color.Black)
     }
 }
 

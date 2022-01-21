@@ -64,19 +64,15 @@ fun PtoRequestNotificationCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(all = 8.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, end = 8.dp),
+                    .padding(all = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
 
             ) {
-//                // TODO Remove this after testing
-//                Image(
-//                    painter = painterResource(id = R.drawable.mm_splash_logo),
-//                    contentDescription = "dummy_image_holder"
-//                )
                 ProfileImageHolder(imageUrl = mmUser?.photoUrl)
                 Row(
                     modifier = Modifier
@@ -84,11 +80,6 @@ fun PtoRequestNotificationCard(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-//                    // TODO Remove this after testing
-//                    Text(
-//                        text = "Display Name here",
-//                        style = TextStyle(color = blueTextColorLight)
-//                    )
                     mmUser?.displayName?.let {
                         Text(
                             text = it,
@@ -101,6 +92,7 @@ fun PtoRequestNotificationCard(
                     )
                 }
             }
+
             Text(
                 text = dateTitle,
                 modifier = Modifier.padding(

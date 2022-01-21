@@ -177,14 +177,14 @@ fun CustomizedMonth(
                 text = monthState.currentMonth.month.name.lowercase()
                     .replaceFirstChar { it.titlecase() },
                 style = MaterialTheme.typography.h5,
-                fontSize = 24.sp,
+                fontSize = 18.sp,
                 color = Color.DarkGray
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = monthState.currentMonth.year.toString(),
                 style = MaterialTheme.typography.h5,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 color = Color.LightGray
             )
         }
