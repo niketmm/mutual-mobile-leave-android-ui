@@ -25,7 +25,7 @@ class AuthViewModel @Inject constructor(
     private val _authFlow = MutableSharedFlow<LandingPageState<String>>()
     val authFlow: SharedFlow<LandingPageState<String>> = _authFlow
 
-    private val _userAuthState = MutableStateFlow(false)
+    private val _userAuthState = MutableSharedFlow<Boolean>(0)
     val userAuthState = _userAuthState
 
     fun handleGoogleSignInResult(data: Intent) {
