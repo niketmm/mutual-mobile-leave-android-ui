@@ -36,6 +36,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.util.rangeTo
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -97,12 +98,18 @@ fun HomeScreen(
 
                 val time = Calendar.getInstance().time
                 Log.d("Time", "HomeScreen: $time")
+                Log.d("Time", "HomeScreen: $currentHour")
 
-                var greeting : String? = null
-                greeting = if (currentHour in 18 downTo 7){
-                    "Good Night"
-                }else {
-                    "Good Morning"
+                val greeting : String = when (currentHour) {
+                    in 7 rangeTo 12 -> {
+                        "Good Morning"
+                    }
+                    in 12 rangeTo 18 -> {
+                        "Good Afternoon"
+                    }
+                    else -> {
+                        "Good Night"
+                    }
                 }
                 Text(
                     text = greeting,
