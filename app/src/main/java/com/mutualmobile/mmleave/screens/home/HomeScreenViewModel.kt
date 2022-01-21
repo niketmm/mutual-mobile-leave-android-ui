@@ -183,6 +183,7 @@ class HomeScreenViewModel @Inject constructor(
             storeUserInfo.setUserTotalPto(0)
             storeUserInfo.setUserAuthenticateState(false)
             FirebaseAuth.getInstance().signOut()
+            // Todo Add Google Sign out
         }
     }
 

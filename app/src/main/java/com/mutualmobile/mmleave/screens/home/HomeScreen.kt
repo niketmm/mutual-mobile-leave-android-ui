@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,9 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -50,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.core.util.rangeTo
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -70,6 +70,7 @@ import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 import com.mutualmobile.mmleave.util.ConnectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.*
 
 @ExperimentalMaterialApi
 @ExperimentalCoroutinesApi
@@ -107,10 +108,27 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
             Column {
+                val name = FirebaseAuth.getInstance().currentUser?.displayName.toString()
+                val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+                val time = Calendar.getInstance().time
+                Log.d("Time", "HomeScreen: $time")
+                Log.d("Time", "HomeScreen: $currentHour")
+
+                val greeting : String = when (currentHour) {
+                    in 7 rangeTo 12 -> {
+                        "Good Morning"
+                    }
+                    in 12 rangeTo 18 -> {
+                        "Good Afternoon"
+                    }
+                    else -> {
+                        "Good Night"
+                    }
+                }
                 Text(
-                    text = stringResource(R.string.good_morning_home_screen_text),
+                    text = greeting,
                     fontSize = 16.sp,
                     color = secondaryTextColorDark
                 )

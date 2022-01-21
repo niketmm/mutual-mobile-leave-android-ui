@@ -1,6 +1,7 @@
 package com.mutualmobile.mmleave
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -15,6 +16,7 @@ import com.mutualmobile.mmleave.navigation.SetUpNavGraph
 import com.mutualmobile.mmleave.ui.theme.MMLeaveTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.*
 
 @AndroidEntryPoint
 @ExperimentalCoroutinesApi
