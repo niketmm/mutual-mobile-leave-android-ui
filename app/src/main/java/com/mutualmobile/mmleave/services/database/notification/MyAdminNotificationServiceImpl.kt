@@ -1,19 +1,14 @@
 package com.mutualmobile.mmleave.services.database.notification
 
 import android.util.Log
-import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.SetOptions
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.data.model.NotificationModel
 import com.mutualmobile.mmleave.di.FirebaseModule
-import com.mutualmobile.mmleave.screens.home.toLocalDate
+import com.mutualmobile.mmleave.ui.screens.home.toLocalDate
 import com.mutualmobile.mmleave.util.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
