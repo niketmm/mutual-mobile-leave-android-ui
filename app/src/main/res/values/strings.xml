@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">MM Leave</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">MM Leave</string>
     <string name="long_text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book</string>
     <string name="web_client_id">964855784492-emvhjgl3m4ma5oq4uloqsr91u6but84q.apps.googleusercontent.com</string>
     <string name="landing_screen_bg_img_desc">rectangle_gradient_image</string>

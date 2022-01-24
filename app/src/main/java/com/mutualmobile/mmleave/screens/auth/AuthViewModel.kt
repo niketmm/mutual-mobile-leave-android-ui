@@ -8,9 +8,12 @@ import com.mutualmobile.mmleave.services.auth.social.GoogleSocialService
 import com.mutualmobile.mmleave.data.data_state.LandingPageState
 import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,11 +25,18 @@ class AuthViewModel @Inject constructor(
     private val storeUserInfo: StoreUserInfo
 ) : ViewModel() {
 
+    init {
+        isAuthenticated()
+    }
+
     private val _authFlow = MutableSharedFlow<LandingPageState<String>>()
     val authFlow: SharedFlow<LandingPageState<String>> = _authFlow
 
     private val _userAuthState = MutableSharedFlow<Boolean>(0)
-    val userAuthState = _userAuthState
+    val userAuthState = _userAuthState.asSharedFlow()
+
+    private val _isUserAuthenticated = MutableStateFlow(false)
+    val isUserAuthenticated = _isUserAuthenticated.asStateFlow()
 
     fun handleGoogleSignInResult(data: Intent) {
         viewModelScope.launch {
@@ -55,6 +65,17 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             storeUserInfo.getUserAuthenticateState.collect {
                 _userAuthState.emit(it)
+                _isUserAuthenticated.value = it
+            }
+        }
+    }
+
+    private fun isAuthenticated() {
+        viewModelScope.launch {
+            // To keep Splash Icon stable for 2 Seconds
+            delay(2000)
+            storeUserInfo.getUserAuthenticateState.collect {
+                _isUserAuthenticated.value = it
             }
         }
     }

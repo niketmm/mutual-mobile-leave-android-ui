@@ -23,18 +23,19 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
 fun SetUpNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    isAuthenticated : Boolean = false
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route
+        startDestination = if (isAuthenticated) Screen.Home.route else Screen.SignUp.route
     ) {
 
-        composable(
-            route = Screen.Splash.route
-        ) {
-            AnimatedSplashScreen(navController = navController)
-        }
+//        composable(
+//            route = Screen.Splash.route
+//        ) {
+//            AnimatedSplashScreen(navController = navController)
+//        }
 
         composable(
             route = Screen.SignUp.route
