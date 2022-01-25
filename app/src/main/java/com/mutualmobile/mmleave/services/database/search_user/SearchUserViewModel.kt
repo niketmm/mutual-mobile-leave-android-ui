@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.ui.screens.search.SearchResultState
+import com.mutualmobile.mmleave.data.data_state.SearchResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

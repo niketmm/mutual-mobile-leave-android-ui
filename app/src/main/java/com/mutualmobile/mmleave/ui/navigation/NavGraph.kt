@@ -7,13 +7,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import coil.annotation.ExperimentalCoilApi
-import com.mutualmobile.mmleave.ui.screens.pto.PtoAvailedScreen
-import com.mutualmobile.mmleave.ui.screens.pto.PtoRequestScreen
-import com.mutualmobile.mmleave.ui.screens.auth.LandingPageScreen
+import com.mutualmobile.mmleave.feature_availed.presentation.PtoAvailedScreen
+import com.mutualmobile.mmleave.feature_auth.presentation.LandingPageScreen
 import com.mutualmobile.mmleave.ui.screens.home.HomeScreen
-import com.mutualmobile.mmleave.ui.screens.notification.NotificationScreen
-import com.mutualmobile.mmleave.ui.screens.pto.ApplyPtoScreen
-import com.mutualmobile.mmleave.ui.screens.search.SearchScreen
+import com.mutualmobile.mmleave.feature_notification.presentation.NotificationScreen
+import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoScreen
+import com.mutualmobile.mmleave.common_ui.components.SearchScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalMaterialApi
@@ -57,12 +56,6 @@ fun SetUpNavGraph(
             route = Screen.ApplyPto.route
         ) {
             ApplyPtoScreen(navHostController = navController)
-        }
-
-        composable(
-            route = Screen.PtoRequests.route
-        ) {
-            PtoRequestScreen()
         }
 
         composable(

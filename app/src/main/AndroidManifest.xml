@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.SplashScreeTheme">
         <activity
-            android:name=".MMLeave"
+            android:name=".ui.MMLeave"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.App.SplashScreeTheme">

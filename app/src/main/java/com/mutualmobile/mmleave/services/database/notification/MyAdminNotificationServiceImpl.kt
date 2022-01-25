@@ -4,7 +4,7 @@ import android.util.Log
 import com.mutualmobile.mmleave.data.model.MMUser
 import com.mutualmobile.mmleave.data.model.NotificationModel
 import com.mutualmobile.mmleave.di.FirebaseModule
-import com.mutualmobile.mmleave.ui.screens.home.toLocalDate
+import com.mutualmobile.mmleave.common_ui.components.toLocalDate
 import com.mutualmobile.mmleave.util.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose

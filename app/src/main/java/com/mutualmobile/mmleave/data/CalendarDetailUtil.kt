@@ -14,9 +14,4 @@ object CalendarDetailList {
         CalendarDetailUtil(Color.Yellow,"Holiday"),
         CalendarDetailUtil(Color.Red,"Rejected"),
     )
-
-    val secondRowList = listOf<CalendarDetailUtil>(
-        CalendarDetailUtil(Color.Blue,"Pending"),
-        CalendarDetailUtil(Color.Magenta,"Updated")
-    )
 }
