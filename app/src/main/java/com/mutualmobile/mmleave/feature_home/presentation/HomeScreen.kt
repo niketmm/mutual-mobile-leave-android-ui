@@ -78,18 +78,19 @@ fun HomeScreen(
     navController: NavHostController,
     homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
 ) {
+    // Todo : Better Way to Call those functions?
     homeScreenViewModel.fetchAndCacheUserData()
     homeScreenViewModel.getLatestPtoRequest()
     homeScreenViewModel.getUserPtoLeft()
     homeScreenViewModel.isUserAdmin()
 
     val scrollableState = rememberScrollState()
-    val ptoLeft by homeScreenViewModel.userPtoLeftState.collectAsState()
-    val latestPtoRequest = homeScreenViewModel.allPtoSelectedList.value.latestPtoRequest
-    val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = false).value
     var expandedState by remember { mutableStateOf(false) }
     val connection by connectivityState()
     val isConnected = connection === ConnectionState.Available
+
+    val homeState = homeScreenViewModel.homeDetailsState.value
+    val isUserAdmin = homeScreenViewModel.isUserAdminState.collectAsState(initial = false).value
 
     LaunchedEffect(Unit) { scrollableState.animateScrollTo(0) }
 
@@ -143,13 +144,14 @@ fun HomeScreen(
                 ExpandCalendar(
                     onClickEvent = {
                         expandedState = !expandedState
+                        homeScreenViewModel.onEvent(HomeUiEvent.ToggleCalendarSection)
                     }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 ProfileImageHolder(
                     navHostController = navController,
                     logoutClickEvent = {
-                        homeScreenViewModel.logoutUser()
+                        homeScreenViewModel.onEvent(HomeUiEvent.LogoutUser)
                     }
                 )
             }
@@ -175,8 +177,10 @@ fun HomeScreen(
                     ),
                 shape = MaterialTheme.shapes.medium,
             ) {
-                if (expandedState) {
-                    StaticHomeCalendar(homeScreenViewModel)
+                homeState.isCalendarExpanded?.let {
+                    if (it) {
+                        StaticHomeCalendar(homeScreenViewModel)
+                    }
                 }
             }
         }
@@ -226,7 +230,7 @@ fun HomeScreen(
                         .padding(start = 24.dp)
                 ) {
 
-                    Text(text = "$ptoLeft of 24", fontSize = 40.sp, color = Color.White)
+                    Text(text = "${homeState.totalPtoLeftCached} of 24", fontSize = 40.sp, color = Color.White)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "PTOs availed",
@@ -241,11 +245,13 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val percentage = (ptoLeft.toDouble() / 24)
-                    LeaveAnimatedCircularProgressBar(
-                        percentage = percentage.toFloat(),
-                        totalValue = 100
-                    )
+                    homeState.totalPtoLeftCached?.let {
+                        val percentage = (it.toDouble() / 24)
+                        LeaveAnimatedCircularProgressBar(
+                            percentage = percentage.toFloat(),
+                            totalValue = 100
+                        )
+                    }
                 }
             }
         }
@@ -288,12 +294,12 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = latestPtoRequest?.date.toLocalDate().toString(), fontSize = 24.sp)
-                        HomePtoAvailedChip(latestPtoRequest?.ptoStatus)
+                        Text(text = homeState.latestPtoRequest?.date.toLocalDate().toString(), fontSize = 24.sp)
+                        HomePtoAvailedChip(homeState.latestPtoRequest?.ptoStatus)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    latestPtoRequest?.description?.let { desc ->
+                    homeState.latestPtoRequest?.description?.let { desc ->
                         AnnotatedString(text = desc)
                     }?.let {
                         ExpandingText(text = it)

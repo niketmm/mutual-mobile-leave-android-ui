@@ -1,5 +1,7 @@
-package com.mutualmobile.mmleave.services.database.home
+package com.mutualmobile.mmleave.feature_home.data.home
 
+import android.util.Log
+import com.google.firebase.firestore.Query
 import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
@@ -11,7 +13,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class CalendarDataServiceImpl @Inject constructor() : CalendarDataService {
+class HomeCalendarDataServiceImpl @Inject constructor() : HomeCalendarDataService {
 
     override suspend fun fetchUserDatesList() = callbackFlow {
         val listeners = FirebaseModule.provideUserPtoRequestDocReference()
@@ -50,6 +52,25 @@ class CalendarDataServiceImpl @Inject constructor() : CalendarDataService {
 
         awaitClose {
             holidayListener.remove()
+        }
+    }
+
+    override suspend fun fetchLatestPtoRequest() = callbackFlow {
+        val listener = FirebaseModule.provideUserPtoRequestDocReference()
+            .orderBy("date", Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .addOnCompleteListener { task ->
+                task.result.forEach { doc ->
+                    trySend(doc.toObject(FirebasePtoRequestModel::class.java))
+                }
+            }
+            .addOnFailureListener {
+                Log.d("LatestPtoRequest", "fetchLatestPtoRequests: $it")
+            }
+
+        awaitClose {
+            listener.isComplete
         }
     }
 }

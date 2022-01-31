@@ -1,12 +1,13 @@
-package com.mutualmobile.mmleave.services.database.home
+package com.mutualmobile.mmleave.feature_home.data.home
 
 import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.model.MMUser
 import kotlinx.coroutines.flow.Flow
 
-interface CalendarDataService {
+interface HomeCalendarDataService {
     suspend fun fetchUserDatesList() : Flow<List<FirebasePtoRequestModel?>>
     suspend fun fetchUserDetails(email : String?) : Flow<MMUser?>
     suspend fun fetchHolidays() : Flow<List<DisplayDateModel>>
+    suspend fun fetchLatestPtoRequest() : Flow<FirebasePtoRequestModel>
 }

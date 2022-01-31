@@ -1,11 +1,10 @@
-package com.mutualmobile.mmleave.data.data_state
+package com.mutualmobile.mmleave.feature_home.presentation
 
 import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import java.time.LocalDate
 
-data class CalendarUiState(
-    var latestPtoRequest : FirebasePtoRequestModel? = null,
+data class CalendarDatesState(
     // FOR PTO Fetching
     var allPtoDatesListModel : List<FirebasePtoRequestModel> = emptyList(),
     var localDateList : List<LocalDate?> = emptyList(),

@@ -27,23 +27,4 @@ class AvailedPtoServiceImpl @Inject constructor(): AvailedPtoService {
             listener.remove()
         }
     }
-
-    override suspend fun fetchLatestPtoRequests() = callbackFlow {
-        val listener = FirebaseModule.provideUserPtoRequestDocReference()
-            .orderBy("date",Query.Direction.DESCENDING)
-            .limit(1)
-            .get()
-            .addOnCompleteListener { task ->
-                task.result.forEach { doc ->
-                    trySend(doc.toObject(FirebasePtoRequestModel::class.java))
-                }
-            }
-            .addOnFailureListener {
-                Log.d("LatestPtoRequest", "fetchLatestPtoRequests: $it")
-            }
-
-        awaitClose {
-            listener.isComplete
-        }
-    }
 }

@@ -1,17 +1,14 @@
 package com.mutualmobile.mmleave.feature_home.presentation
 
-import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.mutualmobile.mmleave.common_ui.components.toLocalDate
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
-import com.mutualmobile.mmleave.data.data_state.CalendarUiState
-import com.mutualmobile.mmleave.feature_availed.data.availed.AvailedPtoServiceImpl
-import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.di.FirebaseModule
-import com.mutualmobile.mmleave.services.database.home.CalendarDataServiceImpl
-import com.mutualmobile.mmleave.common_ui.components.toLocalDate
+import com.mutualmobile.mmleave.feature_home.domain.usecases.HomeUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,13 +22,8 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val calendarDataService: CalendarDataServiceImpl,
-    private val availedPtoServiceImpl: AvailedPtoServiceImpl,
-    private val storeUserInfo: StoreUserInfo
+    private val homeUseCases: HomeUseCases
 ) : ViewModel() {
-
-    private val _userPtoLeftState = MutableStateFlow(0)
-    val userPtoLeftState = _userPtoLeftState
 
     init {
         getLocalDateList()
@@ -39,15 +31,38 @@ class HomeScreenViewModel @Inject constructor(
         fetchAllHolidays()
     }
 
-    private val _isUserAdminState = MutableStateFlow(false)
+    private var _isUserAdminState = MutableStateFlow(false)
     val isUserAdminState = _isUserAdminState
 
-    private val _allPtoSelectedList = MutableStateFlow(CalendarUiState())
-    val allPtoSelectedList: StateFlow<CalendarUiState> = _allPtoSelectedList
+    private val _allPtoSelectedList = MutableStateFlow(CalendarDatesState())
+    val allPtoSelectedList: StateFlow<CalendarDatesState> = _allPtoSelectedList
+
+    private var _homeDetailsState = mutableStateOf(HomeDataState())
+    val homeDetailsState = _homeDetailsState
+
+    fun onEvent(events : HomeUiEvent){
+        when(events){
+            HomeUiEvent.LogoutUser -> {
+                viewModelScope.launch {
+                    homeUseCases.logoutUseCase.invoke()
+                }
+            }
+            HomeUiEvent.ToggleCalendarSection -> {
+                _homeDetailsState.value = homeDetailsState.value.copy(
+                    isCalendarExpanded = homeDetailsState.value.isCalendarExpanded?.not()
+                )
+            }
+            HomeUiEvent.ToggleExpandableText -> {
+                _homeDetailsState.value = homeDetailsState.value.copy(
+                    isDescriptionTextExpanded = homeDetailsState.value.isDescriptionTextExpanded?.not()
+                )
+            }
+        }
+    }
 
     private fun displayDate() {
         viewModelScope.launch {
-            calendarDataService.fetchUserDatesList().collect {
+            homeUseCases.getUserDatesListUseCase.invoke().collect {
                 _allPtoSelectedList.value = allPtoSelectedList.value.copy(
                     allPtoDatesListModel = it.toNonNullList()
                 )
@@ -57,7 +72,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun getLocalDateList() {
         viewModelScope.launch {
-            calendarDataService.fetchUserDatesList().collect {
+            homeUseCases.getUserDatesListUseCase.invoke().collect {
                 _allPtoSelectedList.value = it.map { pto ->
                     pto?.date
                 }.let { it1 ->
@@ -71,9 +86,8 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getLatestPtoRequest() {
         viewModelScope.launch {
-            availedPtoServiceImpl.fetchLatestPtoRequests().collect {
-                Log.d("LatestPtoRequest", "getLatestPtoRequest: $it")
-                _allPtoSelectedList.value = allPtoSelectedList.value.copy(
+            homeUseCases.getLatestPtoRequestUseCase.invoke().collect {
+                _homeDetailsState.value = homeDetailsState.value.copy(
                     latestPtoRequest = it
                 )
             }
@@ -82,44 +96,33 @@ class HomeScreenViewModel @Inject constructor(
 
     fun getUserPtoLeft() {
         viewModelScope.launch {
-            storeUserInfo.getUserTotalPto.collect {
-                _userPtoLeftState.emit(it)
-            }
+           homeUseCases.getTotalCachedPtoUseCase.invoke().collect {
+               _homeDetailsState.value = homeDetailsState.value.copy(
+                   totalPtoLeftCached = it
+               )
+           }
         }
     }
 
-    private fun List<FirebasePtoRequestModel?>.toNonNullList(): List<FirebasePtoRequestModel> {
-        return this.map {
-            it!!
-        }
-    }
-
-    private fun List<com.google.firebase.Timestamp?>.toLocalTime(): List<LocalDate?> {
-        return this.map { timestamp ->
-            timestamp?.toDate()?.toInstant()
-                ?.atZone(ZoneId.systemDefault())
-                ?.toLocalDate()
-        }
-    }
 
     fun isUserAdmin() {
         viewModelScope.launch {
-            storeUserInfo.getIsUserAdminState.collect { prefBoolean ->
-                prefBoolean?.let { it1 -> _isUserAdminState.emit(it1) }
+            homeUseCases.getIsUserAdminUseCase.invoke().collect { isUserAdmin ->
+                isUserAdmin?.let { value -> _isUserAdminState.emit(value) }
             }
         }
     }
-
     fun fetchAndCacheUserData() {
         viewModelScope.launch {
-            calendarDataService.fetchUserDetails(
-                FirebaseModule.currentUser
-            ).collect { user ->
+            homeUseCases.getUserDetailsUseCase.invoke(FirebaseModule.currentUser.toString())
+                .collect { user ->
                 user?.let {
                     // Caching the Response Synced With the Data base
-                    storeUserInfo.setUserTotalPto(totalPtoLeavesLeft = it.leaveLeft ?: 0)
-                    storeUserInfo.setIsUserAdminState(isAdmin = it.userType == 1)
-                    storeUserInfo.setUserAuthenticateState(true)
+                    homeUseCases.syncCacheUseCase.invoke(
+                        isUserAuthenticated = true,
+                        totalPtoRequestLeft = it.leaveLeft ?: 0,
+                        isUserAdmin = it.userType == 1
+                    )
                 }
             }
         }
@@ -127,7 +130,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchAllHolidays(){
         viewModelScope.launch {
-            calendarDataService.fetchHolidays().collect { holidayList ->
+            homeUseCases.getHolidaysUseCase.invoke().collect { holidayList ->
                 _allPtoSelectedList.value = allPtoSelectedList.value.copy(
                     allHolidayStatusList = holidayList
                 )
@@ -177,17 +180,21 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    fun logoutUser() {
-        // Reset the Cache
-        viewModelScope.launch {
-            storeUserInfo.setIsUserAdminState(false)
-            storeUserInfo.setUserTotalPto(0)
-            storeUserInfo.setUserAuthenticateState(false)
-            FirebaseAuth.getInstance().signOut()
+    private fun <T> concatenate(vararg lists: List<T>): List<T> {
+        return listOf(*lists).flatten()
+    }
+
+    private fun List<FirebasePtoRequestModel?>.toNonNullList(): List<FirebasePtoRequestModel> {
+        return this.map {
+            it!!
         }
     }
 
-    private fun <T> concatenate(vararg lists: List<T>): List<T> {
-        return listOf(*lists).flatten()
+    private fun List<com.google.firebase.Timestamp?>.toLocalTime(): List<LocalDate?> {
+        return this.map { timestamp ->
+            timestamp?.toDate()?.toInstant()
+                ?.atZone(ZoneId.systemDefault())
+                ?.toLocalDate()
+        }
     }
 }
