@@ -6,8 +6,9 @@ import com.google.firebase.auth.AuthResult
 import com.mutualmobile.mmleave.feature_auth.domain.repository.AuthenticationRepository
 import com.mutualmobile.mmleave.feature_auth.data.data_source.auth.firebase.AuthenticationService
 import com.mutualmobile.mmleave.feature_auth.data.data_source.auth.social.GoogleSocialService
+import javax.inject.Inject
 
-class AuthenticationRepositoryImpl(
+class AuthenticationRepositoryImpl @Inject constructor(
     private val socialService: GoogleSocialService,
     private val authenticationService: AuthenticationService
 ) : AuthenticationRepository {

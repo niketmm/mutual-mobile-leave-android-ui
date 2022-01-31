@@ -33,7 +33,7 @@ fun AnimatedSplashScreen(
     navController: NavHostController,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    viewModel.getUserAuthState()
+//    viewModel.getUserAuthState()
 
     val userAuthState by viewModel.userAuthState.collectAsState(false)
 

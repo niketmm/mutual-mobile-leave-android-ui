@@ -15,7 +15,7 @@ import com.mutualmobile.mmleave.data.model.NotificationModel
 import com.mutualmobile.mmleave.data.model.PtoRequestDomain
 import com.mutualmobile.mmleave.data.ui_event.PtoRequestEvents
 import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
-import com.mutualmobile.mmleave.services.database.availed.AvailedPtoServiceImpl
+import com.mutualmobile.mmleave.feature_availed.data.availed.AvailedPtoServiceImpl
 import com.mutualmobile.mmleave.services.database.notification.NotificationRequesterImpl
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import com.mutualmobile.mmleave.services.database.ptorequest.toFirebaseTimestamp

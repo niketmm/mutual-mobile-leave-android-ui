@@ -7,12 +7,15 @@ import com.mutualmobile.mmleave.feature_auth.data.data_source.auth.social.Google
 import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import com.mutualmobile.mmleave.feature_auth.data.data_source.user.FirebaseUserDataService
 import com.mutualmobile.mmleave.feature_auth.data.data_source.user.UserDataService
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Singleton
 
 @InstallIn(ViewModelComponent::class)
 @Module
@@ -36,14 +39,13 @@ object GoogleAuthModule {
     }
 }
 
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
-object UserDataModule {
-    @Provides
-    @ViewModelScoped
-    fun provideUserDataService(): UserDataService<FirebaseUser> {
-        return FirebaseUserDataService()
-    }
+abstract class UserDataModule {
+
+    @Binds
+    @Singleton
+    abstract fun provideUserDataService(firebaseUserDataService: FirebaseUserDataService): UserDataService<FirebaseUser>
 }
 
 @ExperimentalCoroutinesApi
@@ -52,7 +54,6 @@ object UserDataModule {
 object PtoModule {
     @Provides
     @ViewModelScoped
-    fun providePtoRequestService(
-    ): PtoRequestServiceImpl =
+    fun providePtoRequestService() : PtoRequestServiceImpl =
         PtoRequestServiceImpl()
 }

@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.feature_availed.presentation.PtoAvailedScreen
 import com.mutualmobile.mmleave.feature_auth.presentation.LandingPageScreen
-import com.mutualmobile.mmleave.ui.screens.home.HomeScreen
+import com.mutualmobile.mmleave.feature_home.presentation.HomeScreen
 import com.mutualmobile.mmleave.feature_notification.presentation.NotificationScreen
 import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoScreen
 import com.mutualmobile.mmleave.common_ui.components.SearchScreen
@@ -22,18 +22,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun SetUpNavGraph(
     navController: NavHostController,
-    isAuthenticated : Boolean = false
+    isAuthenticated : Boolean
 ) {
     NavHost(
         navController = navController,
         startDestination = if (isAuthenticated) Screen.Home.route else Screen.SignUp.route
     ) {
-
-//        composable(
-//            route = Screen.Splash.route
-//        ) {
-//            AnimatedSplashScreen(navController = navController)
-//        }
 
         composable(
             route = Screen.SignUp.route

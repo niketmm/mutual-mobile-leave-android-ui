@@ -1,9 +1,9 @@
-package com.mutualmobile.mmleave.services.database.availed
+package com.mutualmobile.mmleave.feature_availed.domain.repository
 
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import kotlinx.coroutines.flow.Flow
 
-interface AvailedPtoService {
+interface PtoAvailedRepository  {
     suspend fun fetchAllPtoRequests() : Flow<List<FirebasePtoRequestModel?>>
-    suspend fun fetchLatestPtoRequests() : Flow<FirebasePtoRequestModel?>
+    fun getTotalPtoLeft() : Flow<Int>
 }

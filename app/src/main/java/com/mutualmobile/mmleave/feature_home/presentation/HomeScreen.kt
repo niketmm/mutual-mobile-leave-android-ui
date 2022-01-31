@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.ui.screens.home
+package com.mutualmobile.mmleave.feature_home.presentation
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -67,7 +67,6 @@ import com.mutualmobile.mmleave.ui.navigation.Screen
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 import com.mutualmobile.mmleave.util.ConnectionState
-import com.mutualmobile.mmleave.feature_home.presentation.HomeScreenViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 

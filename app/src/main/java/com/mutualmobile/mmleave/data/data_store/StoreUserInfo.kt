@@ -23,7 +23,7 @@ class StoreUserInfo @Inject constructor(
         val USER_TOTAL_PTO_LEFT = intPreferencesKey("user_total_pto_left")
     }
 
-    val getUserAuthenticateState: Flow<Boolean> = context.authDataStore.data
+    val getUserAuthenticateState: Flow<Boolean?> = context.authDataStore.data
         .map { pref ->
             pref[IS_USER_AUTHENTICATE] ?: false
         }

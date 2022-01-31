@@ -4,8 +4,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.feature_auth.data.data_source.auth.firebase.await
+import javax.inject.Inject
 
-class FirebaseUserDataService : UserDataService<FirebaseUser> {
+class FirebaseUserDataService @Inject constructor() : UserDataService<FirebaseUser> {
     override suspend fun isUserExistInDB(email: String): Boolean {
         val data = FirebaseFirestore.getInstance().collection("users_list")
             .document(email).get().await()

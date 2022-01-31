@@ -8,6 +8,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
@@ -16,6 +17,7 @@ import com.mutualmobile.mmleave.feature_auth.presentation.AuthViewModel
 import com.mutualmobile.mmleave.ui.theme.MMLeaveTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 @ExperimentalCoroutinesApi
@@ -32,7 +34,7 @@ class MMLeave : ComponentActivity() {
     val isUserAuthenticatedPref = authViewModel.isUserAuthenticated.value
 
     /* This method being provided by the New Splash Screen API
-     * `setKeepOnScreenCondition` will keep the Vector at Hold until we get the
+     * `setKeepOnScreenCondition` will keep the VectorDrawable at Hold until we get the
      *  result back from the viewModel.
      */
     installSplashScreen().apply {

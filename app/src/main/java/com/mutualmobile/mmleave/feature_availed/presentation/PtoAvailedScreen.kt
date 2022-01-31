@@ -1,5 +1,6 @@
 package com.mutualmobile.mmleave.feature_availed.presentation
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +20,6 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,32 +37,39 @@ import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.common_ui.components.ExpandingText
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.common_ui.components.toLocalDate
-import com.mutualmobile.mmleave.feature_pto.presentation.PtoRequestViewModel
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalCoroutinesApi
 @Preview
 @Composable
 fun PtoAvailedScreen(
-    ptoRequestViewModel: PtoRequestViewModel = hiltViewModel()
+    ptoAvailedViewModel: PtoAvailedViewModel = hiltViewModel()
 ) {
-    ptoRequestViewModel.getUserPtoLeft()
-    val ptoLeft = ptoRequestViewModel.userPtoLeftState.collectAsState()
+
+    val availedPtoState = ptoAvailedViewModel.ptoAvailedState.value
 
     LaunchedEffect(key1 = true) {
-        ptoRequestViewModel.getAllRemotePtoRequest()
+        ptoAvailedViewModel.ptoAvailedUiEvents.collectLatest { events ->
+            when(events){
+                is PtoAvailedUiEvents.ShowSnackBar -> {
+                    Log.d("PtoAvailedScreen", "PtoAvailedScreen: ${events.message}")
+                }
+            }
+        }
     }
 
-    PtoList(
-        ptoRequestViewModel.allPtoSelectedList.value.allPtoRequestRemoteList,
-        totalPtoLeft = ptoLeft.value
+    // Keep it inside a Scaffold and Show a Bottom Sheet when clicked
+    DisplayPtoAvailedList(
+        availedPtoState.allPtoAvailedList,
+        availedPtoState.totalPtoLeft
     )
 }
 
 @Composable
-fun PtoList(
-    ptoList: List<FirebasePtoRequestModel?>,
+fun DisplayPtoAvailedList(
+    ptoList: List<FirebasePtoRequestModel?> = emptyList(),
     totalPtoLeft: Int? = 0
 ) {
     LazyColumn(

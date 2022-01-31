@@ -34,21 +34,21 @@ class AuthViewModel @Inject constructor(
     private val _isUserAuthenticated = MutableStateFlow(false)
     val isUserAuthenticated = _isUserAuthenticated.asStateFlow()
 
-    fun getUserAuthState() {
-        viewModelScope.launch {
-            storeUserInfo.getUserAuthenticateState.collect {
-                _userAuthState.emit(it)
-                _isUserAuthenticated.value = it
-            }
-        }
-    }
+//    fun getUserAuthState() {
+//        viewModelScope.launch {
+//            storeUserInfo.getUserAuthenticateState.collect {
+//                _userAuthState.emit(it)
+//                _isUserAuthenticated.value = it
+//            }
+//        }
+//    }
 
+    // TODO this is providing the NPE
     private fun isAuthenticated() {
         viewModelScope.launch {
-            // To keep Splash Icon stable for 2 Seconds
-            delay(2000)
+            delay(500)
             storeUserInfo.getUserAuthenticateState.collect {
-                _isUserAuthenticated.value = it
+                _isUserAuthenticated.value = it ?: false
             }
         }
     }

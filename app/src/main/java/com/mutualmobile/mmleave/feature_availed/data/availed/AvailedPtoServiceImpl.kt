@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.services.database.availed
+package com.mutualmobile.mmleave.feature_availed.data.availed
 
 import android.util.Log
 import com.google.firebase.firestore.Query
@@ -8,9 +8,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class AvailedPtoServiceImpl : AvailedPtoService {
+class AvailedPtoServiceImpl @Inject constructor(): AvailedPtoService {
 
     override suspend fun fetchAllPtoRequests(): Flow<List<FirebasePtoRequestModel?>> = callbackFlow {
         val listener = FirebaseModule.provideUserPtoRequestDocReference()
