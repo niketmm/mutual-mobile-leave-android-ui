@@ -1,7 +1,7 @@
 package com.mutualmobile.mmleave.feature_home.data.home
 
 import com.google.firebase.auth.FirebaseAuth
-import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
+import com.mutualmobile.mmleave.local_cached_data.StoreUserInfo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

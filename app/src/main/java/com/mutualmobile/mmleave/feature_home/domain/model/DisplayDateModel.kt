@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.data.model
+package com.mutualmobile.mmleave.feature_home.domain.model
 
 import com.google.firebase.Timestamp
 

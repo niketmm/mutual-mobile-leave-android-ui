@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.data.data_store
+package com.mutualmobile.mmleave.local_cached_data
 
 import android.content.Context
 import androidx.datastore.core.DataStore

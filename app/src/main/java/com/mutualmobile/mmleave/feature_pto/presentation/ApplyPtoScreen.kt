@@ -30,9 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -43,7 +40,6 @@ import coil.annotation.ExperimentalCoilApi
 import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.common_ui.components.AdminChip
 import com.mutualmobile.mmleave.common_ui.components.connectivityState
-import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
 import com.mutualmobile.mmleave.ui.navigation.Screen
 import com.mutualmobile.mmleave.common_ui.components.CalendarView
 import com.mutualmobile.mmleave.common_ui.components.SearchScreen

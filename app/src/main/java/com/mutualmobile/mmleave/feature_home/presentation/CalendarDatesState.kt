@@ -1,7 +1,7 @@
 package com.mutualmobile.mmleave.feature_home.presentation
 
-import com.mutualmobile.mmleave.data.model.DisplayDateModel
-import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
+import com.mutualmobile.mmleave.feature_home.domain.model.DisplayDateModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.FirebasePtoRequestModel
 import java.time.LocalDate
 
 data class CalendarDatesState(

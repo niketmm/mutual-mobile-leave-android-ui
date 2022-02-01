@@ -1,5 +1,7 @@
-package com.mutualmobile.mmleave.data.model
+package com.mutualmobile.mmleave.feature_pto.domain.model
 
+import com.mutualmobile.mmleave.feature_pto.domain.model.MMUser
+import com.mutualmobile.mmleave.feature_pto.domain.model.PtoRequestDateModel
 import java.time.LocalDate
 
 data class PtoRequestDomain(

@@ -1,7 +1,7 @@
 package com.mutualmobile.mmleave.feature_pto.data.service
 
-import com.mutualmobile.mmleave.data.model.PtoRequestDomain
-import com.mutualmobile.mmleave.data.ui_event.PtoRequestEvents
+import com.mutualmobile.mmleave.feature_pto.domain.model.PtoRequestDomain
+import com.mutualmobile.mmleave.feature_pto.presentation.PtoRequestEvents
 import kotlinx.coroutines.flow.Flow
 
 

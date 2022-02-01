@@ -1,6 +1,6 @@
 package com.mutualmobile.mmleave.feature_pto.data.service
 
-import com.mutualmobile.mmleave.data.model.MMUser
+import com.mutualmobile.mmleave.feature_pto.domain.model.MMUser
 import kotlinx.coroutines.flow.Flow
 
 interface SearchUserService {

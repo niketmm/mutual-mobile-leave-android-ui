@@ -19,6 +19,15 @@ import com.mutualmobile.mmleave.feature_home.domain.usecases.GetUserDetailsUseCa
 import com.mutualmobile.mmleave.feature_home.domain.usecases.HomeUseCases
 import com.mutualmobile.mmleave.feature_home.domain.usecases.LogoutUseCase
 import com.mutualmobile.mmleave.feature_home.domain.usecases.SyncCacheUseCase
+import com.mutualmobile.mmleave.feature_notification.domain.repository.AdminNotificationRepository
+import com.mutualmobile.mmleave.feature_notification.domain.usecase.AdminNotificationUseCases
+import com.mutualmobile.mmleave.feature_notification.domain.usecase.ApprovedSingleNotificationUseCase
+import com.mutualmobile.mmleave.feature_notification.domain.usecase.FetchNotificationsListUseCase
+import com.mutualmobile.mmleave.feature_notification.domain.usecase.FetchUserDetailsForNotificationDetailUseCase
+import com.mutualmobile.mmleave.feature_notification.domain.usecase.RejectSingleNotificationUseCase
+import com.mutualmobile.mmleave.feature_notification.domain.usecase.UpdateApprovedReqForAllAdmins
+import com.mutualmobile.mmleave.feature_notification.domain.usecase.UpdateFirebaseNotificationDocsUseCases
+import com.mutualmobile.mmleave.feature_notification.domain.usecase.UpdateRejectedReqForAllAdmins
 import com.mutualmobile.mmleave.feature_pto.domain.repository.ApplyPtoRepository
 import com.mutualmobile.mmleave.feature_pto.domain.usecase.ApplyPtoUseCases
 import com.mutualmobile.mmleave.feature_pto.domain.usecase.ApprovePtoRequestUseCase
@@ -87,6 +96,20 @@ object UseCaseModule {
             fetchAdminListUseCase = FetchAdminListUseCase(repository),
             fetchAllUserListUseCase = FetchAllUserListUseCase(repository),
             fetchUsersByUsernameUseCase = FetchUsersByUsernameUseCase(repository)
+        )
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun provideAdminNotificationUseCases(repository : AdminNotificationRepository) : AdminNotificationUseCases {
+        return AdminNotificationUseCases(
+            approvedSingleNotificationUseCase = ApprovedSingleNotificationUseCase(repository),
+            fetchNotificationsListUseCase = FetchNotificationsListUseCase(repository),
+            fetchUserDetailsForNotificationDetailUseCase = FetchUserDetailsForNotificationDetailUseCase(repository),
+            rejectSingleNotificationUseCase = RejectSingleNotificationUseCase(repository),
+            updateApprovedReqForAllAdmins = UpdateApprovedReqForAllAdmins(repository),
+            updateFirebaseNotificationDocsUseCases = UpdateFirebaseNotificationDocsUseCases(repository),
+            updateRejectedReqForAllAdmins = UpdateRejectedReqForAllAdmins(repository)
         )
     }
 }

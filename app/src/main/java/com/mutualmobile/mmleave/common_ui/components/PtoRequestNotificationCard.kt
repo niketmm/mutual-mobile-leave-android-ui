@@ -22,8 +22,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.R
-import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.data.model.NotificationModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.MMUser
+import com.mutualmobile.mmleave.feature_notification.domain.model.NotificationModel
 import com.mutualmobile.mmleave.ui.theme.alertRed
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight

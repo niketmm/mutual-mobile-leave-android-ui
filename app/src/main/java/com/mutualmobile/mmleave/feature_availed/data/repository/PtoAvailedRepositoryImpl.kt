@@ -1,7 +1,7 @@
 package com.mutualmobile.mmleave.feature_availed.data.repository
 
-import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
-import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
+import com.mutualmobile.mmleave.local_cached_data.StoreUserInfo
+import com.mutualmobile.mmleave.feature_pto.domain.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.feature_availed.data.availed.AvailedPtoService
 import com.mutualmobile.mmleave.feature_availed.domain.repository.PtoAvailedRepository
 import kotlinx.coroutines.flow.Flow

@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.data.model
+package com.mutualmobile.mmleave.feature_pto.domain.model
 
 data class MMUser(
     var displayName : String? = "",

@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mutualmobile.mmleave.R.drawable
 import com.mutualmobile.mmleave.common_ui.components.ExpandingText
-import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.common_ui.components.toLocalDate
 import com.mutualmobile.mmleave.ui.theme.blueTextColorLight
 import kotlinx.coroutines.ExperimentalCoroutinesApi

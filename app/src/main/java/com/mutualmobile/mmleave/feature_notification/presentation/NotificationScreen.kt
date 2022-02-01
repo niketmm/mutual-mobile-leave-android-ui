@@ -34,23 +34,23 @@ fun NotificationScreen(
     navHostController: NavHostController,
     notificationViewModel: NotificationViewModel = hiltViewModel(),
 ) {
-    notificationViewModel.fetchNotificationList()
 
-    var totalPtoRequest by remember {
-        mutableStateOf(0)
-    }
-
-    val notificationList = notificationViewModel.notificationList.collectAsState()
+    val notificationState = notificationViewModel.notificationState.value
     val mmUserFlow = notificationViewModel.mmUserDetail.collectAsState(null)
 
-    Column(modifier = Modifier
-        .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
-        totalPtoRequest = notificationList.value.size
+    Column(
+        modifier = Modifier
+        .padding(
+            start = 16.dp,
+            end = 16.dp,
+            top = 8.dp,
+            bottom = 8.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "PTO Requests - $totalPtoRequest", fontSize = 18.sp)
+            Text(text = "PTO Requests - ${notificationState?.notificationList?.size}", fontSize = 18.sp)
             OutlineCalendarButton(navController = navHostController)
         }
 
@@ -58,7 +58,7 @@ fun NotificationScreen(
             Modifier.background(MaterialTheme.colors.surface)
         ){
             LazyColumn {
-                items(notificationList.value) { notificationModel ->
+                items(notificationState.notificationList) { notificationModel ->
                     Log.d("NotificationScreen", "NotificationScreen: ${notificationModel?.notificationDocumentId}")
                     notificationModel?.notify_from?.let { email ->
                         notificationViewModel.fetchUserInfo(email)
@@ -67,10 +67,10 @@ fun NotificationScreen(
                         mmUser = mmUserFlow.value,
                         notificationModel = notificationModel,
                         onApprovedClicked = {
-                            notificationViewModel.approvePtoRequest(it)
+                            notificationViewModel.onEvents(AdminNotificationUiEvents.ApprovedRequest(it))
                         },
                         onRejectedClicked = {
-                            notificationViewModel.rejectPtoRequest(it)
+                            notificationViewModel.onEvents(AdminNotificationUiEvents.RejectRequest(it))
                         }
                     )
                 }

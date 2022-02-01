@@ -2,7 +2,7 @@ package com.mutualmobile.mmleave.feature_auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
+import com.mutualmobile.mmleave.local_cached_data.StoreUserInfo
 import com.mutualmobile.mmleave.feature_auth.domain.usecase.AuthenticateUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

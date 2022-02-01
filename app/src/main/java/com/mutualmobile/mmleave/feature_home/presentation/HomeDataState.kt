@@ -1,6 +1,6 @@
 package com.mutualmobile.mmleave.feature_home.presentation
 
-import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.FirebasePtoRequestModel
 
 data class HomeDataState(
     var latestPtoRequest : FirebasePtoRequestModel? = null,

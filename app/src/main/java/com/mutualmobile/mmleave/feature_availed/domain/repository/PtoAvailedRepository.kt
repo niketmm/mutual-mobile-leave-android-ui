@@ -1,6 +1,6 @@
 package com.mutualmobile.mmleave.feature_availed.domain.repository
 
-import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.FirebasePtoRequestModel
 import kotlinx.coroutines.flow.Flow
 
 interface PtoAvailedRepository  {

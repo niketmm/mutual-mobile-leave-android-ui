@@ -1,20 +1,15 @@
 package com.mutualmobile.mmleave.feature_pto.presentation
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
-import com.mutualmobile.mmleave.data.data_state.PtoUiState
-import com.mutualmobile.mmleave.data.data_state.SearchResultState
-import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.data.model.NotificationModel
-import com.mutualmobile.mmleave.data.model.PtoRequestDomain
-import com.mutualmobile.mmleave.data.ui_event.PtoRequestEvents
-import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
+import com.mutualmobile.mmleave.feature_pto.domain.model.PtoRequestDateModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.MMUser
+import com.mutualmobile.mmleave.feature_notification.domain.model.NotificationModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.PtoRequestDomain
 import com.mutualmobile.mmleave.feature_pto.data.service.toFirebaseTimestamp
 import com.mutualmobile.mmleave.feature_pto.domain.usecase.ApplyPtoUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel

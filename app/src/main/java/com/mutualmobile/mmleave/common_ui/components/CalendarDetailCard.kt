@@ -19,8 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mutualmobile.mmleave.data.CalendarDetailList
-import com.mutualmobile.mmleave.data.CalendarDetailUtil
+import com.mutualmobile.mmleave.util.CalendarDetailList
+import com.mutualmobile.mmleave.util.CalendarDetailUtil
 
 @Composable
 fun CalendarDetailsCard() {

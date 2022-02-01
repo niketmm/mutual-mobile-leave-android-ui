@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
-import com.mutualmobile.mmleave.data.model.MMUser
+import com.mutualmobile.mmleave.feature_pto.domain.model.MMUser
 
 @ExperimentalCoilApi
 @Composable

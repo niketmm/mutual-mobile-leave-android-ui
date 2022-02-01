@@ -1,15 +1,12 @@
 package com.mutualmobile.mmleave.di.availed
 
-import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
+import com.mutualmobile.mmleave.local_cached_data.StoreUserInfo
 import com.mutualmobile.mmleave.feature_availed.data.availed.AvailedPtoService
 import com.mutualmobile.mmleave.feature_availed.data.availed.AvailedPtoServiceImpl
 import com.mutualmobile.mmleave.feature_availed.data.repository.PtoAvailedRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton

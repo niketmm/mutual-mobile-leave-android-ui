@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
-import com.mutualmobile.mmleave.data.model.MMUser
+import com.mutualmobile.mmleave.feature_pto.domain.model.MMUser
 import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoEvent
 import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

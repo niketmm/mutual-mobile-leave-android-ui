@@ -1,7 +1,6 @@
 package com.mutualmobile.mmleave.feature_pto.presentation
 
-import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.data.model.PtoRequestDomain
+import com.mutualmobile.mmleave.feature_pto.domain.model.MMUser
 import java.time.LocalDate
 
 sealed class ApplyPtoEvent{

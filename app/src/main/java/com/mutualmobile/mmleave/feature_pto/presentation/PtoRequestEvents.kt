@@ -1,7 +1,4 @@
-package com.mutualmobile.mmleave.data.ui_event
-
-import com.google.firebase.inject.Deferred
-import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
+package com.mutualmobile.mmleave.feature_pto.presentation
 
 sealed class PtoRequestEvents{
     data class Failed(val message : String) : PtoRequestEvents()

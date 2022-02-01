@@ -2,7 +2,7 @@ package com.mutualmobile.mmleave.feature_pto.data.service
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mutualmobile.mmleave.data.model.MMUser
+import com.mutualmobile.mmleave.feature_pto.domain.model.MMUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onFailure

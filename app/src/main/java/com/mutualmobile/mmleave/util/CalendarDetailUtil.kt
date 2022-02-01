@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.data
+package com.mutualmobile.mmleave.util
 
 import androidx.compose.ui.graphics.Color
 

@@ -3,10 +3,9 @@ package com.mutualmobile.mmleave.feature_home.presentation
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.mutualmobile.mmleave.common_ui.components.toLocalDate
-import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
-import com.mutualmobile.mmleave.data.model.DisplayDateModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.FirebasePtoRequestModel
+import com.mutualmobile.mmleave.feature_home.domain.model.DisplayDateModel
 import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.feature_home.domain.usecases.HomeUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +29,8 @@ class HomeScreenViewModel @Inject constructor(
         displayDate()
         fetchAllHolidays()
     }
+
+
 
     private var _isUserAdminState = MutableStateFlow(false)
     val isUserAdminState = _isUserAdminState

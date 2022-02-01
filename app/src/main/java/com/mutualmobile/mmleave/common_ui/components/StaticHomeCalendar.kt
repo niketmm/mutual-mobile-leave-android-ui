@@ -31,8 +31,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mutualmobile.mmleave.data.model.DisplayDateModel
-import com.mutualmobile.mmleave.data.model.PtoRequestDateModel
+import com.mutualmobile.mmleave.feature_home.domain.model.DisplayDateModel
+import com.mutualmobile.mmleave.feature_pto.domain.model.PtoRequestDateModel
 import com.mutualmobile.mmleave.feature_home.presentation.HomeScreenViewModel
 import io.github.boguszpawlowski.composecalendar.Calendar
 import io.github.boguszpawlowski.composecalendar.CalendarState
