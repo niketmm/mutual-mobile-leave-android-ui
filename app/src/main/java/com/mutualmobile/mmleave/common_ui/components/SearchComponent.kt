@@ -34,14 +34,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.services.database.search_user.SearchUserViewModel
+import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoEvent
+import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @ExperimentalCoilApi
 @Composable
 fun SearchScreen(
-    viewModel: SearchUserViewModel = hiltViewModel()
+    viewModel: ApplyPtoViewModel = hiltViewModel()
 ) {
     val textState = remember { mutableStateOf(TextFieldValue("Search Admins by here")) }
 
@@ -75,17 +76,23 @@ fun SearchScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                   admin?.let {
-                       AdminChip(mmUser = admin, isSelected = it.isSelected!!, onSelectionChanged = { user ->
-                           user.isSelected = user.isSelected!!.not()
-                           Log.d(TAG, "SearchScreen: $it")
-                           viewModel.updateSelectedAdminList(
-                               filteredList.filter{ filteredMMUser ->
-                                   filteredMMUser!!.isSelected!!
-                               }
-                           )
-                       })
-                   }
+                    admin?.let {
+                        AdminChip(
+                            mmUser = admin,
+                            isSelected = it.isSelected!!,
+                            onSelectionChanged = { user ->
+                                user.isSelected = user.isSelected!!.not()
+                                Log.d(TAG, "SearchScreen: $it")
+                                viewModel.onEvents(
+                                    ApplyPtoEvent.SelectAdmins(
+                                        filteredList.filter { filteredMMUser ->
+                                            filteredMMUser!!.isSelected!!
+                                        }
+                                    )
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -96,13 +103,13 @@ fun SearchScreen(
 @Composable
 fun SearchViewComposable(
     state: MutableState<TextFieldValue>,
-    viewModel: SearchUserViewModel
+    viewModel: ApplyPtoViewModel
 ) {
     TextField(
         value = state.value,
         onValueChange = { newValue ->
             state.value = newValue
-            viewModel.getFilteredAdminUserList(newValue.text)
+            viewModel.onEvents(ApplyPtoEvent.SearchUser(newValue.text))
         },
         modifier = Modifier.fillMaxWidth(),
         textStyle = TextStyle(

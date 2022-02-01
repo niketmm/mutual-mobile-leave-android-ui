@@ -1,6 +1,6 @@
 package com.mutualmobile.mmleave.feature_home.domain.usecases
 
-import com.mutualmobile.mmleave.feature_home.domain.HomeRepository
+import com.mutualmobile.mmleave.feature_home.domain.repo.HomeRepository
 import javax.inject.Inject
 
 class GetHolidaysUseCase @Inject constructor(

@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.services.database.search_user
+package com.mutualmobile.mmleave.feature_pto.data.service
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
@@ -7,9 +7,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class FirebaseSearchUserServiceImpl : SearchUserService {
+class FirebaseSearchUserServiceImpl @Inject constructor(): SearchUserService {
 
     private val TAG = FirebaseSearchUserServiceImpl::class.java.name
 

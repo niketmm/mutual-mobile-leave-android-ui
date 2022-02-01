@@ -1,11 +1,10 @@
 package com.mutualmobile.mmleave.di.notification
 
 import com.mutualmobile.mmleave.services.database.notification.MyAdminNotificationServiceImpl
-import com.mutualmobile.mmleave.services.database.notification.NotificationRequesterImpl
+import com.mutualmobile.mmleave.feature_pto.data.service.NotificationRequesterImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -13,11 +12,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @InstallIn(SingletonComponent::class)
 @ExperimentalCoroutinesApi
 object NotificationModule {
-
-    @Provides
-    fun provideNotificationRequesterService() : NotificationRequesterImpl {
-        return NotificationRequesterImpl()
-    }
 
     @Provides
     fun provideAdminNotificationSaverService() : MyAdminNotificationServiceImpl {

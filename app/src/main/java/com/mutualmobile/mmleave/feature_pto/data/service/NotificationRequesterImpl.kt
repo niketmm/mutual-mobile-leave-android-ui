@@ -1,7 +1,8 @@
-package com.mutualmobile.mmleave.services.database.notification
+package com.mutualmobile.mmleave.feature_pto.data.service
 
 import com.mutualmobile.mmleave.data.model.NotificationModel
 import com.mutualmobile.mmleave.di.FirebaseModule
+import com.mutualmobile.mmleave.feature_pto.data.service.NotificationRequester
 import javax.inject.Inject
 
 class NotificationRequesterImpl @Inject constructor() : NotificationRequester {

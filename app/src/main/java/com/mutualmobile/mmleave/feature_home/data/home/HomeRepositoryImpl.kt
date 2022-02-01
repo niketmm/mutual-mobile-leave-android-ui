@@ -1,18 +1,16 @@
-package com.mutualmobile.mmleave.feature_home.domain
+package com.mutualmobile.mmleave.feature_home.data.home
 
-import com.mutualmobile.mmleave.data.data_store.StoreUserInfo
 import com.mutualmobile.mmleave.data.model.DisplayDateModel
 import com.mutualmobile.mmleave.data.model.FirebasePtoRequestModel
 import com.mutualmobile.mmleave.data.model.MMUser
-import com.mutualmobile.mmleave.feature_home.data.home.HomeCalendarDataService
-import com.mutualmobile.mmleave.feature_home.data.home.SyncCacheHomeDataService
+import com.mutualmobile.mmleave.feature_home.domain.repo.HomeRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class HomeRepositoryImpl @Inject constructor(
     private val homeCalendarDataService: HomeCalendarDataService,
     private val syncCacheHomeDataService: SyncCacheHomeDataService
-) : HomeRepository  {
+) : HomeRepository {
 
     override suspend fun fetchUserDatesList(): Flow<List<FirebasePtoRequestModel?>> {
         return homeCalendarDataService.fetchUserDatesList()

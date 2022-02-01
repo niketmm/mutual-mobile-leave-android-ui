@@ -4,9 +4,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.mutualmobile.mmleave.feature_auth.data.data_source.auth.firebase.AuthenticationService
 import com.mutualmobile.mmleave.feature_auth.data.data_source.auth.firebase.FirebaseAuthenticationService
 import com.mutualmobile.mmleave.feature_auth.data.data_source.auth.social.GoogleSocialService
-import com.mutualmobile.mmleave.services.database.ptorequest.PtoRequestServiceImpl
 import com.mutualmobile.mmleave.feature_auth.data.data_source.user.FirebaseUserDataService
 import com.mutualmobile.mmleave.feature_auth.data.data_source.user.UserDataService
+import com.mutualmobile.mmleave.feature_pto.data.service.PtoRequestServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -46,15 +46,4 @@ abstract class UserDataModule {
     @Binds
     @Singleton
     abstract fun provideUserDataService(firebaseUserDataService: FirebaseUserDataService): UserDataService<FirebaseUser>
-}
-
-// Todo : Put it to the Different module
-@ExperimentalCoroutinesApi
-@InstallIn(ViewModelComponent::class)
-@Module
-object PtoModule {
-    @Provides
-    @ViewModelScoped
-    fun providePtoRequestService() : PtoRequestServiceImpl =
-        PtoRequestServiceImpl()
 }

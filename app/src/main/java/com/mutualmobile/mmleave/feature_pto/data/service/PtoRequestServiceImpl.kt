@@ -1,4 +1,4 @@
-package com.mutualmobile.mmleave.services.database.ptorequest
+package com.mutualmobile.mmleave.feature_pto.data.service
 
 import android.util.Log
 import com.google.firebase.Timestamp
@@ -8,6 +8,7 @@ import com.mutualmobile.mmleave.di.FirebaseModule
 import com.mutualmobile.mmleave.data.model.PtoRequestDomain
 import com.mutualmobile.mmleave.data.ui_event.PtoRequestEvents
 import com.mutualmobile.mmleave.feature_auth.data.data_source.auth.firebase.await
+import com.mutualmobile.mmleave.feature_pto.data.service.PtoRequestService
 import kotlin.collections.HashMap
 import com.mutualmobile.mmleave.util.Constants.PTO_LIST_COLLECTION
 import kotlinx.coroutines.Dispatchers
@@ -46,29 +47,6 @@ class PtoRequestServiceImpl @Inject constructor() : PtoRequestService {
         emit(PtoRequestEvents.Failed(it.message.toString()))
     }.flowOn(Dispatchers.IO)
 
-
-//    = callbackFlow {
-//        val deferredFirebaseResponse = CoroutineScope(Dispatchers.IO).async {
-//            try {
-//                ptoRequests.forEach {
-//                    FirebaseModule.provideUserPtoRequestDocReference()
-//                        .document(it?.date.toString())
-//                        .set(getPtoMap(ptoRequest = it, selectedAdmins = selectedAdmins))
-//                }
-//            }
-//            catch (e : Exception){
-//                trySend(
-//                    PtoRequestEvents.Failed(e.message ?: "Couldn't able to save the info")
-//                )
-//            }
-//        }
-//
-//        if (deferredFirebaseResponse.await())
-//
-//        awaitClose {
-//            deferredFirebaseResponse.isCancelled
-//        }
-//    }
 
     override suspend fun updateUserPtoDetails(leaveLeft : Int) {
         val updateUser = HashMap<String,Any>()

@@ -9,7 +9,7 @@ import com.mutualmobile.mmleave.feature_availed.domain.repository.PtoAvailedRepo
 import com.mutualmobile.mmleave.feature_availed.domain.usecases.GetAllPtoAvailedUseCase
 import com.mutualmobile.mmleave.feature_availed.domain.usecases.GetTotalPtoLeftUseCase
 import com.mutualmobile.mmleave.feature_availed.domain.usecases.PtoAvailedUseCase
-import com.mutualmobile.mmleave.feature_home.domain.HomeRepository
+import com.mutualmobile.mmleave.feature_home.domain.repo.HomeRepository
 import com.mutualmobile.mmleave.feature_home.domain.usecases.GetHolidaysUseCase
 import com.mutualmobile.mmleave.feature_home.domain.usecases.GetIsUserAdminUseCase
 import com.mutualmobile.mmleave.feature_home.domain.usecases.GetLatestPtoRequest
@@ -19,12 +19,22 @@ import com.mutualmobile.mmleave.feature_home.domain.usecases.GetUserDetailsUseCa
 import com.mutualmobile.mmleave.feature_home.domain.usecases.HomeUseCases
 import com.mutualmobile.mmleave.feature_home.domain.usecases.LogoutUseCase
 import com.mutualmobile.mmleave.feature_home.domain.usecases.SyncCacheUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.repository.ApplyPtoRepository
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.ApplyPtoUseCases
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.ApprovePtoRequestUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.FetchAdminListUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.FetchAllUserListUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.FetchUsersByUsernameUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.GetUserPtoLeftUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.MakePtoRequestUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.SendNotificationToAdminUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.SetUserPtoLeftUseCase
+import com.mutualmobile.mmleave.feature_pto.domain.usecase.UpdateUserPtoDetailsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import kotlin.math.log
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
@@ -61,6 +71,22 @@ object UseCaseModule {
             getUserDetailsUseCase = GetUserDetailsUseCase(repository),
             syncCacheUseCase = SyncCacheUseCase(repository),
             logoutUseCase = LogoutUseCase(repository)
+        )
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun provideApplyPtoUseCases(repository: ApplyPtoRepository) : ApplyPtoUseCases {
+        return ApplyPtoUseCases(
+            approvePtoRequestUseCase = ApprovePtoRequestUseCase(repository),
+            makePtoRequestUseCase = MakePtoRequestUseCase(repository),
+            sendNotificationToAdminUseCase = SendNotificationToAdminUseCase(repository),
+            updateUserPtoDetailsUseCase = UpdateUserPtoDetailsUseCase(repository),
+            setUserPtoLeftUseCase = SetUserPtoLeftUseCase(repository),
+            getUserPtoLeftUseCase =  GetUserPtoLeftUseCase(repository),
+            fetchAdminListUseCase = FetchAdminListUseCase(repository),
+            fetchAllUserListUseCase = FetchAllUserListUseCase(repository),
+            fetchUsersByUsernameUseCase = FetchUsersByUsernameUseCase(repository)
         )
     }
 }

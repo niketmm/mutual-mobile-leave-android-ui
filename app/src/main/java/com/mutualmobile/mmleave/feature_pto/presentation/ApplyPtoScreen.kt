@@ -47,7 +47,6 @@ import com.mutualmobile.mmleave.data.ui_event.SavePtoRequestEvents
 import com.mutualmobile.mmleave.ui.navigation.Screen
 import com.mutualmobile.mmleave.common_ui.components.CalendarView
 import com.mutualmobile.mmleave.common_ui.components.SearchScreen
-import com.mutualmobile.mmleave.services.database.search_user.SearchUserViewModel
 import com.mutualmobile.mmleave.ui.theme.backgroundLight
 import com.mutualmobile.mmleave.ui.theme.purpleTextColorLight
 import com.mutualmobile.mmleave.util.ConnectionState
@@ -60,22 +59,26 @@ import kotlinx.coroutines.flow.collectLatest
 @ExperimentalCoroutinesApi
 @Composable
 fun ApplyPtoScreen(
-    ptoViewModel: PtoRequestViewModel = hiltViewModel(),
-    searchUserViewModel: SearchUserViewModel = hiltViewModel(),
+    applyPtoViewModel: ApplyPtoViewModel = hiltViewModel(),
     navHostController: NavHostController
 ) {
+    // For connectivity states
     val context = LocalContext.current
     val connection by connectivityState()
     val isConnected = connection === ConnectionState.Available
-    val ptoLeft = ptoViewModel.userPtoLeftState.collectAsState()
+
+    // For Screen scaffold states
     val scrollableState = rememberScrollState()
     val scaffoldState = rememberScaffoldState()
-    var leaveDescriptionText by remember { mutableStateOf("") }
 
-    ptoViewModel.getUserPtoLeft()
+    // For Events and States
+    val ptoLeft = applyPtoViewModel.userPtoLeftState.collectAsState()
+    val applyPtoState = applyPtoViewModel.ptoUiStates.value
+
+    applyPtoViewModel.getUserPtoLeft()
 
     LaunchedEffect(key1 = true) {
-        ptoViewModel.uiEvents.collectLatest { event ->
+        applyPtoViewModel.uiEvents.collectLatest { event ->
             when (event) {
                 SavePtoRequestEvents.SavedPto -> {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -98,20 +101,20 @@ fun ApplyPtoScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    if (ptoViewModel.isValidPtoRequest(
-                            ptoViewModel.allPtoSelectedList.value.localDateList,
-                            searchUserViewModel.adminListState.value.selectedAdminList
+                    if (applyPtoViewModel.isValidPtoRequest(
+                            applyPtoViewModel.ptoUiStates.value.localDateList,
+                            applyPtoViewModel.adminListState.value.selectedAdminList
                         ) && isConnected
                     ) {
-                        ptoViewModel.updatePtoList(
-                            ptoList = ptoViewModel.allPtoSelectedList.value.localDateList,
+                        applyPtoViewModel.updatePtoList(
+                            ptoList = applyPtoViewModel.ptoUiStates.value.localDateList,
                             email = FirebaseAuth.getInstance().currentUser?.email,
-                            desc = leaveDescriptionText,
-                            selectedAdmins = searchUserViewModel.adminListState.value.selectedAdminList
+                            desc = applyPtoState.leaveDescriptionText,
+                            selectedAdmins = applyPtoViewModel.adminListState.value.selectedAdminList
                         )
-                        ptoViewModel.applyPtoRequest(
-                            selectedAdmins = searchUserViewModel.adminListState.value.selectedAdminList
-                        )
+                        // Making the Network Call here
+                        applyPtoViewModel.onEvents(ApplyPtoEvent.ApplyForPto)
+
                     } else {
                        Toast.makeText(context,"Some properties are blank",Toast.LENGTH_SHORT).show()
                     }
@@ -138,11 +141,11 @@ fun ApplyPtoScreen(
                     .fillMaxHeight()
                     .padding(start = 16.dp, end = 16.dp)
             ) {
-                SearchScreen(searchUserViewModel)
+                SearchScreen(applyPtoViewModel)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                CalendarView(ptoViewModel)
+                CalendarView(applyPtoViewModel)
 
                 Row(
                     horizontalArrangement = Arrangement.End,
@@ -165,13 +168,14 @@ fun ApplyPtoScreen(
                 )
 
                 Column(
+                    // Todo Remove this Column
                     verticalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = leaveDescriptionText,
+                        value = applyPtoState.leaveDescriptionText.toString(),
                         onValueChange = {
-                            leaveDescriptionText = it
+                           applyPtoViewModel.onEvents(ApplyPtoEvent.AddDescription(it))
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -187,7 +191,7 @@ fun ApplyPtoScreen(
                         .padding(all = 4.dp)
                 ) {
                     LazyRow(content = {
-                        items(searchUserViewModel.adminListState.value.selectedAdminList) { admin ->
+                        items(applyPtoViewModel.adminListState.value.selectedAdminList) { admin ->
                             admin?.let { it1 -> AdminChip(mmUser = it1) }
                         }
                     })

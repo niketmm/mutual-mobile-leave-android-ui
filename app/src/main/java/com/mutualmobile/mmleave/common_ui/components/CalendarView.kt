@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mutualmobile.mmleave.feature_pto.presentation.PtoRequestViewModel
+import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoEvent
+import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoViewModel
 import io.github.boguszpawlowski.composecalendar.SelectableCalendar
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import io.github.boguszpawlowski.composecalendar.selection.SelectionMode
@@ -17,7 +18,7 @@ import java.time.LocalDate
 @ExperimentalCoroutinesApi
 @Composable
 fun CalendarView(
-    ptoViewModel: PtoRequestViewModel
+    applyPtoViewModel: ApplyPtoViewModel
 ) {
     Column(
         modifier = Modifier.fillMaxWidth().fillMaxSize(0.6f),
@@ -29,7 +30,7 @@ fun CalendarView(
                 initialSelection = listOf(LocalDate.now()),
                 initialSelectionMode = SelectionMode.Multiple,
                 onSelectionChanged = { selectedDates ->
-                    ptoViewModel.allPtoSelectedList.value.localDateList = selectedDates
+                    applyPtoViewModel.onEvents(ApplyPtoEvent.SelectPtoDates(selectedPtoDates = selectedDates))
                 }
             )
         )
