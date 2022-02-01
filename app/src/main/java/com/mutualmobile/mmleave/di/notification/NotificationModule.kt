@@ -1,25 +1,23 @@
 package com.mutualmobile.mmleave.di.notification
 
-import com.mutualmobile.mmleave.services.database.notification.MyAdminNotificationServiceImpl
-import com.mutualmobile.mmleave.services.database.notification.NotificationRequesterImpl
+import com.mutualmobile.mmleave.feature_notification.data.notification.MyAdminNotificationServiceImpl
+import com.mutualmobile.mmleave.feature_notification.data.repository.AdminNotificationRepositoryImpl
+import com.mutualmobile.mmleave.feature_notification.domain.repository.AdminNotificationRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityRetainedComponent::class)
-@ExperimentalCoroutinesApi
-object NotificationModule {
+@InstallIn(SingletonComponent::class)
+abstract class AdminNotificationRepositoryModule {
 
-    @Provides
-    fun provideNotificationRequesterService() : NotificationRequesterImpl {
-        return NotificationRequesterImpl()
-    }
-
-    @Provides
-    fun provideAdminNotificationSaverService() : MyAdminNotificationServiceImpl {
-        return MyAdminNotificationServiceImpl()
-    }
+    @Binds
+    @Singleton
+    abstract fun provideAdminNotificationRepository(
+        adminNotificationRepositoryImpl: AdminNotificationRepositoryImpl
+    ) : AdminNotificationRepository
 }
