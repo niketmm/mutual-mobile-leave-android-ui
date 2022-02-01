@@ -10,5 +10,5 @@ data class PtoUiState(
     var localDateList : List<LocalDate> = emptyList(),
     var cachedLeaveLeft : Int? = 0,
     var totalLeaveLeft : Int? = 0,
-    var leaveDescriptionText : String? = null
+    var leaveDescriptionText : String? = ""
 )

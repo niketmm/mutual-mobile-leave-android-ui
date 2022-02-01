@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.App.SplashScreeTheme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/white</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_star_test_vector</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_mm_light_blue_logo_vector</item>
         <item name="windowSplashScreenAnimationDuration">400</item>
 
 <!--        This will Set the Theme of the app after the Splash Screen has been ended-->
