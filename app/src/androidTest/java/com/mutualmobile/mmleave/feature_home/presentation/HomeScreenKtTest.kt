@@ -34,16 +34,16 @@ import org.junit.Test
  * Main Database or the Local Database
  */
 
+@ExperimentalCoilApi
+@ExperimentalCoroutinesApi
+@ExperimentalMaterialApi
+@ExperimentalFoundationApi
 @HiltAndroidTest
 @UninstallModules(
     HomeCalendarServiceModule::class,
     HomeRepositoryModule::class,
     SyncCacheHomeDataServiceModule::class
 )
-@ExperimentalCoilApi
-@ExperimentalCoroutinesApi
-@ExperimentalMaterialApi
-@ExperimentalFoundationApi
 class HomeScreenKtTest {
 
     /**
@@ -56,12 +56,11 @@ class HomeScreenKtTest {
     @get: Rule(order = 1)
     val composeRule = createAndroidComposeRule<MMLeave>()
 
-    @Before
-    fun setup() {
         /**
          * Init process of testing -> Inject the Mock Dependencies, Define NavGraph
          */
-
+    @Before
+    fun setup() {
         hiltRule.inject()
 
         composeRule.setContent {
@@ -128,4 +127,5 @@ class HomeScreenKtTest {
 //    fun clickApplyPtoButton_takeToApplyPtoScreen() {
 //
 //    }
+
 }
