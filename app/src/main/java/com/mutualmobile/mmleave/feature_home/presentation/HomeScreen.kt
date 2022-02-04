@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -67,6 +68,7 @@ import com.mutualmobile.mmleave.ui.navigation.Screen
 import com.mutualmobile.mmleave.ui.theme.primaryColorLight
 import com.mutualmobile.mmleave.ui.theme.secondaryTextColorDark
 import com.mutualmobile.mmleave.util.ConnectionState
+import com.mutualmobile.mmleave.util.UiTestTags
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 
@@ -142,6 +144,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                 }
                 ExpandCalendar(
+                    modifier = Modifier.testTag(UiTestTags.CALENDAR_TOGGLE_BUTTON),
                     onClickEvent = {
                         expandedState = !expandedState
                         homeScreenViewModel.onEvent(HomeUiEvent.ToggleCalendarSection)
@@ -202,7 +205,9 @@ fun HomeScreen(
                 shape = MaterialTheme.shapes.medium,
             ){
                 if (expandedState) {
-                    CalendarDetailsCard()
+                    CalendarDetailsCard(
+                        modifier = Modifier.testTag(UiTestTags.HOME_CALENDAR_VIEW)
+                    )
                 }
             }
         }

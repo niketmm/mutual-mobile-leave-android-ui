@@ -64,6 +64,7 @@ class AuthViewModel @Inject constructor(
 
                         if (authResult.user != null) {
                             _authUiFlow.emit(AuthUiEvents.ProceedToHomeScreen)
+                            // Todo Improve this implementation of caching with separate method
                             storeUserInfo.setUserAuthenticateState(true)
                             storeUserInfo.setUserTotalPto(24)
                         } else {

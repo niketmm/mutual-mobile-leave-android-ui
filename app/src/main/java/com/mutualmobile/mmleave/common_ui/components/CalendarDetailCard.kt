@@ -23,7 +23,9 @@ import com.mutualmobile.mmleave.util.CalendarDetailList
 import com.mutualmobile.mmleave.util.CalendarDetailUtil
 
 @Composable
-fun CalendarDetailsCard() {
+fun CalendarDetailsCard(
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = Modifier
             .padding(start = 12.dp, end = 12.dp)
