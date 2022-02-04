@@ -18,6 +18,7 @@ import com.mutualmobile.mmleave.ui.theme.secondaryColorLight
 
 @Composable
 fun ExpandCalendar(
+    modifier: Modifier = Modifier,
     onClickEvent : () -> Unit
 ) {
     OutlinedButton(
