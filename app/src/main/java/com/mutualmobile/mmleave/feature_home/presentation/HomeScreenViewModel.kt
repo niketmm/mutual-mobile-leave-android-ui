@@ -30,8 +30,6 @@ class HomeScreenViewModel @Inject constructor(
         fetchAllHolidays()
     }
 
-
-
     private var _isUserAdminState = MutableStateFlow(false)
     val isUserAdminState = _isUserAdminState
 
