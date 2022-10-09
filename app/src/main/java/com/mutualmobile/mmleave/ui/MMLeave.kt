@@ -47,6 +47,7 @@ class MMLeave : ComponentActivity() {
      * We Move forward only when the splash Screen has been
      * Completed its works
      */
+
     setContent {
       MMLeaveTheme {
         Surface(color = MaterialTheme.colors.background) {

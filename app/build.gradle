@@ -16,7 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.HiltTestRunner"
+        testInstrumentationRunner "com.mutualmobile.mmleave.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -156,4 +156,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.0.5"
     debugImplementation "androidx.compose.ui:ui-tooling:1.0.5"
+
+    // Needed for createComposeRule, but not createAndroidComposeRule:
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.0.5")
 }

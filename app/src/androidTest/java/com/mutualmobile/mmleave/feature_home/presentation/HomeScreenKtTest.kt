@@ -1,8 +1,10 @@
 package com.mutualmobile.mmleave.feature_home.presentation
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -10,9 +12,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
+import com.google.common.truth.Truth.assertThat
 import com.mutualmobile.mmleave.di.home.HomeCalendarServiceModule
 import com.mutualmobile.mmleave.di.home.HomeRepositoryModule
 import com.mutualmobile.mmleave.di.home.SyncCacheHomeDataServiceModule
+import com.mutualmobile.mmleave.di.usecase.UseCaseModule
 import com.mutualmobile.mmleave.feature_availed.presentation.PtoAvailedScreen
 import com.mutualmobile.mmleave.feature_notification.presentation.NotificationScreen
 import com.mutualmobile.mmleave.feature_pto.presentation.ApplyPtoScreen
@@ -24,6 +28,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,15 +39,13 @@ import org.junit.Test
  * Main Database or the Local Database
  */
 
+@HiltAndroidTest
 @ExperimentalCoilApi
 @ExperimentalCoroutinesApi
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
-@HiltAndroidTest
 @UninstallModules(
-    HomeCalendarServiceModule::class,
-    HomeRepositoryModule::class,
-    SyncCacheHomeDataServiceModule::class
+    UseCaseModule::class
 )
 class HomeScreenKtTest {
 
@@ -66,7 +69,6 @@ class HomeScreenKtTest {
         composeRule.setContent {
             val navController = rememberNavController()
             MMLeaveTheme {
-
                 NavHost(
                     navController = navController,
                     startDestination = Screen.Home.route
@@ -92,40 +94,43 @@ class HomeScreenKtTest {
     }
 
     @Test
-    fun clickToggleCalendarButton_calendarIsVisible() {
+    fun clickToggleCalendarButton_calendarIsVisible() = runTest {
+        Log.d("TestingTheTestLog", "clickToggleCalendarButton_calendarIsVisible: Idhr aya kya??")
         // By Default the Calendar will be Collapsed
         composeRule.onNodeWithTag(UiTestTags.HOME_CALENDAR_VIEW).assertDoesNotExist()
 
         // We perform a Click on the Toggle Button
         composeRule.onNodeWithTag(UiTestTags.CALENDAR_TOGGLE_BUTTON).performClick()
+        composeRule.awaitIdle()
 
         // Check and assert that the Calendar View is Visible
         composeRule.onNodeWithTag(UiTestTags.HOME_CALENDAR_VIEW).assertIsDisplayed()
     }
 
-//    @Test
-//    fun clickNextMonthCalendarButtonWhenCalendarIsVisible_incrementMonthWithOne() {
-//
-//    }
-//
-//    @Test
-//    fun clickPreviousMonthCalendarButtonWhenCalendarIsVisible_decrementMonthWithOne() {
-//
-//    }
-//
-//    @Test
-//    fun clickUserProfileImage_logoutUser_takeToLandingScreen() {
-//
-//    }
-//
-//    @Test
-//    fun clickPtoDetailSurface_takeToAvailedPtoScreen() {
-//
-//    }
-//
-//    @Test
-//    fun clickApplyPtoButton_takeToApplyPtoScreen() {
-//
-//    }
+    @Test
+    fun clickNextMonthCalendarButtonWhenCalendarIsVisible_incrementMonthWithOne() {
+        Log.d("TestingTheTestLog", "clickToggleCalendarButton_calendarIsVisible: Idhr aya kya bhyi??")
+
+    }
+
+    @Test
+    fun clickPreviousMonthCalendarButtonWhenCalendarIsVisible_decrementMonthWithOne() {
+
+    }
+
+    @Test
+    fun clickUserProfileImage_logoutUser_takeToLandingScreen() {
+
+    }
+
+    @Test
+    fun clickPtoDetailSurface_takeToAvailedPtoScreen() {
+
+    }
+
+    @Test
+    fun clickApplyPtoButton_takeToApplyPtoScreen() {
+
+    }
 
 }
